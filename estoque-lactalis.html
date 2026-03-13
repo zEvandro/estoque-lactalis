@@ -234,6 +234,10 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink
 .btn{background:transparent;border:1.5px solid var(--border);color:var(--ink);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s}
 .btn-reservar{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .btn-reservar:active{background:var(--accent);color:var(--bg)}
+.btn-baixa-pick{border-color:var(--baixa);color:var(--baixa);background:var(--baixa-bg);font-size:11px;padding:6px 12px}
+.btn-baixa-pick:active{background:var(--baixa);color:var(--bg)}
+.btn-diverg{border-color:var(--ora);color:var(--ora);background:var(--ora-bg);font-size:11px;padding:6px 12px;margin-left:6px}
+.btn-diverg:active{background:var(--ora);color:var(--bg)}
 .btn-voltar{border-color:var(--accent3);color:var(--accent3);background:var(--accent3-light)}
 .btn-baixa{border-color:var(--itm);color:var(--itm);background:var(--itm-bg)}
 .picking-label{font-size:11px;font-weight:700;color:var(--red);background:var(--red-bg);border:1px solid var(--red-soft);border-radius:20px;padding:4px 12px;align-self:center}
@@ -325,7 +329,11 @@ body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
 .toast.notif-base{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
 .toast.notif-reserva{background:var(--surface);border-color:var(--accent3);color:var(--accent3)}
 
-/* ── OFFLINE BANNER ── */
+/* ── DIVERGÊNCIA ── */
+.btn-diverg-motivo{background:var(--surface2);border:1.5px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s}
+.btn-diverg-motivo.active{background:var(--ora-bg);border-color:var(--ora);color:var(--ora)}
+
+
 .offline-banner{background:var(--ora-bg);border:1px solid var(--ora);border-radius:var(--radius);padding:10px 14px;font-size:12px;font-weight:600;color:var(--ora);margin-bottom:12px}
 
 /* ── LOG / TIMELINE ── */
@@ -778,6 +786,99 @@ body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
   </div>
 </div>
 
+<!-- Modal divergência -->
+<div class="overlay" id="modalDiverg" onclick="if(event.target===this)fecharDiverg()">
+  <div class="modal" style="max-width:440px;max-height:90vh;overflow-y:auto">
+    <h3 style="margin-bottom:4px">⚠️ Registrar Divergência</h3>
+    <p id="divProdInfo" style="font-size:12px;color:var(--muted);margin-bottom:14px"></p>
+
+    <!-- Motivo -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px">Motivo:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-diverg-motivo active" id="dmQtd"      onclick="setMotivoDiv('qtd')">📦 Quantidade</button>
+        <button class="btn-diverg-motivo"         id="dmData"     onclick="setMotivoDiv('data')">📅 Data</button>
+        <button class="btn-diverg-motivo"         id="dmAmbos"    onclick="setMotivoDiv('ambos')">📦📅 Ambos</button>
+        <button class="btn-diverg-motivo"         id="dmEtiqueta" onclick="setMotivoDiv('etiqueta')">🏷️ Etiqueta trocada</button>
+      </div>
+    </div>
+
+    <!-- Campos quantidade -->
+    <div id="divSecQtd" style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--ora);margin-bottom:8px">📦 QUANTIDADE</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:90px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Sistema</div>
+          <input id="divQtdSis" type="number" readonly style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:14px;font-weight:700;color:var(--muted);font-family:'IBM Plex Mono',monospace;box-sizing:border-box">
+        </div>
+        <div style="font-size:18px;color:var(--muted);padding-top:16px">→</div>
+        <div style="flex:1;min-width:90px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Físico (real)</div>
+          <input id="divQtdReal" type="number" min="0" placeholder="0" oninput="atualizarDiffDiv()" style="width:100%;background:var(--bg);border:1.5px solid var(--accent3);border-radius:6px;padding:8px 10px;font-size:14px;font-weight:700;color:var(--ink);font-family:'IBM Plex Mono',monospace;box-sizing:border-box;outline:none">
+        </div>
+      </div>
+      <div id="divDiffQtd" style="font-size:12px;margin-top:8px;min-height:18px;text-align:center"></div>
+    </div>
+
+    <!-- Campos data -->
+    <div id="divSecData" style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:12px;display:none">
+      <div style="font-size:11px;font-weight:700;color:var(--ora);margin-bottom:8px">📅 DATA DE VALIDADE</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:90px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Sistema</div>
+          <input id="divDataSis" type="text" readonly style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;font-weight:700;color:var(--muted);font-family:'IBM Plex Mono',monospace;box-sizing:border-box">
+        </div>
+        <div style="font-size:18px;color:var(--muted);padding-top:16px">→</div>
+        <div style="flex:1;min-width:90px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Físico (real)</div>
+          <input id="divDataReal" type="text" placeholder="DD/MM/AAAA" style="width:100%;background:var(--bg);border:1.5px solid var(--accent3);border-radius:6px;padding:8px 10px;font-size:13px;font-weight:700;color:var(--ink);font-family:'IBM Plex Mono',monospace;box-sizing:border-box;outline:none">
+        </div>
+      </div>
+    </div>
+
+    <!-- Campos etiqueta trocada -->
+    <div id="divSecEtiqueta" style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:12px;display:none">
+      <div style="font-size:11px;font-weight:700;color:var(--ora);margin-bottom:8px">🏷️ ETIQUETA TROCADA</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">O código da etiqueta não corresponde ao produto físico na prateleira.</div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Código na etiqueta (sistema)</div>
+        <input id="divEtiqSis" type="text" readonly style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;font-weight:700;color:var(--muted);font-family:'IBM Plex Mono',monospace;box-sizing:border-box">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Produto físico encontrado (descrição ou código)</div>
+        <input id="divEtiqReal" type="text" placeholder="Ex: LEITE INTEGRAL 1L ou código 789123" style="width:100%;background:var(--bg);border:1.5px solid var(--accent3);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;box-sizing:border-box;outline:none">
+      </div>
+    </div>
+
+    <!-- Foto -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px">📷 Foto (opcional):</div>
+      <div id="divFotoPreview" style="display:none;margin-bottom:8px;border-radius:8px;overflow:hidden;max-height:180px;text-align:center">
+        <img id="divFotoImg" style="max-width:100%;max-height:180px;border-radius:8px;object-fit:cover">
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="tirarFoto()" style="flex:1;background:var(--surface2);border:1.5px dashed var(--border);border-radius:8px;padding:10px;font-size:12px;color:var(--muted);cursor:pointer">📷 Tirar foto</button>
+        <button onclick="escolherFoto()" style="flex:1;background:var(--surface2);border:1.5px dashed var(--border);border-radius:8px;padding:10px;font-size:12px;color:var(--muted);cursor:pointer">🖼️ Galeria</button>
+        <button id="btnRemoverFoto" onclick="removerFotoDiverg()" style="display:none;background:var(--red-bg);border:1px solid var(--red-soft);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--red);cursor:pointer">✕</button>
+      </div>
+      <input type="file" id="divFotoInput" accept="image/*" style="display:none" onchange="onFotoSelecionada(this)">
+      <input type="file" id="divFotoCamera" accept="image/*" capture="environment" style="display:none" onchange="onFotoSelecionada(this)">
+    </div>
+
+    <!-- Observação -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:6px">Observação (opcional):</div>
+      <textarea id="divObs" maxlength="200" placeholder="Ex: produto molhado, embalagem danificada…" style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;resize:none;height:64px;box-sizing:border-box;outline:none"></textarea>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-baixa" style="flex:1;background:var(--ora);border-color:var(--ora)" onclick="compartilharDivergencia()">📤 Compartilhar</button>
+      <button class="btn btn-baixa" style="flex:1" onclick="salvarDivergencia()">💾 Só salvar</button>
+      <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="fecharDiverg()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal confirmação -->
 <div class="overlay" id="modal">
   <div class="modal">
@@ -854,6 +955,10 @@ let _chatTitleInterval = null; // intervalo para piscar o título
 let _tabAtual    = 'consulta';
 let _histBusca   = [];  // últimos 10 termos buscados
 let _filtroVencCustom = false;
+let _divergIdx   = null;
+let _divergMarca = null;
+let _divergMotivo = 'qtd';   // 'qtd' | 'data' | 'ambos'
+let _divergFotoB64 = null;   // base64 da foto
 
 let filtroAtivo      = 'todos';
 let _filtroVencDias  = 2;
@@ -1669,6 +1774,7 @@ function limparTudo() {
         'chat':          null,
         'contagens':     null,
         'loginAttempts': null,
+        'divergencias':  null,
       }).then(() => {
         try { localStorage.removeItem(CACHE_KEY); } catch(e) {}
         toast('✓ Dia resetado com sucesso!');
@@ -1803,10 +1909,11 @@ function renderLog() {
   if (vazio) vazio.style.display = 'none';
 
   const acaoConfig = {
-    reserva:   { icon:'📋', label:'Reservou',       cls:'reserva' },
-    baixa:     { icon:'✓',  label:'Deu baixa em',   cls:'baixa' },
-    devolucao: { icon:'↩',  label:'Devolveu',        cls:'devolucao' },
-    base:      { icon:'📂', label:'Carregou base',   cls:'base' },
+    reserva:    { icon:'📋', label:'Reservou',          cls:'reserva' },
+    baixa:      { icon:'✓',  label:'Deu baixa em',      cls:'baixa' },
+    devolucao:  { icon:'↩',  label:'Devolveu',           cls:'devolucao' },
+    base:       { icon:'📂', label:'Carregou base',      cls:'base' },
+    divergencia:{ icon:'⚠️', label:'Divergência em',    cls:'devolucao' },
   };
 
   lista.innerHTML = '<div class="timeline">' + items.map((e, i) => {
@@ -1953,9 +2060,12 @@ function cardHTMLFast(e) {
     (e.end ? '<span class="tag endereco">📍 <b>' + e.end + '</b></span>' : '');
 
   const acoes = isPicking
-    ? '<span class="picking-label">🔴 PICKING</span>'
+    ? '<span class="picking-label">🔴 PICKING</span>' +
+      '<button class="btn btn-baixa-pick" onclick="darBaixaPicking(\'' + idx + '\',\'' + marca + '\')">✓ Dar Baixa</button>'
     : '<button class="btn btn-reservar" onclick="reservarItem(\'' + idx + '\',\'' + marca + '\')">📋 Reservar</button>' +
       '<button class="btn btn-contagem" onclick="abrirContagem(\'' + idx + '\',\'' + marca + '\')" style="margin-left:6px;font-size:11px;padding:7px 12px">📊 Contar</button>';
+
+  const btnDiv = '<button class="btn btn-diverg" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')">⚠️ Divergência</button>';
 
   return '<div class="card ' + valClass + '">' +
     '<div class="card-head"><div>' +
@@ -1966,7 +2076,7 @@ function cardHTMLFast(e) {
       (valBadge ? '<span class="val-badge ' + valClass + '">' + valBadge + '</span>' : '') +
     '</div></div>' +
     (tags ? '<div class="card-tags">' + tags + '</div>' : '') +
-    '<div class="card-actions">' + acoes + '</div>' +
+    '<div class="card-actions">' + acoes + btnDiv + '</div>' +
   '</div>';
 }
 
@@ -2421,6 +2531,248 @@ function limparLoginAttempts() {
   confirmar('Limpar tentativas?', 'Remove o log de tentativas de login inválidas.', () => {
     db.ref('loginAttempts').remove().then(() => toast('✓ Log limpo')).catch(e => toast('Erro: ' + e.message));
   });
+}
+
+// ════ PICKING — DAR BAIXA DIRETO ════════════════════════════════
+function darBaixaPicking(idx, marca) {
+  confirmar('Dar baixa no picking?', 'O item será removido do estoque definitivamente.', () => {
+    const b    = bases[marca];
+    const item = b?.dados.find(r => r._idx === idx);
+    if (!item) return;
+    const map  = b.mapa;
+    const baixa = {
+      codigo:    item[map.codigo]    ?? '—',
+      descricao: item[map.descricao] ?? '—',
+      endereco:  item[map.endereco]  ?? '—',
+      caixas:    item[map.caixas]    ?? '',
+      fab:       fmtData(item[map.dtFab]),
+      val:       fmtData(item[map.dtVal]),
+      hora:      new Date().toLocaleString('pt-BR'),
+      ts:        Date.now(),
+      marca,
+      nome:      usuarioLogado.nome,
+      cracha:    usuarioLogado.cracha,
+      origem:    'picking'
+    };
+    const upd = {};
+    upd['baixados/' + idx] = true;
+    upd['baixas/'   + db.ref('baixas').push().key] = baixa;
+    db.ref().update(upd).then(() => {
+      toast('✓ Baixa de picking registrada');
+      registrarLog('baixa', { marca, codigo: baixa.codigo, descricao: baixa.descricao, endereco: baixa.endereco });
+    }).catch(e => toast('Erro: ' + e.message));
+  });
+}
+
+// ════ DIVERGÊNCIA ════════════════════════════════════════════════
+function abrirDivergencia(idx, marca) {
+  _divergIdx    = idx;
+  _divergMarca  = marca;
+  _divergMotivo = 'qtd';
+  _divergFotoB64 = null;
+
+  const b    = bases[marca];
+  const item = b?.dados.find(r => r._idx === idx);
+  if (!item) return;
+
+  const cod  = item[b.mapa.codigo]    ?? '—';
+  const desc = item[b.mapa.descricao] ?? '—';
+  const end  = item[b.mapa.endereco]  ?? '—';
+  const cx   = item[b.mapa.caixas]    ?? '—';
+  const val  = fmtData(item[b.mapa.dtVal]);
+
+  document.getElementById('divProdInfo').textContent = cod + ' · ' + desc + ' · 📍 ' + end;
+  document.getElementById('divQtdSis').value   = cx;
+  document.getElementById('divQtdReal').value  = '';
+  document.getElementById('divDataSis').value  = val;
+  document.getElementById('divDataReal').value = '';
+  document.getElementById('divEtiqSis').value  = cod;
+  document.getElementById('divEtiqReal').value = '';
+  document.getElementById('divDiffQtd').innerHTML = '';
+  document.getElementById('divObs').value = '';
+  document.getElementById('divFotoPreview').style.display = 'none';
+  document.getElementById('btnRemoverFoto').style.display = 'none';
+
+  setMotivoDiv('qtd');
+  document.getElementById('modalDiverg').classList.add('show');
+  setTimeout(() => document.getElementById('divQtdReal').focus(), 150);
+}
+
+function fecharDiverg() {
+  document.getElementById('modalDiverg').classList.remove('show');
+  _divergIdx = _divergMarca = null;
+  _divergFotoB64 = null;
+}
+
+function setMotivoDiv(m) {
+  _divergMotivo = m;
+  ['qtd','data','ambos','etiqueta'].forEach(k => {
+    const id = 'dm' + k.charAt(0).toUpperCase() + k.slice(1);
+    document.getElementById(id)?.classList.toggle('active', k === m);
+  });
+  document.getElementById('divSecQtd').style.display      = (m === 'qtd'   || m === 'ambos') ? '' : 'none';
+  document.getElementById('divSecData').style.display     = (m === 'data'  || m === 'ambos') ? '' : 'none';
+  document.getElementById('divSecEtiqueta').style.display = (m === 'etiqueta') ? '' : 'none';
+}
+
+function atualizarDiffDiv() {
+  const sis  = parseInt(document.getElementById('divQtdSis').value)  || 0;
+  const real = parseInt(document.getElementById('divQtdReal').value);
+  const el   = document.getElementById('divDiffQtd');
+  if (isNaN(real)) { el.innerHTML = ''; return; }
+  const diff = real - sis;
+  const cor  = diff === 0 ? 'var(--accent)' : diff > 0 ? 'var(--yel)' : 'var(--red)';
+  const sinal = diff > 0 ? '+' : '';
+  el.innerHTML = '<span style="color:' + cor + ';font-weight:700">' +
+    (diff === 0 ? '✓ Quantidade confere' : sinal + diff + ' caixas em relação ao sistema') + '</span>';
+}
+
+function tirarFoto()    { document.getElementById('divFotoCamera').click(); }
+function escolherFoto() { document.getElementById('divFotoInput').click(); }
+
+function onFotoSelecionada(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    _divergFotoB64 = e.target.result;
+    document.getElementById('divFotoImg').src = _divergFotoB64;
+    document.getElementById('divFotoPreview').style.display = '';
+    document.getElementById('btnRemoverFoto').style.display = '';
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function removerFotoDiverg() {
+  _divergFotoB64 = null;
+  document.getElementById('divFotoPreview').style.display = 'none';
+  document.getElementById('btnRemoverFoto').style.display = 'none';
+}
+
+function montarMensagemDiverg() {
+  const b    = bases[_divergMarca];
+  const item = b?.dados.find(r => r._idx === _divergIdx);
+  if (!item) return '';
+
+  const cod   = item[b.mapa.codigo]    ?? '—';
+  const desc  = item[b.mapa.descricao] ?? '—';
+  const end   = item[b.mapa.endereco]  ?? '—';
+  const marca = _divergMarca === 'batavo' ? '🟢 BATAVO' : '🔵 ITAMBÉ';
+  const hora  = new Date().toLocaleString('pt-BR');
+  const obs   = document.getElementById('divObs').value.trim();
+
+  const motivoLabels = {
+    qtd:      '📦 Quantidade divergente',
+    data:     '📅 Data divergente',
+    ambos:    '📦📅 Quantidade e Data divergentes',
+    etiqueta: '🏷️ Etiqueta trocada'
+  };
+  let linhas = [
+    '⚠️ DIVERGÊNCIA DE ESTOQUE',
+    '━━━━━━━━━━━━━━━━━━━━',
+    marca,
+    '🏷️ ' + cod + ' — ' + desc,
+    '📍 Endereço: ' + end,
+    '',
+    '🔴 Motivo: ' + motivoLabels[_divergMotivo],
+  ];
+
+  if (_divergMotivo === 'qtd' || _divergMotivo === 'ambos') {
+    const sis  = document.getElementById('divQtdSis').value;
+    const real = document.getElementById('divQtdReal').value;
+    const diff = (parseInt(real) - parseInt(sis)) || 0;
+    const sinal = diff > 0 ? '+' : '';
+    linhas.push('', '📦 QUANTIDADE', '• Sistema: ' + sis + ' cx', '• Físico:  ' + real + ' cx', '• Diferença: ' + sinal + diff + ' cx');
+  }
+  if (_divergMotivo === 'data' || _divergMotivo === 'ambos') {
+    const sis  = document.getElementById('divDataSis').value;
+    const real = document.getElementById('divDataReal').value;
+    linhas.push('', '📅 VALIDADE', '• Sistema: ' + sis, '• Físico:  ' + real);
+  }
+  if (_divergMotivo === 'etiqueta') {
+    const etiqSis  = document.getElementById('divEtiqSis').value;
+    const etiqReal = document.getElementById('divEtiqReal').value;
+    linhas.push('', '🏷️ ETIQUETA', '• Código na etiqueta: ' + etiqSis, '• Produto físico:     ' + (etiqReal || 'não identificado'));
+  }
+
+  linhas.push('', '━━━━━━━━━━━━━━━━━━━━', '👤 ' + usuarioLogado.nome + ' · Crachá ' + usuarioLogado.cracha, '🕐 ' + hora);
+  if (obs) linhas.push('📝 ' + obs);
+
+  return linhas.join('\n');
+}
+
+async function compartilharDivergencia() {
+  const msg = montarMensagemDiverg();
+  if (!msg) return;
+
+  // Salva no Firebase
+  await _salvarDivergenciaDB();
+
+  if (navigator.share) {
+    try {
+      const shareData = { text: msg };
+      if (_divergFotoB64) {
+        // Converte base64 para File para compartilhar com foto
+        const res  = await fetch(_divergFotoB64);
+        const blob = await res.blob();
+        const file = new File([blob], 'divergencia.jpg', { type: blob.type });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          shareData.files = [file];
+        }
+      }
+      await navigator.share(shareData);
+      toast('✓ Compartilhado com sucesso!');
+      fecharDiverg();
+    } catch(e) {
+      if (e.name !== 'AbortError') toast('Erro ao compartilhar: ' + e.message);
+    }
+  } else {
+    // Fallback: copia texto para área de transferência
+    try {
+      await navigator.clipboard.writeText(msg);
+      toast('📋 Texto copiado! Cole no WhatsApp.');
+    } catch(e) {
+      toast('Compartilhamento não suportado neste navegador');
+    }
+  }
+}
+
+async function salvarDivergencia() {
+  await _salvarDivergenciaDB();
+  toast('✓ Divergência salva no sistema');
+  fecharDiverg();
+}
+
+async function _salvarDivergenciaDB() {
+  const b    = bases[_divergMarca];
+  const item = b?.dados.find(r => r._idx === _divergIdx);
+  if (!item) return;
+
+  const entry = {
+    idx:      _divergIdx,
+    marca:    _divergMarca,
+    motivo:   _divergMotivo,
+    codigo:   item[b.mapa.codigo]    ?? '—',
+    descricao:item[b.mapa.descricao] ?? '—',
+    endereco: item[b.mapa.endereco]  ?? '—',
+    qtdSis:   document.getElementById('divQtdSis').value   || null,
+    qtdReal:  document.getElementById('divQtdReal').value  || null,
+    dataSis:  document.getElementById('divDataSis').value  || null,
+    dataReal: document.getElementById('divDataReal').value || null,
+    etiqSis:  document.getElementById('divEtiqSis').value  || null,
+    etiqReal: document.getElementById('divEtiqReal').value || null,
+    obs:      document.getElementById('divObs').value.trim() || null,
+    foto:     _divergFotoB64 || null,
+    nome:     usuarioLogado.nome,
+    cracha:   usuarioLogado.cracha,
+    hora:     new Date().toLocaleString('pt-BR'),
+    ts:       Date.now(),
+  };
+  try {
+    await db.ref('divergencias').push(entry);
+    registrarLog('divergencia', { marca: _divergMarca, codigo: entry.codigo, descricao: entry.descricao, endereco: entry.endereco });
+  } catch(e) { toast('Erro ao salvar: ' + e.message); }
 }
 
 // ════ TOAST ESPECIAL ══════════════════════════════════════════════
