@@ -2706,32 +2706,49 @@ async function compartilharDivergencia() {
   const msg = montarMensagemDiverg();
   if (!msg) return;
 
-  // Salva no Firebase
-  await _salvarDivergenciaDB();
-
   if (navigator.share) {
     try {
       const shareData = { text: msg };
+
+      // Adiciona foto se tiver — monta o File antes do share
       if (_divergFotoB64) {
-        // Converte base64 para File para compartilhar com foto
-        const res  = await fetch(_divergFotoB64);
-        const blob = await res.blob();
-        const file = new File([blob], 'divergencia.jpg', { type: blob.type });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          shareData.files = [file];
-        }
+        try {
+          const res  = await fetch(_divergFotoB64);
+          const blob = await res.blob();
+          const file = new File([blob], 'divergencia.jpg', { type: blob.type });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            shareData.files = [file];
+          }
+        } catch(e) { /* ignora erro de foto, compartilha só o texto */ }
       }
+
+      // Compartilha ANTES de salvar para manter o gesto do usuário
       await navigator.share(shareData);
-      toast('✓ Compartilhado com sucesso!');
+
+      // Salva no Firebase depois do compartilhamento
+      await _salvarDivergenciaDB();
+      toast('✓ Compartilhado e salvo!');
       fecharDiverg();
     } catch(e) {
-      if (e.name !== 'AbortError') toast('Erro ao compartilhar: ' + e.message);
+      if (e.name === 'AbortError') {
+        // Usuário cancelou o compartilhamento — não faz nada
+      } else {
+        // Erro real — tenta copiar como fallback
+        try {
+          await navigator.clipboard.writeText(msg);
+          toast('📋 Texto copiado! Cole no WhatsApp.');
+        } catch(_) {
+          toast('Erro: ' + e.message);
+        }
+      }
     }
   } else {
-    // Fallback: copia texto para área de transferência
+    // Navegador não suporta Web Share API — copia o texto
     try {
       await navigator.clipboard.writeText(msg);
+      await _salvarDivergenciaDB();
       toast('📋 Texto copiado! Cole no WhatsApp.');
+      fecharDiverg();
     } catch(e) {
       toast('Compartilhamento não suportado neste navegador');
     }
