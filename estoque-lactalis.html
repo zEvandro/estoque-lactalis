@@ -1,0 +1,2533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>📦 Estoque Contagem</title>
+
+<!-- PWA -->
+<link rel="manifest" href="./manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Estoque">
+<meta name="theme-color" content="#0f1117">
+<!-- Ícone para iOS (Safari não lê o manifest) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230f1117'/><text y='135' x='15' font-size='130'>📦</text></svg>">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Base */
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;
+  --border:#2e3352;--ink:#e8eaf6;--muted:#6b7280;
+  --accent:#4fffb0;--accent-light:#1a2a22;
+  --accent3:#ffd166;--accent3-light:#2a2516;
+  --radius:10px;
+  --shadow:0 2px 8px rgba(0,0,0,.4);
+  /* Marcas — fixas em todos os temas */
+  --bat:#4fffb0;--bat-bg:#1a2a22;--bat-border:rgba(79,255,176,.35);
+  --itm:#3b9eff;--itm-bg:#0d2a45;--itm-border:rgba(59,158,255,.35);
+  /* Vencido (vermelho) */
+  --red:#e53935;
+  --red-bg:#2a1212;
+  --red-soft:rgba(229,57,53,.22);
+  --card-venc-bg:#1c0d0d;
+  --card-venc-border:#e53935;
+  /* Crítico (laranja) */
+  --ora:#ff6d00;
+  --ora-bg:#2a1800;
+  --ora-soft:rgba(255,109,0,.22);
+  --card-crit-bg:#1c1100;
+  --card-crit-border:#ff6d00;
+  /* Atenção (amarelo) */
+  --yel:#e6b800;
+  --yel-bg:#2a2400;
+  --yel-soft:rgba(230,184,0,.22);
+  --card-ate-bg:#1c1c00;
+  --card-ate-border:#c9a800;
+  /* Baixa / picking */
+  --baixa:#4fc3f7;--baixa-bg:#081c28;--baixa-border:rgba(79,195,247,.3);
+  --pick:#e53935; --pick-bg:#1c0d0d;  --pick-border:rgba(229,57,53,.35);
+}
+body.t-claro{
+  --bg:#f4f1eb;--surface:#fff;--surface2:#f0ede6;
+  --border:#d8d2c8;--ink:#1a1612;--muted:#7a7068;
+  --accent:#2c7a4b;--accent-light:#e8f5ee;
+  --accent3:#b8860b;--accent3-light:#fdf6e3;
+  --shadow:0 1px 4px rgba(0,0,0,.1);
+  --bat-bg:#e8f8f0;--itm-bg:#e8f2ff;
+  --red:#c62828;
+  --red-bg:#fde8e8;--red-soft:rgba(198,40,40,.15);
+  --card-venc-bg:#fff5f5;--card-venc-border:#e53935;
+  --ora:#bf360c;
+  --ora-bg:#fff3e0;--ora-soft:rgba(191,54,12,.15);
+  --card-crit-bg:#fff8f0;--card-crit-border:#e65100;
+  --yel:#8a6500;
+  --yel-bg:#fffde7;--yel-soft:rgba(138,101,0,.15);
+  --card-ate-bg:#fffef0;--card-ate-border:#c8a000;
+  --baixa:#0277bd;--baixa-bg:#e3f2fd;--baixa-border:rgba(2,119,189,.25);
+  --pick:#c62828;--pick-bg:#fde8e8;--pick-border:rgba(198,40,40,.3);
+}
+body.t-industrial{
+  --bg:#1a1a18;--surface:#242420;--surface2:#2e2e28;
+  --border:#3a3a30;--ink:#f0edd8;--muted:#7a7860;
+  --accent:#f5c518;--accent-light:#2a2510;
+  --accent3:#e8734a;--accent3-light:#2a1a0a;--radius:6px;
+  --bat-bg:#1e2a1a;--itm-bg:#1a2030;
+  --red:#ef5350;
+  --red-bg:#281010;--red-soft:rgba(239,83,80,.22);
+  --card-venc-bg:#200c0c;--card-venc-border:#ef5350;
+  --ora:#ff8f00;
+  --ora-bg:#281800;--ora-soft:rgba(255,143,0,.22);
+  --card-crit-bg:#201200;--card-crit-border:#ff8f00;
+  --yel:#e6b800;
+  --yel-bg:#282400;--yel-soft:rgba(230,184,0,.22);
+  --card-ate-bg:#201e00;--card-ate-border:#c9a800;
+  --baixa:#4fc3f7;--baixa-bg:#081c24;--baixa-border:rgba(79,195,247,.3);
+  --pick:#ef5350;--pick-bg:#200c0c;--pick-border:rgba(239,83,80,.3);
+}
+body.t-oceano{
+  --bg:#050e1a;--surface:#0a1929;--surface2:#0d2137;
+  --border:#1a3a5c;--ink:#cce4ff;--muted:#5a8aaa;
+  --accent:#38bdf8;--accent-light:#0a2540;
+  --accent3:#fb923c;--accent3-light:#2a1800;--radius:12px;
+  --bat-bg:#0a2218;--itm-bg:#081828;
+  --red:#ff5252;
+  --red-bg:#280a0a;--red-soft:rgba(255,82,82,.22);
+  --card-venc-bg:#1a0808;--card-venc-border:#ff5252;
+  --ora:#ff9800;
+  --ora-bg:#281400;--ora-soft:rgba(255,152,0,.22);
+  --card-crit-bg:#1a0e00;--card-crit-border:#ff9800;
+  --yel:#ffe57f;
+  --yel-bg:#282400;--yel-soft:rgba(255,229,127,.22);
+  --card-ate-bg:#1a1a00;--card-ate-border:#ccb800;
+  --baixa:#80d8ff;--baixa-bg:#061820;--baixa-border:rgba(128,216,255,.3);
+  --pick:#ff5252;--pick-bg:#1a0808;--pick-border:rgba(255,82,82,.3);
+}
+body.t-roxo{
+  --bg:#0d0a1a;--surface:#16112a;--surface2:#1e1838;
+  --border:#2e2460;--ink:#e8e0ff;--muted:#7060a0;
+  --accent:#a78bfa;--accent-light:#1e1040;
+  --accent3:#f472b6;--accent3-light:#2a0820;--radius:14px;
+  --bat-bg:#122218;--itm-bg:#101828;
+  --red:#ff6b6b;
+  --red-bg:#2a1020;--red-soft:rgba(255,107,107,.22);
+  --card-venc-bg:#1c0814;--card-venc-border:#ff6b6b;
+  --ora:#ffab40;
+  --ora-bg:#2a1800;--ora-soft:rgba(255,171,64,.22);
+  --card-crit-bg:#1c1000;--card-crit-border:#ffab40;
+  --yel:#ffe082;
+  --yel-bg:#282400;--yel-soft:rgba(255,224,130,.22);
+  --card-ate-bg:#1c1c00;--card-ate-border:#d4a800;
+  --baixa:#b39ddb;--baixa-bg:#12082a;--baixa-border:rgba(179,157,219,.3);
+  --pick:#ff6b6b;--pick-bg:#1c0814;--pick-border:rgba(255,107,107,.3);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+
+/* LOGIN */
+#telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
+.login-wrap{width:100%;max-width:360px}
+.login-logo{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:var(--accent);text-align:center;margin-bottom:4px}
+.login-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:28px}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 22px;box-shadow:var(--shadow)}
+.lf{margin-bottom:16px}
+.lf label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.lf input{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:13px 14px;font-size:16px;color:var(--ink);font-family:'IBM Plex Mono',monospace;outline:none;transition:border-color .15s}
+.lf input:focus{border-color:var(--accent)}
+.btn-login{width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;margin-top:4px;transition:opacity .15s}
+.btn-login:active{opacity:.8}
+.login-erro{color:var(--red);font-size:13px;text-align:center;margin-top:12px;min-height:18px}
+
+/* BASE SELECT */
+#telaBaseSelect{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
+.bs-logo{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:var(--accent);text-align:center;margin-bottom:4px}
+.bs-user{font-size:13px;color:var(--muted);text-align:center;margin-bottom:28px}
+.bs-title{font-size:17px;font-weight:600;text-align:center;margin-bottom:20px}
+.bs-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:380px}
+.bs-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:24px 16px;text-align:center;transition:all .15s}
+.bs-card.disponivel{cursor:pointer}
+.bs-card.batavo.disponivel{border-color:var(--bat-border)}
+.bs-card.batavo.disponivel:hover,.bs-card.batavo.disponivel:active{border-color:var(--bat);background:var(--surface2)}
+.bs-card.itambe.disponivel{border-color:var(--itm-border)}
+.bs-card.itambe.disponivel:hover,.bs-card.itambe.disponivel:active{border-color:var(--itm);background:var(--surface2)}
+.bs-card.indisponivel{opacity:.45;cursor:not-allowed}
+.bs-icon{font-size:32px;margin-bottom:10px}
+.bs-nome{font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:10px}
+.bs-card.batavo .bs-nome{color:var(--bat)}
+.bs-card.itambe .bs-nome{color:var(--itm)}
+.bs-status{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:6px}
+.bs-ok{background:var(--bat-bg);color:var(--bat)}
+.bs-card.itambe .bs-ok{background:var(--itm-bg);color:var(--itm)}
+.bs-no{background:var(--surface2);color:var(--muted)}
+.bs-arquivo{font-size:11px;color:var(--muted);margin-top:4px;word-break:break-all}
+.bs-aviso{font-size:11px;color:var(--accent3);margin-top:4px}
+.btn-sair{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:10px 24px;font-size:13px;cursor:pointer;margin-top:20px;font-family:'IBM Plex Sans',sans-serif}
+.btn-sair:hover{border-color:var(--muted);color:var(--ink)}
+
+/* HEADER */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100;flex-wrap:wrap}
+.logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.5px}
+.header-right{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.user-pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--accent-light);border:1px solid var(--accent);color:var(--accent);letter-spacing:.3px}
+.base-pills{display:flex;gap:5px}
+.base-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid;letter-spacing:.4px;transition:opacity .2s}
+.base-pill.batavo{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
+.base-pill.itambe{background:var(--itm-bg);border-color:var(--itm);color:var(--itm)}
+.base-pill.off{opacity:.3}
+.db-pill{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:all .3s}
+.dot.on{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.conn-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid;letter-spacing:.3px;transition:all .3s}
+.conn-pill.online{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
+.conn-pill.offline{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.btn-hdr{background:transparent;border:1px solid var(--border);color:var(--ink);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s}
+.btn-hdr:hover{border-color:var(--accent);color:var(--accent)}
+
+/* TABS */
+.tabs{display:flex;gap:0;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:11px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover{color:var(--ink)}
+
+/* CONTENT */
+.content{padding:14px;max-width:680px;margin:0 auto;padding-bottom:80px}
+.search-box{position:relative;margin-bottom:12px}
+.search-box input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 44px 12px 14px;font-size:14px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;outline:none;transition:border-color .15s}
+.search-box input:focus{border-color:var(--accent)}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--muted)}
+.filtro-wrap{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.btn-filtro{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.btn-filtro.active{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
+.stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.stat{font-size:12px;color:var(--muted)}
+.stat b{color:var(--ink)}
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty .icon{font-size:40px;margin-bottom:12px}
+.empty h3{font-size:16px;margin-bottom:6px;color:var(--ink)}
+.empty p{font-size:13px}
+.help{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.no-db-banner{background:var(--yel-bg);border:1px solid var(--yel);border-radius:var(--radius);padding:14px 16px;font-size:13px;color:var(--accent3);margin-bottom:14px}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .15s}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 14px 8px}
+.card-code{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:var(--accent);margin-bottom:2px}
+.card-desc{font-size:13px;color:var(--ink);line-height:1.3}
+.head-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;padding-left:8px}
+.card-brand{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid;white-space:nowrap}
+.card-brand.batavo{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
+.card-brand.itambe{background:var(--itm-bg);border-color:var(--itm);color:var(--itm)}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
+.tag{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--muted)}
+.tag b{color:var(--ink)}
+.tag.destaque{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.tag.destaque b{color:var(--accent)}
+.tag.endereco{font-size:15px}
+.card-actions{display:flex;gap:8px;padding:0 14px 12px;flex-wrap:wrap}
+.btn{background:transparent;border:1.5px solid var(--border);color:var(--ink);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s}
+.btn-reservar{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.btn-reservar:active{background:var(--accent);color:var(--bg)}
+.btn-voltar{border-color:var(--accent3);color:var(--accent3);background:var(--accent3-light)}
+.btn-baixa{border-color:var(--itm);color:var(--itm);background:var(--itm-bg)}
+.picking-label{font-size:11px;font-weight:700;color:var(--red);background:var(--red-bg);border:1px solid var(--red-soft);border-radius:20px;padding:4px 12px;align-self:center}
+.res-info{font-size:11px;color:var(--muted);padding:4px 14px 8px;border-top:1px solid var(--border)}
+.res-info b{color:var(--ink)}
+
+/* VALIDADE — totalmente via variáveis CSS, adaptam em todos os temas */
+.card.vencido{border-color:var(--card-venc-border);background:var(--card-venc-bg)}
+.card.critico{border-color:var(--card-crit-border);background:var(--card-crit-bg)}
+.card.atencao{border-color:var(--card-ate-border);background:var(--card-ate-bg)}
+.val-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid;letter-spacing:.4px;white-space:nowrap}
+.val-badge.vencido{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.val-badge.critico{background:var(--ora-bg);border-color:var(--ora);color:var(--ora)}
+.val-badge.atencao{background:var(--yel-bg);border-color:var(--yel);color:var(--accent3)}
+.tag-vencido{background:var(--red-bg)!important;border-color:var(--red)!important;color:var(--red)!important}
+.tag-vencido b{color:var(--red)!important}
+.tag-critico{background:var(--ora-bg)!important;border-color:var(--ora)!important;color:var(--ora)!important}
+.tag-critico b{color:var(--ora)!important}
+.tag-atencao{background:var(--yel-bg)!important;border-color:var(--yel)!important;color:var(--accent3)!important}
+.tag-atencao b{color:var(--accent3)!important}
+.venc-dias-tag{font-weight:700;font-size:12px}
+.venc-dias-tag.vencido{background:var(--red-bg);color:var(--red);border:1px solid var(--red-soft)}
+.venc-dias-tag.critico{background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-soft)}
+.venc-dias-tag.atencao{background:var(--yel-bg);color:var(--accent3);border:1px solid var(--yel-soft)}
+
+/* ── CHAT ── */
+.chat-layout{display:flex;height:calc(100vh - 130px);min-height:300px;gap:0;overflow:hidden}
+.chat-sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.chat-sidebar-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:10px 14px 6px}
+.chat-conv-item{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .12s;position:relative}
+.chat-conv-item:hover{background:var(--surface2)}
+.chat-conv-item.active{background:var(--surface2);border-left:3px solid var(--accent)}
+.chat-conv-item.active .chat-conv-avatar{color:var(--accent)}
+.chat-conv-avatar{font-size:20px;flex-shrink:0}
+.chat-conv-info{flex:1;min-width:0}
+.chat-conv-name{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-conv-preview{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.chat-conv-badge{background:var(--red);color:#fff;border-radius:10px;font-size:10px;font-weight:700;padding:1px 7px;flex-shrink:0}
+.chat-main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.chat-conv-header{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--ink);flex-shrink:0}
+.chat-back{background:none;border:none;color:var(--accent);font-size:13px;cursor:pointer;padding:4px 8px;border-radius:6px;font-family:'IBM Plex Sans',sans-serif;white-space:nowrap}
+.chat-back:hover{background:var(--surface2)}
+.chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.chat-msg{max-width:78%;padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.45;word-break:break-word}
+.chat-msg.mine{align-self:flex-end;background:var(--accent-light);border:1px solid var(--accent);color:var(--ink);border-bottom-right-radius:4px}
+.chat-msg.other{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px}
+.chat-msg-user{font-size:10px;font-weight:700;color:var(--accent);margin-bottom:3px}
+.chat-msg.other .chat-msg-user{color:var(--itm)}
+.chat-msg-dm-tag{font-size:10px;background:var(--accent3-light);border:1px solid var(--accent3);color:var(--accent3);padding:1px 7px;border-radius:10px;margin-bottom:4px;display:inline-block}
+.chat-msg-time{font-size:10px;color:var(--muted);margin-top:3px;text-align:right}
+.chat-input-wrap{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0}
+.chat-input-wrap input{flex:1;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:11px 14px;font-size:14px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;outline:none}
+.chat-input-wrap input:focus{border-color:var(--accent)}
+.chat-send{background:var(--accent);color:var(--bg);border:none;border-radius:var(--radius);padding:11px 18px;font-size:16px;cursor:pointer;flex-shrink:0;transition:opacity .15s}
+.chat-send:active{opacity:.7}
+.chat-badge{display:inline-block;background:var(--red);color:#fff;border-radius:10px;font-size:10px;font-weight:700;padding:1px 6px;margin-left:3px;vertical-align:middle}
+/* Bolinha pulsante vermelha na aba do chat */
+.tab-notif-dot{display:inline-block;width:8px;height:8px;background:var(--red);border-radius:50%;margin-left:5px;vertical-align:middle;animation:chat-pulse 1.2s ease-in-out infinite}
+@keyframes slideDown{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes chat-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
+/* Mobile: sidebar vira tela inteira */
+@media(max-width:600px){
+  .chat-layout{position:relative}
+  .chat-sidebar{width:100%;position:absolute;inset:0;z-index:2;background:var(--bg)}
+  .chat-sidebar.hidden{display:none}
+  .chat-main{width:100%}
+}
+
+/* ── HISTÓRICO DE BUSCA ── */
+.hist-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.hist-chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--muted);cursor:pointer;font-family:'IBM Plex Mono',monospace;transition:all .15s;display:flex;align-items:center;gap:5px}
+.hist-chip:hover{border-color:var(--accent);color:var(--accent)}
+.hist-chip-x{font-size:10px;opacity:.5;padding:0 1px}
+.hist-chip-x:hover{opacity:1;color:var(--red)}
+
+/* ── CONTAGEM PARCIAL ── */
+.btn-contagem{border-color:var(--accent3);color:var(--accent3);background:var(--accent3-light)}
+
+/* ── TEMA POR MARCA (sobrescreve --accent quando marcaAtiva é definida) ── */
+body.marca-batavo{--accent:var(--bat);--accent-light:var(--bat-bg)}
+body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
+
+/* ── LOGIN ATTEMPTS ── */
+.attempt-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-radius:8px;margin-bottom:6px;font-size:12px}
+.attempt-cracha{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--red)}
+.attempt-hora{color:var(--muted)}
+
+/* ── NOTIF TOAST ESPECIAL ── */
+.toast.notif-base{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
+.toast.notif-reserva{background:var(--surface);border-color:var(--accent3);color:var(--accent3)}
+
+/* ── OFFLINE BANNER ── */
+.offline-banner{background:var(--ora-bg);border:1px solid var(--ora);border-radius:var(--radius);padding:10px 14px;font-size:12px;font-weight:600;color:var(--ora);margin-bottom:12px}
+
+/* ── LOG / TIMELINE ── */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);position:relative}
+.tl-item:last-child{border-bottom:none}
+.tl-dot-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:28px}
+.tl-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;border:2px solid}
+.tl-dot.reserva{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.tl-dot.baixa{background:var(--baixa-bg);border-color:var(--baixa);color:var(--baixa)}
+.tl-dot.devolucao{background:var(--accent3-light);border-color:var(--accent3);color:var(--accent3)}
+.tl-dot.base{background:var(--surface2);border-color:var(--border);color:var(--muted)}
+.tl-line{width:2px;flex:1;background:var(--border);margin-top:4px}
+.tl-body{flex:1;padding-top:3px}
+.tl-acao{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.tl-cod{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:2px}
+.tl-meta{font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+.tl-marca{font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;border:1px solid}
+.tl-marca.batavo{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
+.tl-marca.itambe{background:var(--itm-bg);border-color:var(--itm);color:var(--itm)}
+.tl-hora{font-size:10px;color:var(--muted);margin-left:auto;flex-shrink:0;padding-top:2px}
+
+/* ── BASE DE DADOS ── */
+.bases-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.base-card{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:18px 14px;cursor:pointer;transition:all .2s;user-select:none}
+.base-card.batavo:hover,.base-card.batavo.loaded{border-color:var(--bat)}
+.base-card.itambe:hover,.base-card.itambe.loaded{border-color:var(--itm)}
+.base-card-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.base-card-nome{font-size:13px;font-weight:700;letter-spacing:.5px}
+.base-card.batavo .base-card-nome{color:var(--bat)}
+.base-card.itambe .base-card-nome{color:var(--itm)}
+.base-card-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:auto}
+.base-card.batavo .base-card-badge{background:var(--bat-bg);border:1px solid var(--bat);color:var(--bat)}
+.base-card.itambe .base-card-badge{background:var(--itm-bg);border:1px solid var(--itm);color:var(--itm)}
+.base-card-arquivo{font-size:11px;color:var(--ink);margin-bottom:4px;word-break:break-all}
+.base-card-arquivo.vazio{color:var(--muted);font-style:italic}
+.base-card-meta{font-size:11px;color:var(--muted);margin-bottom:8px}
+.base-card-action{font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:4px 10px;display:inline-block}
+.base-card.batavo .base-card-action{color:var(--bat)}
+.base-card.itambe .base-card-action{color:var(--itm)}
+
+/* ADMIN */
+.admin-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px}
+.admin-section h3{font-size:14px;font-weight:600;margin-bottom:14px;color:var(--accent)}
+.form-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.form-row input,.form-row select{flex:1;min-width:120px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;outline:none}
+.form-row input:focus,.form-row select:focus{border-color:var(--accent)}
+.form-row select option{background:var(--surface2)}
+.btn-add{background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;white-space:nowrap}
+.usuario-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.usuario-nome{font-weight:600;font-size:13px}
+.usuario-meta{font-size:11px;color:var(--muted)}
+.btn-remover{margin-left:auto;background:transparent;border:1px solid var(--red-soft);color:var(--red);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif}
+.btn-remover:hover{background:var(--red-bg);border-color:var(--red)}
+.baixa-stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.btn-limpar-dia{background:transparent;border:1px solid var(--red-soft);color:var(--red);border-radius:8px;padding:10px 20px;font-size:13px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;width:100%;transition:all .15s}
+.btn-limpar-dia:hover{background:var(--red-bg);border-color:var(--red)}
+
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.show{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border-radius:var(--radius);padding:22px;max-width:360px;width:100%;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.modal h3{font-size:15px;margin-bottom:8px}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:18px}
+.modal-btns{display:flex;gap:8px}
+.modal-gerenciar{background:var(--surface);border-radius:var(--radius);max-width:320px;width:100%;overflow:hidden;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.25)}
+.modal-gerenciar.batavo{border-top:3px solid var(--bat)}
+.modal-gerenciar.itambe{border-top:3px solid var(--itm)}
+.modal-base-header{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border)}
+.modal-base-icon{font-size:20px}
+.modal-base-titulo{font-size:15px;font-weight:700;letter-spacing:.5px}
+.modal-base-body{padding:14px 18px}
+.modal-base-arquivo{font-size:13px;font-weight:600;margin-bottom:4px;word-break:break-all}
+.modal-base-contagem{font-size:12px;color:var(--muted);margin-bottom:16px}
+.btn-acao-base{display:block;width:100%;padding:11px 14px;font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;border:1.5px solid;transition:all .15s;text-align:left;margin-bottom:8px}
+.btn-acao-base.substituir.batavo{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
+.btn-acao-base.substituir.itambe{background:var(--itm-bg);border-color:var(--itm);color:var(--itm)}
+.btn-acao-base.retirar{background:transparent;border-color:var(--red-soft);color:var(--red)}
+.btn-acao-base.retirar:hover{background:var(--red-bg);border-color:var(--red)}
+.btn-acao-base.cancelar{background:transparent;border-color:var(--border);color:var(--muted)}
+
+/* TEMAS */
+.temas-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tema-btn{display:flex;align-items:center;gap:10px;background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;color:var(--ink);text-align:left}
+.tema-btn:hover,.tema-btn.ativo{border-color:var(--accent)}
+.tema-preview{width:28px;height:28px;border-radius:6px;flex-shrink:0;border:1px solid rgba(0,0,0,.1)}
+.t-dark{background:linear-gradient(135deg,#0f1117 50%,#4fffb0 50%)}
+.t-claro-prev{background:linear-gradient(135deg,#f4f1eb 50%,#2c7a4b 50%)}
+.t-industrial-prev{background:linear-gradient(135deg,#1a1a18 50%,#f5c518 50%)}
+.t-oceano-prev{background:linear-gradient(135deg,#050e1a 50%,#38bdf8 50%)}
+.t-roxo-prev{background:linear-gradient(135deg,#0d0a1a 50%,#a78bfa 50%)}
+.tema-label{font-size:13px;font-weight:600;flex:1}
+.tema-check{font-size:13px;color:var(--accent);font-weight:700;min-width:14px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:10px 22px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.4);z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* BAIXAS */
+.btn-limpar{background:transparent;border:1px solid var(--red-soft);color:var(--red);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;margin-bottom:12px}
+.btn-fechar{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif}
+.baixa-user-row{font-size:11px;color:var(--muted);padding:6px 14px 10px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
+.baixa-user-row b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<!-- Banner de atualização disponível -->
+<div id="updateBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:10000;background:var(--surface);border-bottom:2px solid var(--accent3);padding:12px 16px;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.5);animation:slideDown .3s ease">
+  <div style="font-size:22px">🔄</div>
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:700;color:var(--ink)">Nova versão disponível!</div>
+    <div style="font-size:11px;color:var(--muted)">Toque em Atualizar para aplicar as novidades</div>
+  </div>
+  <button onclick="aplicarAtualizacao()" style="background:var(--accent3);color:var(--bg);border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif">🔄 Atualizar</button>
+  <button onclick="document.getElementById('updateBanner').style.display='none'" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 8px">✕</button>
+</div>
+
+<!-- Banner de instalação PWA -->
+<div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--surface);border-top:2px solid var(--accent);padding:14px 18px;display:none;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.4)">
+  <div style="font-size:28px">📦</div>
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:700;color:var(--ink)">Instalar Estoque Contagem</div>
+    <div style="font-size:11px;color:var(--muted)">Acesse como app no seu celular, sem navegador</div>
+  </div>
+  <button onclick="instalarPWA()" style="background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif">Instalar</button>
+  <button onclick="document.getElementById('installBanner').style.display='none'" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 8px">✕</button>
+</div>
+
+<!-- ══ TELA LOGIN ══ -->
+<div id="telaLogin">
+  <div class="login-wrap">
+    <div class="login-logo">📦 ESTOQUE CONTAGEM</div>
+    <div class="login-sub">Base Lactalis · Faça login para continuar</div>
+    <div class="login-card">
+      <div class="lf">
+        <label>Número do Crachá</label>
+        <input id="loginCracha" type="number" placeholder="Digite seu crachá" onkeydown="if(event.key==='Enter')fazerLogin()">
+      </div>
+      <div class="lf" id="loginSenhaWrap" style="display:none">
+        <label>Senha ADM</label>
+        <input id="loginSenha" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()">
+      </div>
+      <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+      <div class="login-erro" id="loginErro"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TELA SELEÇÃO BASE ══ -->
+<div id="telaBaseSelect" style="display:none">
+  <div class="bs-logo">📦 ESTOQUE CONTAGEM</div>
+  <div class="bs-user" id="bsUserInfo"></div>
+  <div class="bs-title">Escolha a base de dados</div>
+  <div class="bs-grid">
+    <div class="bs-card batavo indisponivel" id="bsCardBatavo" onclick="selecionarBase('batavo')">
+      <div class="bs-icon">🟢</div>
+      <div class="bs-nome">BATAVO</div>
+      <div id="bsStatusBatavo">
+        <span class="bs-status bs-no">⚠️ Base ausente</span>
+        <div class="bs-aviso">Não houve contagem hoje</div>
+      </div>
+    </div>
+    <div class="bs-card itambe indisponivel" id="bsCardItambe" onclick="selecionarBase('itambe')">
+      <div class="bs-icon">🔵</div>
+      <div class="bs-nome">ITAMBÉ</div>
+      <div id="bsStatusItambe">
+        <span class="bs-status bs-no">⚠️ Base ausente</span>
+        <div class="bs-aviso">Não houve contagem hoje</div>
+      </div>
+    </div>
+  </div>
+  <button class="btn-sair" onclick="fazerLogout()">↩ Sair</button>
+</div>
+
+<!-- ══ APP PRINCIPAL ══ -->
+<div id="appPrincipal" style="display:none">
+
+  <div class="header">
+    <div class="logo">📦 ESTOQUE CONTAGEM</div>
+    <div class="header-right">
+      <div class="user-pill" id="userPill"></div>
+      <div class="base-pills">
+        <span class="base-pill batavo off" id="pillBatavo">🟢 BATAVO</span>
+        <span class="base-pill itambe off" id="pillItambe">🔵 ITAMBÉ</span>
+      </div>
+      <div class="db-pill"><div class="dot" id="dbDot"></div><span id="dbTxt">sem base</span></div>
+      <div class="conn-pill" id="connPill">🔴 Offline</div>
+      <button class="btn-hdr" onclick="abrirTemas()">🎨</button>
+      <button class="btn-hdr" id="btnTrocarBase" onclick="irParaBaseSelect()" style="display:none">🔄 Base</button>
+      <button class="btn-hdr" onclick="fazerLogout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="tabs" id="appTabs"></div>
+
+  <!-- CONSULTA -->
+  <div class="content" id="tab-consulta">
+    <div id="noDB" class="no-db-banner" style="display:none">
+      ⚠️ Base não carregada. Aguarde o ADM carregar a base do dia.
+    </div>
+    <div id="offlineBanner" class="offline-banner" style="display:none">
+      📴 Modo offline — consultando cache local. Reservas não serão salvas.
+    </div>
+    <div id="areaConsulta">
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Código, descrição ou endereço (ex: A 001)…" oninput="debounceBuscar()" onkeydown="if(event.key==='Escape'){this.value='';buscar();}" autocomplete="off">
+        <span class="search-icon">⌕</span>
+      </div>
+      <div id="histBuscaWrap" class="hist-wrap" style="display:none"></div>
+      <div class="filtro-wrap">
+        <button class="btn-filtro active" id="filtroTodos" onclick="setFiltro('todos')">Todos</button>
+        <button class="btn-filtro" id="filtroReserva" onclick="setFiltro('reserva')">📋 Reserva</button>
+        <button class="btn-filtro" id="filtroPicking" onclick="setFiltro('picking')">🔴 Picking</button>
+      </div>
+      <div class="stats" id="statsBar"></div>
+      <div class="results" id="listaResultados"></div>
+    </div>
+  </div>
+
+  <!-- VENCIMENTOS -->
+  <div class="content" id="tab-vencimentos" style="display:none">
+    <div class="filtro-wrap">
+      <button class="btn-filtro active" id="fv2"  onclick="setFiltroVenc(2)">⚠️ 2 dias</button>
+      <button class="btn-filtro"        id="fv5"  onclick="setFiltroVenc(5)">5 dias</button>
+      <button class="btn-filtro"        id="fv10" onclick="setFiltroVenc(10)">10 dias</button>
+      <button class="btn-filtro"        id="fv30" onclick="setFiltroVenc(30)">30 dias</button>
+      <button class="btn-filtro"        id="fvCustom" onclick="toggleFiltroCustom()">✏️ Personalizado</button>
+    </div>
+    <div id="filtroCustomWrap" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Vence entre:</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:6px">
+          <input id="vencMin" type="number" min="0" max="365" value="0" style="width:64px;background:var(--surface2);border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-size:14px;color:var(--ink);font-family:'IBM Plex Mono',monospace;outline:none" oninput="renderVencimentos()">
+          <span style="font-size:12px;color:var(--muted)">e</span>
+          <input id="vencMax" type="number" min="0" max="365" value="30" style="width:64px;background:var(--surface2);border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-size:14px;color:var(--ink);font-family:'IBM Plex Mono',monospace;outline:none" oninput="renderVencimentos()">
+          <span style="font-size:12px;color:var(--muted)">dias</span>
+        </div>
+        <button class="btn-filtro active" style="margin:0" onclick="renderVencimentos()">Aplicar</button>
+      </div>
+    </div>
+    <div class="stats" id="statsVenc"></div>
+    <div class="results" id="listaVencimentos"></div>
+    <div id="vazioVenc" class="empty" style="display:none">
+      <div class="icon">✅</div><h3>Nenhum produto vencendo</h3>
+      <p>Nenhum item vence dentro do prazo selecionado</p>
+    </div>
+  </div>
+
+  <!-- RESERVADOS -->
+  <div class="content" id="tab-reservados" style="display:none">
+    <div class="results" id="listaReservados"></div>
+    <div id="vazioReservados" class="empty">
+      <div class="icon">🗂️</div><h3>Nenhum produto reservado</h3>
+      <p>Na aba Consulta, clique em <b>Reservar</b> para mover itens aqui</p>
+    </div>
+  </div>
+
+  <!-- BAIXAS -->
+  <div class="content" id="tab-baixas" style="display:none">
+    <div class="search-box" style="margin-bottom:10px">
+      <input id="searchBaixas" type="text" placeholder="Buscar por código ou descrição..." oninput="renderBaixas()" autocomplete="off">
+      <span class="search-icon">⌕</span>
+    </div>
+    <div id="listaBaixas"></div>
+    <div id="vazioBaixas" class="empty">
+      <div class="icon">📉</div><h3>Nenhuma baixa registrada</h3>
+      <p>As baixas que você registrar aparecem aqui</p>
+    </div>
+  </div>
+
+  <!-- LOG DE ATIVIDADE -->
+  <div class="content" id="tab-log" style="display:none">
+    <div class="filtro-wrap">
+      <button class="btn-filtro active" id="logFiltroTodos"   onclick="setFiltroLog('todos')">Todos</button>
+      <button class="btn-filtro"        id="logFiltroReserva" onclick="setFiltroLog('reserva')">📋 Reservas</button>
+      <button class="btn-filtro"        id="logFiltroBaixa"   onclick="setFiltroLog('baixa')">✓ Baixas</button>
+      <button class="btn-filtro"        id="logFiltroBase"    onclick="setFiltroLog('base')">📂 Bases</button>
+    </div>
+    <div id="listaLog"></div>
+    <div id="vazioLog" class="empty" style="display:none">
+      <div class="icon">📋</div><h3>Nenhuma atividade ainda</h3>
+      <p>As ações do dia aparecerão aqui em tempo real</p>
+    </div>
+  </div>
+
+
+  <!-- CHAT -->
+  <div class="content" id="tab-chat" style="display:none">
+    <div class="chat-layout">
+      <!-- Painel esquerdo: lista de conversas -->
+      <div class="chat-sidebar" id="chatSidebar">
+        <div class="chat-sidebar-title">Conversas</div>
+        <div id="chatConvList"></div>
+      </div>
+      <!-- Painel direito: mensagens -->
+      <div class="chat-main">
+        <div class="chat-conv-header" id="chatConvHeader">
+          <button class="chat-back" id="chatBackBtn" onclick="voltarChatSidebar()" style="display:none">← Voltar</button>
+          <span id="chatConvNome">💬 Selecione uma conversa</span>
+        </div>
+        <div id="chatMsgs" class="chat-msgs"></div>
+        <div class="chat-input-wrap" id="chatInputWrap" style="display:none">
+          <input id="chatInput" type="text" placeholder="Mensagem…" maxlength="200"
+            onkeydown="if(event.key==='Enter')enviarChat()" autocomplete="off">
+          <button class="chat-send" onclick="enviarChat()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- BASE DE DADOS (ADM) -->
+  <div class="content" id="tab-base" style="display:none">
+    <div class="help">
+      <b>Gerenciamento de bases — ADM</b><br>
+      Carregue o arquivo Excel do dia para cada marca. Os usuários verão a base automaticamente.
+    </div>
+    <div class="bases-grid">
+      <div class="base-card batavo" id="baseCardBatavo" onclick="cardClick('batavo')">
+        <div class="base-card-header">
+          <span class="base-card-icon">🟢</span>
+          <span class="base-card-nome">BATAVO</span>
+          <span class="base-card-badge" id="badgeBatavo"></span>
+        </div>
+        <div class="base-card-arquivo vazio" id="arquivoBatavo">Nenhum arquivo carregado</div>
+        <div class="base-card-meta" id="metaBatavo"></div>
+        <div class="base-card-action" id="actionBatavo">+ Clique para carregar</div>
+      </div>
+      <div class="base-card itambe" id="baseCardItambe" onclick="cardClick('itambe')">
+        <div class="base-card-header">
+          <span class="base-card-icon">🔵</span>
+          <span class="base-card-nome">ITAMBÉ</span>
+          <span class="base-card-badge" id="badgeItambe"></span>
+        </div>
+        <div class="base-card-arquivo vazio" id="arquivoItambe">Nenhum arquivo carregado</div>
+        <div class="base-card-meta" id="metaItambe"></div>
+        <div class="base-card-action" id="actionItambe">+ Clique para carregar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="content" id="tab-admin" style="display:none">
+
+    <!-- Alterar senha ADM -->
+    <div class="admin-section">
+      <h3>🔑 Alterar Senha ADM</h3>
+      <div class="form-row">
+        <input id="senhaAtual" type="password" placeholder="Senha atual">
+      </div>
+      <div class="form-row">
+        <input id="senhaNova" type="password" placeholder="Nova senha">
+        <input id="senhaConfirm" type="password" placeholder="Confirmar nova senha">
+      </div>
+      <div class="form-row">
+        <button class="btn-add" onclick="alterarSenha()">💾 Salvar nova senha</button>
+      </div>
+    </div>
+
+    <!-- Cadastrar usuário -->
+    <div class="admin-section">
+      <h3>👤 Cadastrar Usuário</h3>
+      <div class="form-row">
+        <input id="novoNome" type="text" placeholder="Nome completo">
+        <input id="novoCracha" type="number" placeholder="Crachá">
+      </div>
+      <div class="form-row">
+        <select id="novaBase">
+          <option value="batavo">🟢 Batavo</option>
+          <option value="itambe">🔵 Itambé</option>
+          <option value="ambas">🔄 Ambas</option>
+        </select>
+        <button class="btn-add" onclick="cadastrarUsuario()">+ Cadastrar</button>
+      </div>
+    </div>
+
+    <!-- Lista de usuários -->
+    <div class="admin-section">
+      <h3>👥 Usuários Cadastrados</h3>
+      <div id="listaUsuarios"><div class="empty" style="padding:16px 0"><p>Nenhum usuário cadastrado</p></div></div>
+    </div>
+
+    <!-- Tentativas de login inválidas -->
+    <div class="admin-section">
+      <h3>🔒 Tentativas de Login Inválidas</h3>
+      <div id="listaLoginAttempts"><p style="font-size:13px;color:var(--muted)">Nenhuma tentativa registrada</p></div>
+      <button class="btn-limpar-dia" style="margin-top:12px;border-color:var(--border);color:var(--muted)" onclick="limparLoginAttempts()">🗑 Limpar</button>
+    </div>
+
+    <!-- Baixas do dia -->
+    <div class="admin-section">
+      <h3>📊 Baixas do Dia</h3>
+      <div id="resumoBaixas"><p style="font-size:13px;color:var(--muted)">Nenhuma baixa registrada</p></div>
+      <button class="btn-limpar-dia" style="margin-top:12px" onclick="limparBaixas()">🗑 Limpar histórico de baixas</button>
+    </div>
+
+    <!-- Reset do dia -->
+    <div class="admin-section" style="border-color:var(--red-soft)">
+      <h3 style="color:var(--red)">🗑 Resetar o Dia</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
+        Remove <b>bases, reservas e baixas</b> de todos os usuários. Use no fim do dia para preparar o app para a próxima contagem.
+      </p>
+      <button class="btn-limpar-dia" onclick="limparTudo()">⚠️ Limpar tudo e resetar o dia</button>
+    </div>
+
+  </div>
+
+</div><!-- /appPrincipal -->
+
+<!-- Modal contagem parcial -->
+<div class="overlay" id="modalContagem" onclick="if(event.target===this)fecharModalContagem()">
+  <div class="modal" style="max-width:400px">
+    <h3 id="modalContagemTitulo" style="margin-bottom:4px"></h3>
+    <p id="modalContagemDesc" style="font-size:12px;color:var(--muted);margin-bottom:16px"></p>
+    <div style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="color:var(--muted)">Sistema:</span>
+        <span id="modalContagemSistema" style="font-weight:700;font-family:'IBM Plex Mono',monospace"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--muted)">Contagem real:</span>
+        <input id="modalContagemReal" type="number" min="0" style="width:90px;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:6px 10px;font-size:14px;font-weight:700;color:var(--ink);text-align:right;font-family:'IBM Plex Mono',monospace;outline:none" onkeydown="if(event.key==='Enter')confirmarContagem()">
+      </div>
+    </div>
+    <div id="modalContagemDiff" style="font-size:13px;text-align:center;min-height:20px;margin-bottom:14px"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-baixa" style="flex:1" onclick="confirmarContagem()">💾 Salvar</button>
+      <button class="btn" style="flex:1;border-color:var(--border);color:var(--muted)" onclick="fecharModalContagem()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal gerenciar base -->
+<div class="overlay" id="modalBase">
+  <div class="modal-gerenciar" id="modalGerenciarCard">
+    <div class="modal-base-header">
+      <span class="modal-base-icon" id="modalBaseIcone"></span>
+      <span class="modal-base-titulo" id="modalBaseTitulo"></span>
+    </div>
+    <div class="modal-base-body">
+      <div class="modal-base-arquivo" id="modalBaseArquivo"></div>
+      <div class="modal-base-contagem" id="modalBaseContagem"></div>
+      <div style="display:flex;flex-direction:column">
+        <button class="btn-acao-base substituir" id="btnSubstituir" onclick="prepararUpload()">🔄 Substituir arquivo</button>
+        <button class="btn-acao-base retirar" onclick="retirarBase()">✕ Retirar base</button>
+        <button class="btn-acao-base cancelar" onclick="fecharModalBase()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirmação -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <h3 id="modalTitulo">Confirmar</h3>
+    <p id="modalMsg"></p>
+    <div class="modal-btns">
+      <button class="btn btn-baixa" id="modalOk">Confirmar</button>
+      <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="fecharModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal temas -->
+<div class="overlay" id="modalTemas">
+  <div class="modal" style="max-width:380px">
+    <h3 style="margin-bottom:16px">🎨 Escolher Tema</h3>
+    <div class="temas-grid">
+      <button class="tema-btn" onclick="aplicarTema('')" data-tema=""><span class="tema-preview t-dark"></span><span class="tema-label">🖤 Dark Pro</span><span class="tema-check" id="check-">✓</span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-claro')" data-tema="t-claro"><span class="tema-preview t-claro-prev"></span><span class="tema-label">☀️ Claro</span><span class="tema-check" id="check-t-claro"></span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-industrial')" data-tema="t-industrial"><span class="tema-preview t-industrial-prev"></span><span class="tema-label">🏭 Industrial</span><span class="tema-check" id="check-t-industrial"></span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-oceano')" data-tema="t-oceano"><span class="tema-preview t-oceano-prev"></span><span class="tema-label">🌊 Oceano</span><span class="tema-check" id="check-t-oceano"></span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-roxo')" data-tema="t-roxo"><span class="tema-preview t-roxo-prev"></span><span class="tema-label">🔮 Roxo</span><span class="tema-check" id="check-t-roxo"></span></button>
+    </div>
+    <button class="btn-acao-base cancelar" style="width:100%;margin-top:14px" onclick="fecharTemas()">Fechar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- File inputs diretamente no body -->
+<input type="file" id="fileInputBatavo" accept=".xlsx,.xls" style="display:none" onchange="processarArquivo(this.files[0],'batavo');this.value=''">
+<input type="file" id="fileInputItambe" accept=".xlsx,.xls" style="display:none" onchange="processarArquivo(this.files[0],'itambe');this.value=''">
+
+<script>
+// ════ FIREBASE ════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyDOXVL0k9RNPuOmlO_QwfuN0zDaZnENb6Q",
+  authDomain: "base-lactalis.firebaseapp.com",
+  databaseURL: "https://base-lactalis-default-rtdb.firebaseio.com",
+  projectId: "base-lactalis",
+  storageBucket: "base-lactalis.firebasestorage.app",
+  messagingSenderId: "227431929273",
+  appId: "1:227431929273:web:c1e4a0274edc4c93069268"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ════ CONFIG ADM ══════════════════════════════════════════════════
+const ADM_CRACHA = '564216';
+const ADM_SENHA  = '043533333504';
+const ADM_NOME   = 'Chicão';
+
+// ════ ESTADO ══════════════════════════════════════════════════════
+let usuarioLogado    = null;
+let marcaAtiva       = ''; // 'batavo' | 'itambe' | 'ambas'
+let bases = {
+  batavo: { dados:[], mapa:{}, carregada:false, arquivo:'', carregadoPor:'', carregadoEm:null },
+  itambe: { dados:[], mapa:{}, carregada:false, arquivo:'', carregadoPor:'', carregadoEm:null }
+};
+let reservasDB   = {}; // { [idx]: { nome, cracha, hora } }
+let baixadosDB   = {}; // { [idx]: true }
+let baixasDB     = []; // sorted array
+let usuariosDB   = {}; // { [cracha]: { nome, basePerm } }
+let logDB        = []; // sorted array of all actions
+let chatDB       = {}; // { [canal]: [msgs sorted] } canal='todos' ou 'dm_X_Y'
+let loginAttemptsDB = []; // login attempts
+let contagensDB  = {}; // { [idx]: { real, sistema, diff, nome, hora } }
+let _filtroLog   = 'todos';
+let _estaOnline  = false;
+let _chatConvAtual = null;  // canal ativo: 'todos' | 'dm_X_Y'
+let _chatNaoLidas = {};     // { [canal]: count }
+let _chatUltimaLeitura = {}; // { [canal]: timestamp }
+let _chatTitleInterval = null; // intervalo para piscar o título
+let _tabAtual    = 'consulta';
+let _histBusca   = [];  // últimos 10 termos buscados
+let _filtroVencCustom = false;
+
+let filtroAtivo      = 'todos';
+let _filtroVencDias  = 2;
+let _indice          = [];
+let _marcaGerenciar  = '';
+let _abasVisiveis    = [];
+
+// ════ FIREBASE LISTENERS ══════════════════════════════════════════
+function initListeners() {
+  // Indicador de conexão + offline mode
+  db.ref('.info/connected').on('value', snap => {
+    _estaOnline = snap.val() === true;
+    const pill = document.getElementById('connPill');
+    if (pill) {
+      pill.textContent = _estaOnline ? '🟢 Online' : '🔴 Offline';
+      pill.className   = 'conn-pill ' + (_estaOnline ? 'online' : 'offline');
+    }
+    const banner = document.getElementById('offlineBanner');
+    // Quando fica offline, tenta restaurar cache
+    if (!_estaOnline) {
+      const restaurou = restaurarCache();
+      if (restaurou) {
+        reconstruirIndice();
+        atualizarStatus();
+        if (appVisivel()) buscar();
+      }
+    }
+    if (banner) banner.style.display = _estaOnline ? 'none' : '';
+  });
+  db.ref('bases/batavo').on('value', snap => {
+    const v = snap.val();
+    const eraCarregada = bases.batavo.carregada;
+    if (v && v.carregada) {
+      const d = Array.isArray(v.dados) ? v.dados : Object.values(v.dados || {});
+      bases.batavo = { dados: d, mapa: v.mapa||{}, carregada:true, arquivo:v.arquivo||'', carregadoPor:v.carregadoPor||'', carregadoEm:v.carregadoEm||null };
+      if (!eraCarregada && appVisivel()) toastEspecial('📦 Base Batavo carregada por ' + bases.batavo.carregadoPor + '!', 'notif-base');
+    } else {
+      bases.batavo = { dados:[], mapa:{}, carregada:false, arquivo:'', carregadoPor:'', carregadoEm:null };
+    }
+    onBaseAtualizada();
+  });
+
+  db.ref('bases/itambe').on('value', snap => {
+    const v = snap.val();
+    const eraCarregada = bases.itambe.carregada;
+    if (v && v.carregada) {
+      const d = Array.isArray(v.dados) ? v.dados : Object.values(v.dados || {});
+      bases.itambe = { dados: d, mapa: v.mapa||{}, carregada:true, arquivo:v.arquivo||'', carregadoPor:v.carregadoPor||'', carregadoEm:v.carregadoEm||null };
+      if (!eraCarregada && appVisivel()) toastEspecial('📦 Base Itambé carregada por ' + bases.itambe.carregadoPor + '!', 'notif-base');
+    } else {
+      bases.itambe = { dados:[], mapa:{}, carregada:false, arquivo:'', carregadoPor:'', carregadoEm:null };
+    }
+    onBaseAtualizada();
+  });
+
+  db.ref('reservas').on('value', snap => {
+    const novas = snap.val() || {};
+    // Aviso se produto visível na tela foi reservado por outro usuário
+    if (appVisivel() && usuarioLogado) {
+      Object.entries(novas).forEach(([idx, info]) => {
+        if (reservasDB[idx]) return; // já estava reservado
+        if (info.cracha === usuarioLogado.cracha) return; // eu mesmo reservei
+        // Verifica se está na lista visível
+        const lista = document.getElementById('listaResultados');
+        if (lista && lista.innerHTML.includes(idx.split('_')[1])) {
+          const marca = idx.startsWith('batavo') ? 'batavo' : 'itambe';
+          const b = bases[marca];
+          const item = b?.dados.find(r => r._idx === idx);
+          const cod = item ? (item[b.mapa.codigo] ?? idx) : idx;
+          toastEspecial('⚠️ ' + info.nome + ' reservou ' + cod + ' agora!', 'notif-reserva');
+        }
+      });
+    }
+    reservasDB = novas;
+    reconstruirIndice();
+    if (appVisivel()) { buscar(); renderReservados(); atualizarStatus(); }
+  });
+
+  db.ref('baixados').on('value', snap => {
+    baixadosDB = snap.val() || {};
+    reconstruirIndice();
+    if (appVisivel()) { buscar(); renderReservados(); }
+  });
+
+  db.ref('baixas').on('value', snap => {
+    const raw = snap.val() || {};
+    baixasDB = Object.values(raw).sort((a,b) => (b.ts||0)-(a.ts||0));
+    if (appVisivel()) { renderBaixas(); renderResumoBaixas(); atualizarStatus(); }
+  });
+
+  db.ref('usuarios').on('value', snap => {
+    usuariosDB = snap.val() || {};
+    if (appVisivel()) renderUsuarios();
+  });
+
+  db.ref('log').on('value', snap => {
+    const raw = snap.val() || {};
+    logDB = Object.values(raw).sort((a,b) => (b.ts||0) - (a.ts||0));
+    if (appVisivel()) { renderLog(); atualizarBadgeLog(); }
+  });
+
+  db.ref('chat').on('value', snap => {
+    const raw = snap.val() || {};
+    const myCracha = usuarioLogado?.cracha;
+    let temNovaMsg = false;
+    chatDB = {};
+    Object.entries(raw).forEach(([canal, msgs]) => {
+      if (canal !== 'todos' && myCracha && !canal.includes(myCracha)) return;
+      chatDB[canal] = Object.values(msgs).sort((a,b) => (a.ts||0)-(b.ts||0));
+    });
+    Object.entries(chatDB).forEach(([canal, msgs]) => {
+      const ultimaLeitura = _chatUltimaLeitura[canal] || 0;
+      const naoLidas = msgs.filter(m => m.cracha !== myCracha && (m.ts||0) > ultimaLeitura).length;
+      if (canal === _chatConvAtual && _tabAtual === 'chat') {
+        _chatNaoLidas[canal] = 0;
+        _chatUltimaLeitura[canal] = Date.now();
+      } else {
+        if (naoLidas > (_chatNaoLidas[canal] || 0)) temNovaMsg = true;
+        _chatNaoLidas[canal] = naoLidas;
+      }
+    });
+    // Toca som e mostra toast quando chega mensagem nova fora do canal atual
+    if (temNovaMsg && appVisivel()) tocarSomChat();
+    if (appVisivel()) {
+      if (_tabAtual === 'chat') {
+        renderChatConvList();
+        if (_chatConvAtual) renderChat();
+      }
+      atualizarBadgeChat();
+    }
+  });
+
+  db.ref('loginAttempts').on('value', snap => {
+    const raw = snap.val() || {};
+    loginAttemptsDB = Object.values(raw).sort((a,b) => (b.ts||0)-(a.ts||0));
+    if (appVisivel()) renderLoginAttempts();
+  });
+
+  db.ref('contagens').on('value', snap => {
+    contagensDB = snap.val() || {};
+  });
+}
+
+function onBaseAtualizada() {
+  reconstruirIndice();
+  atualizarStatus();
+  atualizarBaseSelectCards();
+  salvarCache(); // persiste localmente para uso offline
+  if (appVisivel()) {
+    buscar();
+    atualizarCardsBase();
+    renderReservados();
+  }
+}
+
+function appVisivel() {
+  return document.getElementById('appPrincipal').style.display !== 'none';
+}
+
+// ════ LOGIN ═══════════════════════════════════════════════════════
+function fazerLogin() {
+  const cracha = document.getElementById('loginCracha').value.trim();
+  const errEl  = document.getElementById('loginErro');
+  errEl.textContent = '';
+
+  if (!cracha) { errEl.textContent = 'Digite seu crachá'; return; }
+
+  if (cracha === ADM_CRACHA) {
+    const wrap = document.getElementById('loginSenhaWrap');
+    if (wrap.style.display === 'none') {
+      wrap.style.display = '';
+      document.getElementById('loginSenha').focus();
+      return;
+    }
+    const senha = document.getElementById('loginSenha').value;
+    if (senha !== _senhaAdm) { errEl.textContent = 'Senha incorreta'; return; }
+    usuarioLogado = { nome: ADM_NOME, cracha: ADM_CRACHA, perfil: 'adm' };
+    marcaAtiva = 'ambas';
+    irParaApp();
+    return;
+  }
+
+  // Usuário comum — consulta Firebase
+  db.ref('usuarios/' + cracha).get().then(snap => {
+    if (!snap.exists()) {
+      errEl.textContent = 'Crachá não cadastrado. Contate o ADM.';
+      // Registra tentativa inválida
+      db.ref('loginAttempts').push({ cracha, hora: new Date().toLocaleString('pt-BR'), ts: Date.now() }).catch(()=>{});
+      return;
+    }
+    const u = snap.val();
+    usuarioLogado = { nome: u.nome, cracha: String(cracha), perfil: 'comum', basePerm: u.basePerm||'ambas' };
+    irParaBaseSelect();
+  }).catch(() => {
+    errEl.textContent = 'Erro de conexão. Verifique a internet.';
+  });
+}
+
+function fazerLogout() {
+  usuarioLogado = null;
+  marcaAtiva = '';
+  document.body.classList.remove('marca-batavo','marca-itambe');
+  document.getElementById('appPrincipal').style.display = 'none';
+  document.getElementById('telaBaseSelect').style.display = 'none';
+  document.getElementById('telaLogin').style.display = '';
+  document.getElementById('loginCracha').value = '';
+  document.getElementById('loginSenha').value = '';
+  document.getElementById('loginSenhaWrap').style.display = 'none';
+  document.getElementById('loginErro').textContent = '';
+  _chatNaoLidas = {};
+  _chatConvAtual = null;
+  _chatUltimaLeitura = {};
+  _histBusca = [];
+}
+
+// ════ NAVEGAÇÃO ════════════════════════════════════════════════════
+function irParaBaseSelect() {
+  // Usuário com permissão 'ambas' vai direto pro app com as duas bases
+  if (usuarioLogado.basePerm === 'ambas') {
+    marcaAtiva = 'ambas';
+    irParaApp();
+    return;
+  }
+  document.getElementById('telaLogin').style.display = 'none';
+  document.getElementById('appPrincipal').style.display = 'none';
+  document.getElementById('telaBaseSelect').style.display = '';
+  document.getElementById('bsUserInfo').textContent = 'Olá, ' + usuarioLogado.nome + ' · Crachá ' + usuarioLogado.cracha;
+  atualizarBaseSelectCards();
+}
+
+function irParaApp() {
+  document.getElementById('telaLogin').style.display = 'none';
+  document.getElementById('telaBaseSelect').style.display = 'none';
+  document.getElementById('appPrincipal').style.display = '';
+  document.getElementById('userPill').textContent = '👤 ' + usuarioLogado.nome;
+  document.getElementById('btnTrocarBase').style.display = usuarioLogado.perfil === 'comum' ? '' : 'none';
+  // Tema por marca
+  document.body.classList.remove('marca-batavo','marca-itambe');
+  if (marcaAtiva === 'batavo') document.body.classList.add('marca-batavo');
+  if (marcaAtiva === 'itambe') document.body.classList.add('marca-itambe');
+  configurarTabs();
+  reconstruirIndice();
+  atualizarStatus();
+  buscar();
+}
+
+function selecionarBase(marca) {
+  const perm = usuarioLogado?.basePerm || 'ambas';
+  // Bloqueia se o usuário não tem permissão para esta base
+  if (perm !== 'ambas' && perm !== marca) {
+    toast('⛔ Você não tem acesso à base ' + (marca === 'batavo' ? 'Batavo' : 'Itambé'));
+    return;
+  }
+  if (!bases[marca].carregada) { toast('⚠️ Base não disponível. Aguarde o ADM.'); return; }
+  marcaAtiva = marca;
+  irParaApp();
+}
+
+function atualizarBaseSelectCards() {
+  if (document.getElementById('telaBaseSelect').style.display === 'none') return;
+  const perm = usuarioLogado?.basePerm || 'ambas';
+  ['batavo','itambe'].forEach(m => {
+    const cap    = m === 'batavo' ? 'Batavo' : 'Itambe';
+    const card   = document.getElementById('bsCard' + cap);
+    const status = document.getElementById('bsStatus' + cap);
+    if (!card || !status) return;
+    const b           = bases[m];
+    const temPermissao = perm === 'ambas' || perm === m;
+
+    if (!temPermissao) {
+      // Sem permissão — bloqueia independente de estar carregada
+      card.className = 'bs-card ' + m + ' indisponivel';
+      status.innerHTML = '<span class="bs-status bs-no">⛔ Sem permissão</span>' +
+        '<div class="bs-aviso">Contate o ADM para liberar acesso</div>';
+    } else if (b.carregada) {
+      card.className = 'bs-card ' + m + ' disponivel';
+      status.innerHTML = '<span class="bs-status bs-ok">✓ Disponível</span>' +
+        '<div class="bs-arquivo">' + b.arquivo + '</div>' +
+        '<div class="bs-arquivo">Por ' + b.carregadoPor + '</div>';
+    } else {
+      card.className = 'bs-card ' + m + ' indisponivel';
+      status.innerHTML = '<span class="bs-status bs-no">⚠️ Base ausente</span>' +
+        '<div class="bs-aviso">Não houve contagem hoje</div>';
+    }
+  });
+}
+
+// ════ TABS ════════════════════════════════════════════════════════
+function configurarTabs() {
+  const tabsEl = document.getElementById('appTabs');
+  const isAdm  = usuarioLogado && usuarioLogado.perfil === 'adm';
+  const tabs = [
+    { id:'consulta',    label:'🔍 Consulta' },
+    { id:'vencimentos', label:'⏳ Vencimentos', badge:'badgeVenc' },
+    { id:'reservados',  label:'📋 Reservados',  badge:'badgeRes' },
+    { id:'baixas',      label:'📉 Baixas',       badge:'badgeDel' },
+    { id:'log',         label:'📋 Log',           badge:'badgeLog' },
+    { id:'chat',        label:'💬 Chat',          badge:'badgeChat' },
+  ];
+  if (isAdm) {
+    tabs.push({ id:'base',  label:'📂 Base de Dados' });
+    tabs.push({ id:'admin', label:'👑 Admin' });
+  }
+  _abasVisiveis = tabs.map(t => t.id);
+  tabsEl.innerHTML = tabs.map((t,i) =>
+    '<div class="tab' + (i===0?' active':'') + '" onclick="showTab(\'' + t.id + '\')">' +
+    t.label + (t.badge ? ' <span id="' + t.badge + '"></span>' : '') + '</div>'
+  ).join('');
+  ['consulta','vencimentos','reservados','baixas','log','chat','base','admin'].forEach(id => {
+    const el = document.getElementById('tab-' + id);
+    if (el) el.style.display = _abasVisiveis.includes(id) ? (id==='consulta'?'':'none') : 'none';
+  });
+}
+
+function showTab(t) {
+  _tabAtual = t;
+  _abasVisiveis.forEach(id => {
+    const el = document.getElementById('tab-' + id);
+    if (el) el.style.display = id === t ? '' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', _abasVisiveis[i] === t);
+  });
+  if (t === 'reservados')  renderReservados();
+  if (t === 'baixas')      renderBaixas();
+  if (t === 'consulta')    { buscar(); renderHistBusca(); }
+  if (t === 'vencimentos') renderVencimentos();
+  if (t === 'log')         renderLog();
+  if (t === 'chat')        { renderChatConvList(); if(_chatConvAtual) renderChat(); atualizarBadgeChat(); }
+  if (t === 'admin')       { renderUsuarios(); renderResumoBaixas(); renderLoginAttempts(); }
+}
+
+// ════ MAPEAMENTO ══════════════════════════════════════════════════
+function detectarMapa(cols) {
+  const c = cols.map(s => String(s).toLowerCase().trim());
+  const find = (...keys) => {
+    let i = c.findIndex(col => keys.some(k => col === k));
+    if (i >= 0) return cols[i];
+    i = c.findIndex(col => keys.some(k => col.startsWith(k)));
+    if (i >= 0) return cols[i];
+    i = c.findIndex(col => keys.some(k => col.includes(k)));
+    return i >= 0 ? cols[i] : '';
+  };
+  const descricao = find('descri','produto','product','nome','name');
+  const dtFabCol = (() => {
+    const keys = ['fabricação','fabricacao','dt_fab','_fab','fabric','fab','manuf','data fab','dt fab'];
+    for (const k of keys) {
+      const i = c.findIndex(col => col.includes(k));
+      if (i >= 0 && cols[i] !== descricao) return cols[i];
+    }
+    return '';
+  })();
+  return {
+    codigo:    find('cod','codigo','code','sku','ref'),
+    descricao,
+    caixas:    find('caixa','cx','qty','qtd','quant','box','und por cx','und/cx'),
+    dtFab:     dtFabCol,
+    dtVal:     find('validade','dt_val','_val','valid','expir','venc','val'),
+    lote:      find('lote','lot','batch'),
+    endereco:  find('endereço','endereco','ender','addr','local','end','posit'),
+  };
+}
+
+// ════ UPLOAD BASE (ADM) ══════════════════════════════════════════
+let _marcaGerenciarUpload = '';
+
+function cardClick(m) {
+  if (bases[m].carregada) abrirGerenciar(m);
+  else {
+    _marcaGerenciarUpload = m;
+    document.getElementById(m === 'batavo' ? 'fileInputBatavo' : 'fileInputItambe').click();
+  }
+}
+
+function abrirGerenciar(m) {
+  _marcaGerenciar = m;
+  _marcaGerenciarUpload = m;
+  const b = bases[m];
+  document.getElementById('modalGerenciarCard').className = 'modal-gerenciar ' + m;
+  document.getElementById('modalBaseIcone').textContent   = m==='batavo' ? '🟢' : '🔵';
+  document.getElementById('modalBaseTitulo').textContent  = m==='batavo' ? 'BATAVO' : 'ITAMBÉ';
+  document.getElementById('modalBaseArquivo').textContent = '📄 ' + b.arquivo;
+  document.getElementById('modalBaseContagem').textContent =
+    b.dados.filter(r => !baixadosDB[r._idx] && !reservasDB[r._idx]).length + ' em estoque · ' +
+    Object.keys(reservasDB).filter(idx => idx.startsWith(m + '_')).length + ' reservados';
+  document.getElementById('btnSubstituir').className = 'btn-acao-base substituir ' + m;
+  document.getElementById('modalBase').classList.add('show');
+}
+
+function prepararUpload() {
+  fecharModalBase();
+  document.getElementById(_marcaGerenciarUpload === 'batavo' ? 'fileInputBatavo' : 'fileInputItambe').click();
+}
+
+function fecharModalBase() { document.getElementById('modalBase').classList.remove('show'); }
+
+function retirarBase() {
+  fecharModalBase();
+  const m = _marcaGerenciar;
+  const cap = m === 'batavo' ? 'Batavo' : 'Itambé';
+  confirmar('Retirar base ' + cap + '?', 'Os dados serão removidos do servidor para todos os usuários.', () => {
+    const upd = {};
+    upd['bases/' + m] = { carregada: false };
+    Object.keys(reservasDB).forEach(idx => { if (idx.startsWith(m + '_')) upd['reservas/' + idx] = null; });
+    Object.keys(baixadosDB).forEach(idx => { if (idx.startsWith(m + '_')) upd['baixados/' + idx] = null; });
+    db.ref().update(upd).then(() => toast('Base ' + cap + ' retirada'));
+  });
+}
+
+function processarArquivo(file, marca) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const wb = XLSX.read(ev.target.result, { type:'array', cellDates:false, raw:false, cellFormula:false, dateNF:'dd/mm/yyyy' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { defval:'', raw:false });
+      if (!rows.length) { toast('⚠️ Arquivo vazio'); return; }
+      const primeiraLinha = {};
+      Object.keys(rows[0]).forEach(k => {
+        const chave = k.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '') || 'col0';
+        primeiraLinha[chave] = rows[0][k];
+      });
+      const mapa = detectarMapa(Object.keys(primeiraLinha));
+      if (!mapa.codigo) { toast('⚠️ Coluna de código não encontrada'); return; }
+
+      // Sanitiza os valores do mapa para bater com as chaves dos dados
+      const sanitize = s => s ? s.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g,'_').replace(/^_|_$/g,'') : '';
+      const mapaSanitizado = {};
+      Object.entries(mapa).forEach(([k,v]) => { mapaSanitizado[k] = sanitize(v); });
+      const dados = rows.map((r, i) => {
+        const limpo = { _idx: marca + '_' + i };
+        Object.entries(r).forEach(([k,v]) => {
+          // Sanitiza chave: remove caracteres inválidos para Firebase
+          const chave = k.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '') || 'col' + i;
+          limpo[chave] = (typeof v==='string' && v.startsWith('=')) ? '' : v;
+        });
+        return limpo;
+      });
+      toast('⏳ Salvando no servidor...');
+      // Clear old reservas/baixados for this marca first
+      const upd = {};
+      Object.keys(reservasDB).forEach(idx => { if (idx.startsWith(marca + '_')) upd['reservas/' + idx] = null; });
+      Object.keys(baixadosDB).forEach(idx => { if (idx.startsWith(marca + '_')) upd['baixados/' + idx] = null; });
+      if (Object.keys(upd).length) db.ref().update(upd);
+
+      db.ref('bases/' + marca).set({
+        carregada: true,
+        arquivo: file.name,
+        mapa: mapaSanitizado,
+        dados,
+        carregadoPor: usuarioLogado ? usuarioLogado.nome : 'ADM',
+        carregadoEm: Date.now()
+      }).then(() => {
+        const cap = marca === 'batavo' ? 'Batavo' : 'Itambé';
+        toast('✓ ' + dados.length + ' registros ' + cap + ' carregados');
+        registrarLog('base', { marca, arquivo: file.name, total: dados.length });
+        showTab('consulta');
+      }).catch(e => toast('Erro ao salvar: ' + e.message));
+    } catch(err) { toast('Erro: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function atualizarCardsBase() {
+  ['batavo','itambe'].forEach(m => {
+    const b   = bases[m];
+    const cap = m === 'batavo' ? 'Batavo' : 'Itambe';
+    const card      = document.getElementById('baseCard' + cap);
+    const elArq     = document.getElementById('arquivo' + cap);
+    const elMeta    = document.getElementById('meta' + cap);
+    const elAction  = document.getElementById('action' + cap);
+    const elBadge   = document.getElementById('badge' + cap);
+    if (!card || !elArq) return;
+    if (b.carregada) {
+      card.classList.add('loaded');
+      elArq.textContent = b.arquivo; elArq.classList.remove('vazio');
+      if (elMeta) {
+        const em = b.carregadoEm ? new Date(b.carregadoEm).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+        elMeta.textContent = 'Por ' + b.carregadoPor + (em ? ' às ' + em : '');
+      }
+      if (elAction) elAction.textContent = '✎ Clique para gerenciar';
+      if (elBadge)  elBadge.textContent  = 'CARREGADO';
+    } else {
+      card.classList.remove('loaded');
+      elArq.textContent = 'Nenhum arquivo carregado'; elArq.classList.add('vazio');
+      if (elMeta)   elMeta.textContent   = '';
+      if (elAction) elAction.textContent = '+ Clique para carregar';
+      if (elBadge)  elBadge.textContent  = '';
+    }
+  });
+}
+
+// ════ ÍNDICE ══════════════════════════════════════════════════════
+function reconstruirIndice() {
+  const hoje = Date.now();
+  _indice = [];
+  const marcas = marcaAtiva === 'ambas' ? ['batavo','itambe'] : (marcaAtiva ? [marcaAtiva] : []);
+  marcas.forEach(m => {
+    const b = bases[m];
+    if (!b.carregada) return;
+    b.dados.forEach(r => {
+      const idx = r._idx;
+      if (!idx) return;
+      if (reservasDB[idx]) return;
+      if (baixadosDB[idx]) return;
+      const valTs = parseData(r[b.mapa.dtVal]);
+      const diasVal = valTs === Infinity ? null : Math.ceil((valTs - hoje) / 86400000);
+      _indice.push({
+        _ref: r, _marca: m,
+        _cod:  String(r[b.mapa.codigo]    ?? '').toLowerCase(),
+        _desc: String(r[b.mapa.descricao] ?? '').toLowerCase(),
+        _end:  String(r[b.mapa.endereco]  ?? ''),
+        _fab:  parseData(r[b.mapa.dtFab]),
+        _diasVal: diasVal,
+        cod:  r[b.mapa.codigo]    ?? '—',
+        desc: r[b.mapa.descricao] ?? '—',
+        cx:   r[b.mapa.caixas]    ?? '',
+        fab:  fmtData(r[b.mapa.dtFab]),
+        val:  fmtData(r[b.mapa.dtVal]),
+        end:  r[b.mapa.endereco]  ?? '',
+      });
+    });
+  });
+  // Pré-ordena por data de fabricação (evita ordenar a cada busca)
+  _indice.sort((a,b) => a._fab - b._fab);
+}
+
+// ════ STATUS ══════════════════════════════════════════════════════
+function atualizarStatus() {
+  const total = _indice.length;
+  const resCount = Object.keys(reservasDB).filter(idx => {
+    if (marcaAtiva === 'ambas') return true;
+    return idx.startsWith(marcaAtiva + '_');
+  }).length;
+  const ok = total > 0 || resCount > 0;
+  const dbDot = document.getElementById('dbDot');
+  const dbTxt = document.getElementById('dbTxt');
+  const noDB  = document.getElementById('noDB');
+  if (dbDot) dbDot.className = 'dot' + (ok ? ' on' : '');
+  if (dbTxt) dbTxt.textContent = ok ? total + ' em estoque' : 'sem base';
+  if (noDB)  noDB.style.display = ok ? 'none' : '';
+  const badgeRes = document.getElementById('badgeRes');
+  if (badgeRes) badgeRes.textContent = resCount > 0 ? ' (' + resCount + ')' : '';
+  const vCount = _indice.filter(e => e._diasVal !== null && e._diasVal <= 30).length;
+  const badgeVenc = document.getElementById('badgeVenc');
+  if (badgeVenc) badgeVenc.textContent = vCount > 0 ? ' (' + vCount + ')' : '';
+  document.getElementById('pillBatavo')?.classList.toggle('off', !bases.batavo.carregada);
+  document.getElementById('pillItambe')?.classList.toggle('off', !bases.itambe.carregada);
+  atualizarCardsBase();
+}
+
+// ════ BUSCA ═══════════════════════════════════════════════════════
+let _buscarTimer = null;
+function debounceBuscar() {
+  clearTimeout(_buscarTimer);
+  const q = document.getElementById('searchInput')?.value.trim() ?? '';
+  // Se tem query, espera 180ms após parar de digitar; se apagou tudo, atualiza na hora
+  if (q.length === 0) { buscar(); return; }
+  _buscarTimer = setTimeout(buscar, 180);
+}
+
+function setFiltro(f) {
+  filtroAtivo = f;
+  ['Todos','Reserva','Picking'].forEach(n => {
+    document.getElementById('filtro' + n)?.classList.toggle('active', f === n.toLowerCase());
+  });
+  buscar();
+}
+
+function buscar() {
+  const q     = document.getElementById('searchInput')?.value.trim().toLowerCase() ?? '';
+  const lista = document.getElementById('listaResultados');
+  const stats = document.getElementById('statsBar');
+  if (!lista) return;
+
+  // Detecta busca por endereço: começa com letra seguida de espaço/número (ex: "a 001", "b003")
+  const isEndBusca = q.length >= 2 && /^[a-z]\s*\d/.test(q);
+
+  let res;
+  if (q.length === 0) {
+    res = _indice.slice(0, 60);
+  } else if (isEndBusca) {
+    const qNorm = q.replace(/\s+/g, ' ').trim();
+    res = _indice.filter(e => e._end.toLowerCase().replace(/\s+/g,' ').includes(qNorm));
+  } else if (q.length === 1) {
+    res = _indice.filter(e => e._cod.startsWith(q) || e._desc.startsWith(q)).slice(0, 80);
+  } else {
+    res = _indice.filter(e => e._cod.includes(q) || e._desc.includes(q));
+  }
+
+  if (filtroAtivo === 'picking')
+    res = res.filter(e => /\s10$/.test(e._end.trim()));
+  else if (filtroAtivo === 'reserva')
+    res = res.filter(e => !/\s10$/.test(e._end.trim()));
+
+  const resCount = Object.keys(reservasDB).filter(idx =>
+    marcaAtiva === 'ambas' || idx.startsWith(marcaAtiva + '_')
+  ).length;
+
+  if (stats) stats.innerHTML =
+    '<div class="stat">Resultados: <b>' + res.length + '</b>' + (isEndBusca ? ' · 📍 endereço' : '') + '</div>' +
+    '<div class="stat">Em estoque: <b>' + _indice.length + '</b></div>' +
+    '<div class="stat">Reservados: <b>' + resCount + '</b></div>';
+
+  if (!res.length) {
+    lista.innerHTML = q.length > 0
+      ? '<div class="empty"><div class="icon">🔎</div><h3>Nenhum resultado</h3><p>' +
+        (isEndBusca ? 'Nenhum produto no endereço "' + q.toUpperCase() + '"' : 'Tente outro código ou descrição') +
+        '</p></div>'
+      : '<div class="empty"><div class="icon">📦</div><h3>Base carregada</h3><p>Digite um código, descrição ou endereço para buscar</p></div>';
+    return;
+  }
+
+  lista.innerHTML = res.map(e => cardHTMLFast(e)).join('');
+}
+
+// ════ RESERVAR / DEVOLVER / BAIXA ════════════════════════════════
+function registrarLog(acao, dados) {
+  const entry = {
+    acao, ts: Date.now(),
+    hora: new Date().toLocaleString('pt-BR'),
+    nome: usuarioLogado?.nome || '?',
+    cracha: usuarioLogado?.cracha || '?',
+    ...dados
+  };
+  db.ref('log').push(entry).catch(() => {});
+}
+
+function reservarItem(idx, marca) {
+  if (!_estaOnline) { toast('⚠️ Sem conexão — não é possível reservar offline'); return; }
+  const b    = bases[marca];
+  const item = b?.dados.find(r => r._idx === idx);
+  const info = { nome: usuarioLogado.nome, cracha: usuarioLogado.cracha, hora: new Date().toLocaleString('pt-BR'), marca };
+  db.ref('reservas/' + idx).set(info).then(() => {
+    toast('✓ Produto reservado');
+    registrarLog('reserva', {
+      marca,
+      codigo:    item ? (item[b.mapa.codigo]    ?? '—') : idx,
+      descricao: item ? (item[b.mapa.descricao] ?? '—') : '',
+      endereco:  item ? (item[b.mapa.endereco]  ?? '')  : '',
+    });
+  }).catch(e => toast('Erro: ' + e.message));
+}
+
+function voltarEstoque(idx) {
+  const marca  = idx.startsWith('batavo') ? 'batavo' : 'itambe';
+  const b      = bases[marca];
+  const item   = b?.dados.find(r => r._idx === idx);
+  db.ref('reservas/' + idx).remove().then(() => {
+    toast('✓ Devolvido ao estoque');
+    registrarLog('devolucao', {
+      marca,
+      codigo:    item ? (item[b.mapa.codigo]    ?? '—') : idx,
+      descricao: item ? (item[b.mapa.descricao] ?? '—') : '',
+      endereco:  item ? (item[b.mapa.endereco]  ?? '')  : '',
+    });
+  }).catch(e => toast('Erro: ' + e.message));
+}
+
+function darBaixa(idx, marca) {
+  confirmar('Dar baixa?', 'O item será removido do estoque e registrado no histórico.', () => {
+    const b = bases[marca];
+    if (!b) return;
+    const item = b.dados.find(r => r._idx === idx);
+    if (!item) return;
+    const map  = b.mapa;
+    const baixa = {
+      codigo:    item[map.codigo]    ?? '—',
+      descricao: item[map.descricao] ?? '—',
+      endereco:  item[map.endereco]  ?? '—',
+      caixas:    item[map.caixas]    ?? '',
+      fab:       fmtData(item[map.dtFab]),
+      val:       fmtData(item[map.dtVal]),
+      hora:      new Date().toLocaleString('pt-BR'),
+      ts:        Date.now(),
+      marca,
+      nome:      usuarioLogado.nome,
+      cracha:    usuarioLogado.cracha
+    };
+    const upd = {};
+    upd['reservas/' + idx]  = null;
+    upd['baixados/' + idx]  = true;
+    upd['baixas/' + db.ref('baixas').push().key] = baixa;
+    db.ref().update(upd).then(() => {
+      toast('✓ Baixa registrada');
+      registrarLog('baixa', {
+        marca,
+        codigo:    baixa.codigo,
+        descricao: baixa.descricao,
+        endereco:  baixa.endereco,
+      });
+    }).catch(e => toast('Erro: ' + e.message));
+  });
+}
+
+// ════ RENDER RESERVADOS ═══════════════════════════════════════════
+function renderReservados() {
+  const lista = document.getElementById('listaReservados');
+  const vazio = document.getElementById('vazioReservados');
+  if (!lista) return;
+
+  const marcas = marcaAtiva === 'ambas' ? ['batavo','itambe'] : [marcaAtiva];
+  const items  = [];
+
+  Object.entries(reservasDB).forEach(([idx, resInfo]) => {
+    const marca = idx.startsWith('batavo') ? 'batavo' : 'itambe';
+    if (!marcas.includes(marca)) return;
+    if (baixadosDB[idx]) return;
+    const b = bases[marca];
+    if (!b.carregada) return;
+    const item = b.dados.find(r => r._idx === idx);
+    if (!item) return;
+    items.push({ item, marca, resInfo, idx });
+  });
+
+  if (!items.length) {
+    lista.innerHTML = '';
+    if (vazio) vazio.style.display = '';
+    return;
+  }
+  if (vazio) vazio.style.display = 'none';
+
+  lista.innerHTML = items.map(({ item, marca, resInfo, idx }) => {
+    const map = bases[marca].mapa;
+    const cc  = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
+    const bl  = marca === 'batavo' ? '🟢 BATAVO' : '🔵 ITAMBÉ';
+    const cod = item[map.codigo]    ?? '—';
+    const dsc = item[map.descricao] ?? '—';
+    const cx  = item[map.caixas]    ?? '';
+    const fab = fmtData(item[map.dtFab]);
+    const val = fmtData(item[map.dtVal]);
+    const end = item[map.endereco]  ?? '';
+    return '<div class="card">' +
+      '<div class="card-head"><div>' +
+        '<div class="card-code" style="color:' + cc + '">' + cod + '</div>' +
+        '<div class="card-desc">' + dsc + '</div>' +
+      '</div><div class="head-right"><span class="card-brand ' + marca + '">' + bl + '</span></div></div>' +
+      '<div class="card-tags">' +
+        (cx  ? '<span class="tag destaque">📦 <b>' + cx + '</b> cx</span>' : '') +
+        (fab !== '—' ? '<span class="tag">Fab: <b>' + fab + '</b></span>' : '') +
+        (val !== '—' ? '<span class="tag">Val: <b>' + val + '</b></span>' : '') +
+        (end ? '<span class="tag endereco">📍 <b>' + end + '</b></span>' : '') +
+      '</div>' +
+      '<div class="res-info">👤 Reservado por <b>' + resInfo.nome + '</b> (' + resInfo.cracha + ') · ' + resInfo.hora + '</div>' +
+      '<div class="card-actions">' +
+        '<button class="btn btn-voltar" onclick="voltarEstoque(\'' + idx + '\')">↩ Devolver</button>' +
+        '<button class="btn btn-baixa" onclick="darBaixa(\'' + idx + '\',\'' + marca + '\')">✓ Dar Baixa</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+// ════ RENDER BAIXAS ═══════════════════════════════════════════════
+function renderBaixas() {
+  const lista = document.getElementById('listaBaixas');
+  const vazio = document.getElementById('vazioBaixas');
+  if (!lista) return;
+  const q = document.getElementById('searchBaixas')?.value.trim().toLowerCase() ?? '';
+  const isAdm = usuarioLogado && usuarioLogado.perfil === 'adm';
+
+  let items = baixasDB;
+  if (marcaAtiva !== 'ambas') items = items.filter(b => b.marca === marcaAtiva);
+  if (!isAdm) items = items.filter(b => b.cracha === usuarioLogado?.cracha);
+  if (q) items = items.filter(b =>
+    String(b.codigo||'').toLowerCase().includes(q) ||
+    String(b.descricao||'').toLowerCase().includes(q)
+  );
+
+  if (!items.length) {
+    lista.innerHTML = '';
+    if (vazio) vazio.style.display = '';
+    return;
+  }
+  if (vazio) vazio.style.display = 'none';
+
+  lista.innerHTML = items.map(b => {
+    const cc = b.marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
+    const bl = b.marca === 'batavo' ? '🟢 BATAVO' : '🔵 ITAMBÉ';
+    return '<div class="card">' +
+      '<div class="card-head"><div>' +
+        '<div class="card-code" style="color:' + cc + '">' + (b.codigo||'—') + '</div>' +
+        '<div class="card-desc">' + (b.descricao||'—') + '</div>' +
+      '</div><div class="head-right"><span class="card-brand ' + (b.marca||'') + '">' + bl + '</span></div></div>' +
+      '<div class="card-tags">' +
+        (b.caixas ? '<span class="tag destaque">📦 <b>' + b.caixas + '</b> cx</span>' : '') +
+        (b.fab && b.fab !== '—' ? '<span class="tag">Fab: <b>' + b.fab + '</b></span>' : '') +
+        (b.val && b.val !== '—' ? '<span class="tag">Val: <b>' + b.val + '</b></span>' : '') +
+        (b.endereco ? '<span class="tag endereco">📍 <b>' + b.endereco + '</b></span>' : '') +
+      '</div>' +
+      '<div class="baixa-user-row"><span>👤 <b>' + b.nome + '</b> · ' + b.cracha + '</span><span>' + b.hora + '</span></div>' +
+    '</div>';
+  }).join('');
+}
+
+function limparBaixas() {
+  confirmar('Limpar histórico de baixas?', 'Todas as baixas registradas serão removidas permanentemente.', () => {
+    db.ref('baixas').remove().then(() => toast('Histórico de baixas limpo'));
+  });
+}
+
+function limparTudo() {
+  confirmar(
+    '⚠️ Resetar o dia completo?',
+    'Isso remove as duas bases, todas as reservas e todo o histórico de baixas do servidor para todos os usuários. Esta ação não pode ser desfeita.',
+    () => {
+      db.ref().update({
+        'bases/batavo':  { carregada: false },
+        'bases/itambe':  { carregada: false },
+        'reservas':      null,
+        'baixados':      null,
+        'baixas':        null,
+        'log':           null,
+        'chat':          null,
+        'contagens':     null,
+        'loginAttempts': null,
+      }).then(() => {
+        try { localStorage.removeItem(CACHE_KEY); } catch(e) {}
+        toast('✓ Dia resetado com sucesso!');
+      }).catch(e => toast('Erro: ' + e.message));
+    }
+  );
+}
+
+// ════ ADMIN ═══════════════════════════════════════════════════════
+function cadastrarUsuario() {
+  const nome   = document.getElementById('novoNome').value.trim();
+  const cracha = document.getElementById('novoCracha').value.trim();
+  const base   = document.getElementById('novaBase').value;
+  if (!nome || !cracha) { toast('⚠️ Preencha nome e crachá'); return; }
+  if (cracha === ADM_CRACHA) { toast('⚠️ Este crachá é reservado'); return; }
+  db.ref('usuarios/' + cracha).set({ nome, cracha, basePerm: base })
+    .then(() => {
+      document.getElementById('novoNome').value = '';
+      document.getElementById('novoCracha').value = '';
+      toast('✓ Usuário cadastrado!');
+    }).catch(e => toast('Erro: ' + e.message));
+}
+
+function removerUsuario(cracha) {
+  confirmar('Remover usuário?', 'O crachá ' + cracha + ' perderá o acesso ao app.', () => {
+    db.ref('usuarios/' + cracha).remove()
+      .then(() => toast('✓ Usuário removido'))
+      .catch(e => toast('Erro: ' + e.message));
+  });
+}
+
+function renderUsuarios() {
+  const lista = document.getElementById('listaUsuarios');
+  if (!lista) return;
+  const users = Object.values(usuariosDB);
+  if (!users.length) {
+    lista.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:8px 0">Nenhum usuário cadastrado</div>';
+    return;
+  }
+  const baseLabel = { batavo:'🟢 Batavo', itambe:'🔵 Itambé', ambas:'🔄 Ambas' };
+  const perms = ['batavo','itambe','ambas'];
+  lista.innerHTML = users.map(u =>
+    '<div class="usuario-card" style="flex-wrap:wrap;gap:8px">' +
+      '<div style="flex:1;min-width:0">' +
+        '<div class="usuario-nome">' + u.nome + '</div>' +
+        '<div class="usuario-meta">Crachá: ' + u.cracha + '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">' +
+        perms.map(p =>
+          '<button onclick="alterarPermissao(\'' + u.cracha + '\',\'' + p + '\')" ' +
+          'style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:\'IBM Plex Sans\',sans-serif;border:1.5px solid;transition:all .15s;' +
+          (u.basePerm === p
+            ? (p==='batavo' ? 'background:var(--bat-bg);border-color:var(--bat);color:var(--bat)'
+              : p==='itambe' ? 'background:var(--itm-bg);border-color:var(--itm);color:var(--itm)'
+              : 'background:var(--accent-light);border-color:var(--accent);color:var(--accent)')
+            : 'background:transparent;border-color:var(--border);color:var(--muted)') +
+          '">' +
+          (p==='batavo'?'🟢 Batavo':p==='itambe'?'🔵 Itambé':'🔄 Ambas') +
+          '</button>'
+        ).join('') +
+        '<button class="btn-remover" onclick="removerUsuario(\'' + u.cracha + '\')">✕</button>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+}
+
+function alterarPermissao(cracha, novaPerm) {
+  db.ref('usuarios/' + cracha + '/basePerm').set(novaPerm)
+    .then(() => {
+      const label = { batavo:'🟢 Batavo', itambe:'🔵 Itambé', ambas:'🔄 Ambas' };
+      toast('✓ Permissão alterada para ' + label[novaPerm]);
+    })
+    .catch(e => toast('Erro: ' + e.message));
+}
+
+function renderResumoBaixas() {
+  const el = document.getElementById('resumoBaixas');
+  if (!el) return;
+  if (!baixasDB.length) {
+    el.innerHTML = '<p style="font-size:13px;color:var(--muted)">Nenhuma baixa registrada</p>';
+    return;
+  }
+  const porUsuario = {};
+  baixasDB.forEach(b => {
+    const key = b.nome + ' (' + b.cracha + ')';
+    if (!porUsuario[key]) porUsuario[key] = 0;
+    porUsuario[key]++;
+  });
+  el.innerHTML = Object.entries(porUsuario).map(([user, count]) =>
+    '<div class="baixa-stat-card">' +
+      '<span style="font-size:13px;font-weight:600">👤 ' + user + '</span>' +
+      '<span class="tag destaque" style="font-size:12px"><b>' + count + '</b> baixas</span>' +
+    '</div>'
+  ).join('');
+}
+
+// ════ LOG DE ATIVIDADE ════════════════════════════════════════════
+function setFiltroLog(f) {
+  _filtroLog = f;
+  ['Todos','Reserva','Baixa','Base'].forEach(n => {
+    document.getElementById('logFiltro' + n)?.classList.toggle('active', f === n.toLowerCase());
+  });
+  renderLog();
+}
+
+function atualizarBadgeLog() {
+  const el = document.getElementById('badgeLog');
+  if (!el) return;
+  const isAdm = usuarioLogado?.perfil === 'adm';
+  const count = isAdm ? logDB.length
+    : logDB.filter(e => e.cracha === usuarioLogado?.cracha).length;
+  el.textContent = count > 0 ? ' (' + count + ')' : '';
+}
+
+function renderLog() {
+  const lista = document.getElementById('listaLog');
+  const vazio = document.getElementById('vazioLog');
+  if (!lista) return;
+  const isAdm = usuarioLogado?.perfil === 'adm';
+
+  let items = isAdm ? logDB
+    : logDB.filter(e => e.cracha === usuarioLogado?.cracha);
+
+  if (_filtroLog !== 'todos')
+    items = items.filter(e => e.acao === _filtroLog);
+
+  if (!items.length) {
+    lista.innerHTML = '';
+    if (vazio) vazio.style.display = '';
+    return;
+  }
+  if (vazio) vazio.style.display = 'none';
+
+  const acaoConfig = {
+    reserva:   { icon:'📋', label:'Reservou',       cls:'reserva' },
+    baixa:     { icon:'✓',  label:'Deu baixa em',   cls:'baixa' },
+    devolucao: { icon:'↩',  label:'Devolveu',        cls:'devolucao' },
+    base:      { icon:'📂', label:'Carregou base',   cls:'base' },
+  };
+
+  lista.innerHTML = '<div class="timeline">' + items.map((e, i) => {
+    const cfg   = acaoConfig[e.acao] || { icon:'•', label:e.acao, cls:'base' };
+    const marca = e.marca || '';
+    const hasLine = i < items.length - 1;
+    let detalhe = '';
+    if (e.acao === 'base') {
+      detalhe = '<div class="tl-acao">' + cfg.label + ' ' + (marca === 'batavo' ? 'Batavo' : 'Itambé') + ' (' + (e.total||'?') + ' registros)</div>' +
+        '<div class="tl-cod">' + (e.arquivo||'') + '</div>';
+    } else {
+      detalhe = '<div class="tl-acao">' + cfg.label + ' <span style="font-family:\'IBM Plex Mono\',monospace">' + (e.codigo||'') + '</span></div>' +
+        (e.descricao ? '<div style="font-size:12px;color:var(--muted);margin-bottom:3px">' + e.descricao + '</div>' : '') +
+        (e.endereco  ? '<div style="font-size:11px;color:var(--muted)">📍 ' + e.endereco + '</div>' : '');
+    }
+    return '<div class="tl-item">' +
+      '<div class="tl-dot-wrap">' +
+        '<div class="tl-dot ' + cfg.cls + '">' + cfg.icon + '</div>' +
+        (hasLine ? '<div class="tl-line"></div>' : '') +
+      '</div>' +
+      '<div class="tl-body">' +
+        detalhe +
+        '<div class="tl-meta">' +
+          '<span>👤 ' + e.nome + '</span>' +
+          (marca ? '<span class="tl-marca ' + marca + '">' + (marca === 'batavo' ? '🟢 BATAVO' : '🔵 ITAMBÉ') + '</span>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="tl-hora">' + (e.hora||'') + '</div>' +
+    '</div>';
+  }).join('') + '</div>';
+}
+function setFiltroVenc(dias) {
+  _filtroVencDias = dias;
+  _filtroVencCustom = false;
+  [2,5,10,30].forEach(d => document.getElementById('fv'+d)?.classList.toggle('active', d===dias));
+  document.getElementById('fvCustom')?.classList.remove('active');
+  const wrap = document.getElementById('filtroCustomWrap');
+  if (wrap) wrap.style.display = 'none';
+  renderVencimentos();
+}
+
+function toggleFiltroCustom() {
+  _filtroVencCustom = !_filtroVencCustom;
+  [2,5,10,30].forEach(d => document.getElementById('fv'+d)?.classList.remove('active'));
+  document.getElementById('fvCustom')?.classList.toggle('active', _filtroVencCustom);
+  const wrap = document.getElementById('filtroCustomWrap');
+  if (wrap) wrap.style.display = _filtroVencCustom ? '' : 'none';
+  if (_filtroVencCustom) renderVencimentos();
+}
+
+function renderVencimentos() {
+  const lista = document.getElementById('listaVencimentos');
+  const vazio = document.getElementById('vazioVenc');
+  const stats = document.getElementById('statsVenc');
+  if (!lista) return;
+
+  let minDias, maxDias;
+  if (_filtroVencCustom) {
+    minDias = parseInt(document.getElementById('vencMin')?.value ?? 0);
+    maxDias = parseInt(document.getElementById('vencMax')?.value ?? 30);
+    if (isNaN(minDias)) minDias = 0;
+    if (isNaN(maxDias)) maxDias = 30;
+  } else {
+    minDias = -9999;
+    maxDias = _filtroVencDias;
+  }
+
+  const res = _indice
+    .filter(e => e._diasVal !== null && e._diasVal >= minDias && e._diasVal <= maxDias)
+    .sort((a,b) => a._diasVal - b._diasVal);
+
+  const vencidos = res.filter(e => e._diasVal < 0).length;
+  const hoje0    = res.filter(e => e._diasVal === 0).length;
+  const proximos = res.filter(e => e._diasVal > 0).length;
+
+  const rangeLabel = _filtroVencCustom
+    ? ' · ' + minDias + ' a ' + maxDias + ' dias'
+    : '';
+
+  if (stats) stats.innerHTML = res.length
+    ? '<div class="stat">Total: <b>' + res.length + '</b>' + rangeLabel + '</div>' +
+      (vencidos ? '<div class="stat stat-danger">Vencidos: <b>' + vencidos + '</b></div>' : '') +
+      (hoje0    ? '<div class="stat stat-warn">Hoje: <b>' + hoje0 + '</b></div>' : '') +
+      '<div class="stat">Próximos: <b>' + proximos + '</b></div>' : '';
+
+  if (!res.length) {
+    lista.innerHTML = '';
+    if (vazio) vazio.style.display = '';
+    return;
+  }
+  if (vazio) vazio.style.display = 'none';
+
+  lista.innerHTML = res.map(e => {
+    const marca  = e._marca;
+    const cc     = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
+    const bl     = marca === 'batavo' ? '🟢 BATAVO' : '🔵 ITAMBÉ';
+    const { valClass, valBadge } = getValStatus(e._diasVal);
+    const diasTxt = e._diasVal < 0
+      ? 'Vencido há ' + Math.abs(e._diasVal) + ' dia(s)'
+      : e._diasVal === 0 ? 'Vence HOJE'
+      : 'Vence em ' + e._diasVal + ' dia(s)';
+    return '<div class="card ' + valClass + '" style="border-left-width:4px">' +
+      '<div class="card-head"><div>' +
+        '<div class="card-code" style="color:' + cc + '">' + e.cod + '</div>' +
+        '<div class="card-desc">' + e.desc + '</div>' +
+      '</div><div class="head-right">' +
+        '<span class="card-brand ' + marca + '">' + bl + '</span>' +
+        '<span class="val-badge ' + valClass + '">' + valBadge + '</span>' +
+      '</div></div>' +
+      '<div class="card-tags">' +
+        '<span class="tag venc-dias-tag ' + valClass + '">' + diasTxt + '</span>' +
+        (e.val !== '—' ? '<span class="tag">Val: <b>' + e.val + '</b></span>' : '') +
+        (e.cx  ? '<span class="tag destaque">📦 <b>' + e.cx + '</b> cx</span>' : '') +
+        (e.end ? '<span class="tag endereco" style="font-size:16px;font-weight:700">📍 ' + e.end + '</span>' : '<span class="tag" style="color:var(--muted)">📍 Sem endereço</span>') +
+      '</div></div>';
+  }).join('');
+}
+
+// ════ CARD FAST ════════════════════════════════════════════════════
+function getValStatus(dias, apenasUrgente = false) {
+  if (dias === null) return { valClass:'', valBadge:'', valTagClass:'' };
+  if (dias < 0)   return { valClass:'vencido', valBadge:'⚠️ VENCIDO',    valTagClass:'tag-vencido' };
+  if (dias === 0) return { valClass:'vencido', valBadge:'⚠️ VENCE HOJE', valTagClass:'tag-vencido' };
+  if (dias === 1) return { valClass:'critico', valBadge:'⏳ VENCE AMANHÃ', valTagClass:'tag-critico' };
+  // Abaixo: só mostra se NÃO for modo urgente (aba Vencimentos)
+  if (apenasUrgente) return { valClass:'', valBadge:'', valTagClass:'' };
+  if (dias <= 7)  return { valClass:'critico', valBadge:'⏳ '+dias+'d',  valTagClass:'tag-critico' };
+  if (dias <= 30) return { valClass:'atencao', valBadge:'🟡 '+dias+'d',  valTagClass:'tag-atencao' };
+  return { valClass:'', valBadge:'', valTagClass:'' };
+}
+
+function cardHTMLFast(e) {
+  const marca = e._marca;
+  const idx   = e._ref._idx;
+  const isPicking = /\s10$/.test(e._end.trim());
+  const cc  = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
+  const bl  = marca === 'batavo' ? '🟢 BATAVO' : '🔵 ITAMBÉ';
+  const { valClass, valBadge, valTagClass } = getValStatus(e._diasVal, true);
+
+  const tags =
+    (e.cx  ? '<span class="tag destaque">📦 <b>' + e.cx + '</b> cx</span>' : '') +
+    (e.fab !== '—' ? '<span class="tag">Fab: <b>' + e.fab + '</b></span>' : '') +
+    (e.val !== '—' ? '<span class="tag ' + valTagClass + '">Val: <b>' + e.val + '</b></span>' : '') +
+    (e.end ? '<span class="tag endereco">📍 <b>' + e.end + '</b></span>' : '');
+
+  const acoes = isPicking
+    ? '<span class="picking-label">🔴 PICKING</span>'
+    : '<button class="btn btn-reservar" onclick="reservarItem(\'' + idx + '\',\'' + marca + '\')">📋 Reservar</button>' +
+      '<button class="btn btn-contagem" onclick="abrirContagem(\'' + idx + '\',\'' + marca + '\')" style="margin-left:6px;font-size:11px;padding:7px 12px">📊 Contar</button>';
+
+  return '<div class="card ' + valClass + '">' +
+    '<div class="card-head"><div>' +
+      '<div class="card-code" style="color:' + cc + '">' + e.cod + '</div>' +
+      '<div class="card-desc">' + e.desc + '</div>' +
+    '</div><div class="head-right">' +
+      '<span class="card-brand ' + marca + '">' + bl + '</span>' +
+      (valBadge ? '<span class="val-badge ' + valClass + '">' + valBadge + '</span>' : '') +
+    '</div></div>' +
+    (tags ? '<div class="card-tags">' + tags + '</div>' : '') +
+    '<div class="card-actions">' + acoes + '</div>' +
+  '</div>';
+}
+
+// ════ DATAS ════════════════════════════════════════════════════════
+function parseData(v) {
+  if (!v) return Infinity;
+  if (v instanceof Date) return isNaN(v) ? Infinity : Date.UTC(v.getFullYear(), v.getMonth(), v.getDate());
+  if (typeof v === 'string') {
+    const m4 = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m4) return Date.UTC(+m4[3], +m4[2]-1, +m4[1]);
+    const m2 = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
+    if (m2) return Date.UTC(2000 + +m2[3], +m2[2]-1, +m2[1]);
+  }
+  const t = new Date(v).getTime();
+  return isNaN(t) ? Infinity : t;
+}
+
+function fmtData(v) {
+  if (!v) return '—';
+  if (v instanceof Date) {
+    if (isNaN(v)) return '—';
+    return pad(v.getDate()) + '/' + pad(v.getMonth()+1) + '/' + v.getFullYear();
+  }
+  if (typeof v === 'string') {
+    const m4 = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m4) return pad(+m4[1]) + '/' + pad(+m4[2]) + '/' + m4[3];
+    const m2 = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
+    if (m2) return pad(+m2[1]) + '/' + pad(+m2[2]) + '/20' + m2[3];
+  }
+  const d = new Date(v);
+  return isNaN(d) ? String(v) : pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear();
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+// ════ MODAIS ══════════════════════════════════════════════════════
+let _confirmCb = null;
+function confirmar(titulo, msg, cb) {
+  _confirmCb = cb;
+  document.getElementById('modalTitulo').textContent = titulo;
+  document.getElementById('modalMsg').textContent    = msg;
+  document.getElementById('modal').classList.add('show');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('modalOk').onclick = () => { fecharModal(); if (_confirmCb) _confirmCb(); };
+});
+function fecharModal() { document.getElementById('modal').classList.remove('show'); }
+
+// ════ CACHE OFFLINE ═══════════════════════════════════════════════
+const CACHE_KEY = 'estoque-cache-v1';
+
+function salvarCache() {
+  try {
+    const payload = {
+      ts: Date.now(),
+      batavo: bases.batavo.carregada ? {
+        dados: bases.batavo.dados,
+        mapa:  bases.batavo.mapa,
+        arquivo: bases.batavo.arquivo,
+        carregadoPor: bases.batavo.carregadoPor
+      } : null,
+      itambe: bases.itambe.carregada ? {
+        dados: bases.itambe.dados,
+        mapa:  bases.itambe.mapa,
+        arquivo: bases.itambe.arquivo,
+        carregadoPor: bases.itambe.carregadoPor
+      } : null,
+    };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
+  } catch(e) { /* sem espaço */ }
+}
+
+function restaurarCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return false;
+    const payload = JSON.parse(raw);
+    const idadeH  = (Date.now() - (payload.ts||0)) / 3600000;
+    if (idadeH > 24) return false; // cache expirado
+    let restaurou = false;
+    ['batavo','itambe'].forEach(m => {
+      if (payload[m] && !bases[m].carregada) {
+        const d = Array.isArray(payload[m].dados) ? payload[m].dados : Object.values(payload[m].dados||{});
+        bases[m] = { dados: d, mapa: payload[m].mapa, carregada: true,
+          arquivo: payload[m].arquivo + ' (cache)', carregadoPor: payload[m].carregadoPor, carregadoEm: null };
+        restaurou = true;
+      }
+    });
+    return restaurou;
+  } catch(e) { return false; }
+}
+let _senhaAdm = ADM_SENHA;
+
+function carregarSenhaAdm() {
+  db.ref('config/senhaAdm').get().then(snap => {
+    if (snap.exists()) _senhaAdm = snap.val();
+  });
+}
+
+function alterarSenha() {
+  const atual    = document.getElementById('senhaAtual').value;
+  const nova     = document.getElementById('senhaNova').value.trim();
+  const confirm  = document.getElementById('senhaConfirm').value.trim();
+
+  if (atual !== _senhaAdm) { toast('⚠️ Senha atual incorreta'); return; }
+  if (!nova) { toast('⚠️ Digite a nova senha'); return; }
+  if (nova.length < 6) { toast('⚠️ Senha precisa ter pelo menos 6 caracteres'); return; }
+  if (nova !== confirm) { toast('⚠️ As senhas não conferem'); return; }
+
+  db.ref('config/senhaAdm').set(nova).then(() => {
+    _senhaAdm = nova;
+    document.getElementById('senhaAtual').value  = '';
+    document.getElementById('senhaNova').value   = '';
+    document.getElementById('senhaConfirm').value = '';
+    toast('✓ Senha alterada com sucesso!');
+  }).catch(e => toast('Erro: ' + e.message));
+}
+const TEMAS = ['','t-claro','t-industrial','t-oceano','t-roxo'];
+function aplicarTema(tema) {
+  TEMAS.forEach(t => { if (t) document.body.classList.remove(t); });
+  if (tema) document.body.classList.add(tema);
+  TEMAS.forEach(t => {
+    const el = document.getElementById('check-' + t);
+    if (el) el.textContent = t === tema ? '✓' : '';
+  });
+  document.querySelectorAll('.tema-btn').forEach(b => b.classList.toggle('ativo', b.dataset.tema === tema));
+  fecharTemas();
+  try { localStorage.setItem('estoque-tema', tema); } catch(e) {}
+}
+function abrirTemas()  { document.getElementById('modalTemas').classList.add('show'); }
+function fecharTemas() { document.getElementById('modalTemas').classList.remove('show'); }
+
+// ════ CHAT ════════════════════════════════════════════════════════
+function tocarSomChat() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.setValueAtTime(1100, ctx.currentTime + 0.08);
+    g.gain.setValueAtTime(0.15, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    o.start(ctx.currentTime);
+    o.stop(ctx.currentTime + 0.3);
+  } catch(e) {}
+}
+function dmCanal(crachaDest) {
+  // Chave consistente: ordena os dois crachás para sempre gerar o mesmo canal
+  const ids = [usuarioLogado.cracha, crachaDest].sort();
+  return 'dm_' + ids[0] + '_' + ids[1];
+}
+
+function abrirConversa(canal) {
+  _chatConvAtual = canal;
+  _chatNaoLidas[canal] = 0;
+  _chatUltimaLeitura[canal] = Date.now();
+  // Atualiza header
+  const headerEl = document.getElementById('chatConvNome');
+  const backBtn  = document.getElementById('chatBackBtn');
+  const inputWrap = document.getElementById('chatInputWrap');
+  if (canal === 'todos') {
+    if (headerEl) headerEl.textContent = '📢 Todos — Equipe';
+  } else {
+    // DM — descobre o nome do outro
+    const outroCracha = canal.replace('dm_','').split('_').find(c => c !== usuarioLogado.cracha);
+    const outro = usuariosDB[outroCracha] || { nome: outroCracha };
+    if (headerEl) headerEl.textContent = '👤 ' + outro.nome;
+  }
+  if (backBtn) backBtn.style.display = '';
+  if (inputWrap) inputWrap.style.display = 'flex';
+  // Mobile: esconde sidebar
+  document.getElementById('chatSidebar')?.classList.add('hidden');
+  renderChat();
+  atualizarBadgeChat();
+  renderChatConvList();
+  setTimeout(() => document.getElementById('chatInput')?.focus(), 80);
+}
+
+function voltarChatSidebar() {
+  _chatConvAtual = null;
+  document.getElementById('chatSidebar')?.classList.remove('hidden');
+  document.getElementById('chatBackBtn').style.display = 'none';
+  document.getElementById('chatInputWrap').style.display = 'none';
+  document.getElementById('chatConvNome').textContent = '💬 Selecione uma conversa';
+  document.getElementById('chatMsgs').innerHTML = '';
+  renderChatConvList();
+}
+
+function renderChatConvList() {
+  const el = document.getElementById('chatConvList');
+  if (!el) return;
+  const myCracha = usuarioLogado?.cracha;
+
+  // Constrói lista de conversas disponíveis
+  const convs = [];
+
+  // 1. Canal "Todos"
+  const msgsGrupo = chatDB['todos'] || [];
+  const ultimaGrupo = msgsGrupo[msgsGrupo.length - 1];
+  const naoLidasGrupo = _chatNaoLidas['todos'] || 0;
+  convs.push({
+    canal: 'todos',
+    avatar: '📢',
+    nome: 'Todos — Equipe',
+    preview: ultimaGrupo ? ultimaGrupo.nome + ': ' + ultimaGrupo.texto : 'Mensagem para toda a equipe',
+    naoLidas: naoLidasGrupo,
+    ts: ultimaGrupo?.ts || 0,
+  });
+
+  // 2. DMs com cada usuário cadastrado + ADM
+  const todos = { ...usuariosDB };
+  // Adiciona ADM se não sou o ADM
+  if (myCracha !== ADM_CRACHA) todos[ADM_CRACHA] = { nome: ADM_NOME, cracha: ADM_CRACHA };
+  // Remove a si mesmo
+  delete todos[myCracha];
+
+  Object.values(todos).forEach(u => {
+    const canal = dmCanal(u.cracha || u.nome);
+    const msgsDM = chatDB[canal] || [];
+    const ultimaDM = msgsDM[msgsDM.length - 1];
+    const naoLidasDM = _chatNaoLidas[canal] || 0;
+    convs.push({
+      canal,
+      avatar: '👤',
+      nome: u.nome,
+      preview: ultimaDM
+        ? (ultimaDM.cracha === myCracha ? 'Você: ' : '') + ultimaDM.texto
+        : 'Iniciar conversa privada',
+      naoLidas: naoLidasDM,
+      ts: ultimaDM?.ts || 0,
+    });
+  });
+
+  // Ordena: com mensagens primeiro (por ts), depois sem
+  convs.sort((a,b) => b.ts - a.ts || (a.canal === 'todos' ? -1 : 1));
+
+  el.innerHTML = convs.map(c =>
+    '<div class="chat-conv-item' + (c.canal === _chatConvAtual ? ' active' : '') + '" onclick="abrirConversa(\'' + c.canal + '\')">' +
+      '<div class="chat-conv-avatar">' + c.avatar + '</div>' +
+      '<div class="chat-conv-info">' +
+        '<div class="chat-conv-name">' + escapeHtml(c.nome) + '</div>' +
+        '<div class="chat-conv-preview">' + escapeHtml(c.preview.slice(0, 40)) + '</div>' +
+      '</div>' +
+      (c.naoLidas > 0 ? '<div class="chat-conv-badge">' + c.naoLidas + '</div>' : '') +
+    '</div>'
+  ).join('');
+}
+
+function enviarChat() {
+  const input = document.getElementById('chatInput');
+  const txt = input?.value.trim();
+  if (!txt || !usuarioLogado || !_chatConvAtual) return;
+  input.value = '';
+  const msg = {
+    texto:  txt,
+    nome:   usuarioLogado.nome,
+    cracha: usuarioLogado.cracha,
+    hora:   new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }),
+    ts:     Date.now(),
+    canal:  _chatConvAtual,
+  };
+  db.ref('chat/' + _chatConvAtual).push(msg).catch(e => toast('Erro: ' + e.message));
+}
+
+function renderChat() {
+  const el = document.getElementById('chatMsgs');
+  if (!el || !_chatConvAtual) return;
+  const msgs = chatDB[_chatConvAtual] || [];
+  if (!msgs.length) {
+    el.innerHTML = '<div class="empty" style="padding:30px 0"><div class="icon">💬</div><h3>' +
+      (_chatConvAtual === 'todos' ? 'Chat da equipe' : 'Conversa privada') + '</h3>' +
+      '<p>Nenhuma mensagem ainda. Diga olá!</p></div>';
+    return;
+  }
+  const myCracha = usuarioLogado?.cracha;
+  el.innerHTML = msgs.map(m => {
+    const mine = m.cracha === myCracha;
+    const isDM = _chatConvAtual !== 'todos';
+    return '<div class="chat-msg ' + (mine ? 'mine' : 'other') + '">' +
+      (!mine && !isDM ? '<div class="chat-msg-user">' + escapeHtml(m.nome) + '</div>' : '') +
+      (isDM && !mine ? '<div class="chat-msg-user">' + escapeHtml(m.nome) + '</div>' : '') +
+      '<div>' + escapeHtml(m.texto) + '</div>' +
+      '<div class="chat-msg-time">' + (m.hora || '') + '</div>' +
+    '</div>';
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function atualizarBadgeChat() {
+  const el = document.getElementById('badgeChat');
+  if (!el) return;
+  const total = Object.values(_chatNaoLidas).reduce((s, n) => s + n, 0);
+
+  // Badge numérico dentro da aba
+  el.innerHTML = total > 0
+    ? '<span class="tab-notif-dot"></span>'
+    : '';
+
+  // Título da página pisca quando há mensagens não lidas e o usuário está em outra aba
+  if (total > 0 && document.hidden) {
+    if (!_chatTitleInterval) {
+      const orig = document.title;
+      let tog = false;
+      _chatTitleInterval = setInterval(() => {
+        document.title = tog ? '💬 ' + total + ' msg nova(s)!' : orig;
+        tog = !tog;
+      }, 1200);
+    }
+  } else {
+    if (_chatTitleInterval) {
+      clearInterval(_chatTitleInterval);
+      _chatTitleInterval = null;
+      document.title = '📦 Estoque Contagem';
+    }
+  }
+}
+
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ════ HISTÓRICO DE BUSCA ══════════════════════════════════════════
+function salvarHistBusca(q) {
+  if (!q || q.length < 2) return;
+  _histBusca = [q, ..._histBusca.filter(h => h !== q)].slice(0, 10);
+  renderHistBusca();
+}
+
+function renderHistBusca() {
+  const wrap = document.getElementById('histBuscaWrap');
+  if (!wrap) return;
+  if (!_histBusca.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'flex';
+  wrap.innerHTML = '<span style="font-size:10px;color:var(--muted);align-self:center;margin-right:2px">🕐</span>' +
+    _histBusca.map((h, i) =>
+      '<div class="hist-chip" onclick="usarHistBusca(\'' + escapeHtml(h) + '\')">' +
+        escapeHtml(h) +
+        '<span class="hist-chip-x" onclick="event.stopPropagation();removerHistBusca(' + i + ')">✕</span>' +
+      '</div>'
+    ).join('');
+}
+
+function usarHistBusca(q) {
+  const inp = document.getElementById('searchInput');
+  if (inp) { inp.value = q; buscar(); }
+}
+
+function removerHistBusca(i) {
+  _histBusca.splice(i, 1);
+  renderHistBusca();
+}
+
+// Integra histórico com buscar: salva quando usuário para de digitar com resultado
+const _buscarOriginal = window.debounceBuscar;
+function debounceBuscar() {
+  clearTimeout(_buscarTimer);
+  const q = document.getElementById('searchInput')?.value.trim() ?? '';
+  if (q.length === 0) { buscar(); return; }
+  _buscarTimer = setTimeout(() => {
+    buscar();
+    if (q.length >= 2) salvarHistBusca(q);
+  }, 180);
+}
+
+// ════ CONTAGEM PARCIAL ════════════════════════════════════════════
+let _contagemIdx = null, _contagemMarca = null;
+
+function abrirContagem(idx, marca) {
+  const b    = bases[marca];
+  const item = b?.dados.find(r => r._idx === idx);
+  if (!item) return;
+  _contagemIdx   = idx;
+  _contagemMarca = marca;
+
+  const cxSistema = item[b.mapa.caixas] ?? '—';
+  const cod  = item[b.mapa.codigo]    ?? '—';
+  const desc = item[b.mapa.descricao] ?? '—';
+  const contagemAnterior = contagensDB[idx];
+
+  document.getElementById('modalContagemTitulo').textContent = String(cod);
+  document.getElementById('modalContagemDesc').textContent = String(desc);
+  document.getElementById('modalContagemSistema').textContent = String(cxSistema) + ' cx';
+  const inp = document.getElementById('modalContagemReal');
+  inp.value = contagemAnterior ? contagemAnterior.real : '';
+  document.getElementById('modalContagemDiff').innerHTML = '';
+  document.getElementById('modalContagem').classList.add('show');
+  setTimeout(() => inp.focus(), 120);
+  inp.oninput = () => {
+    const real   = parseInt(inp.value);
+    const sis    = parseInt(cxSistema);
+    const diffEl = document.getElementById('modalContagemDiff');
+    if (!isNaN(real) && !isNaN(sis)) {
+      const diff = real - sis;
+      const cor  = diff === 0 ? 'var(--accent)' : diff > 0 ? 'var(--yel)' : 'var(--red)';
+      const sinal = diff > 0 ? '+' : '';
+      diffEl.innerHTML = '<span style="color:' + cor + ';font-weight:700;font-size:15px">' +
+        (diff === 0 ? '✓ Confere' : sinal + diff + ' caixas em relação ao sistema') + '</span>';
+    } else { diffEl.innerHTML = ''; }
+  };
+}
+
+function fecharModalContagem() {
+  document.getElementById('modalContagem').classList.remove('show');
+  _contagemIdx = _contagemMarca = null;
+}
+
+function confirmarContagem() {
+  const inp  = document.getElementById('modalContagemReal');
+  const real = parseInt(inp.value);
+  if (isNaN(real) || real < 0) { toast('⚠️ Digite uma quantidade válida'); return; }
+
+  const b    = bases[_contagemMarca];
+  const item = b?.dados.find(r => r._idx === _contagemIdx);
+  const sis  = parseInt(item ? (item[b.mapa.caixas] ?? 0) : 0);
+
+  const entry = {
+    real, sistema: sis, diff: real - sis,
+    nome:   usuarioLogado.nome,
+    cracha: usuarioLogado.cracha,
+    hora:   new Date().toLocaleString('pt-BR'),
+    ts:     Date.now(),
+    codigo: item ? (item[b.mapa.codigo] ?? '—') : '—',
+    marca:  _contagemMarca,
+  };
+
+  db.ref('contagens/' + _contagemIdx).set(entry)
+    .then(() => {
+      toast('✓ Contagem salva — ' + (entry.diff === 0 ? 'Confere!' : (entry.diff > 0 ? '+' : '') + entry.diff + ' cx'));
+      fecharModalContagem();
+    })
+    .catch(e => toast('Erro: ' + e.message));
+}
+
+// ════ LOGIN ATTEMPTS ══════════════════════════════════════════════
+function renderLoginAttempts() {
+  const el = document.getElementById('listaLoginAttempts');
+  if (!el) return;
+  if (!loginAttemptsDB.length) {
+    el.innerHTML = '<p style="font-size:13px;color:var(--muted)">Nenhuma tentativa registrada</p>';
+    return;
+  }
+  el.innerHTML = loginAttemptsDB.slice(0, 20).map(a =>
+    '<div class="attempt-item">' +
+      '<span>Crachá <span class="attempt-cracha">' + escapeHtml(String(a.cracha)) + '</span></span>' +
+      '<span class="attempt-hora">' + (a.hora || '') + '</span>' +
+    '</div>'
+  ).join('');
+}
+
+function limparLoginAttempts() {
+  confirmar('Limpar tentativas?', 'Remove o log de tentativas de login inválidas.', () => {
+    db.ref('loginAttempts').remove().then(() => toast('✓ Log limpo')).catch(e => toast('Erro: ' + e.message));
+  });
+}
+
+// ════ TOAST ESPECIAL ══════════════════════════════════════════════
+let _ttE;
+function toastEspecial(msg, classe) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (classe || '');
+  clearTimeout(_ttE);
+  _ttE = setTimeout(() => { el.classList.remove('show'); el.className = 'toast'; }, 4000);
+}
+
+// ════ TOAST ═══════════════════════════════════════════════════════
+let _tt;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(_tt); _tt = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ════ INIT ════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Tema salvo
+  try {
+    const saved = localStorage.getItem('estoque-tema') ?? '';
+    if (saved) aplicarTema(saved);
+    else document.getElementById('check-').textContent = '✓';
+  } catch(e) { document.getElementById('check-').textContent = '✓'; }
+
+  // Inicia listeners Firebase
+  initListeners();
+  carregarSenhaAdm();
+
+  // Para de piscar o título quando o usuário volta para a aba
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && _chatTitleInterval) {
+      clearInterval(_chatTitleInterval);
+      _chatTitleInterval = null;
+      document.title = '📦 Estoque Contagem';
+    }
+  });
+
+  // ── PWA: Registro do Service Worker ──
+  let _swRegistration = null;
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      _swRegistration = reg;
+
+      // Detecta quando um novo SW está esperando para ativar
+      const checkWaiting = (r) => {
+        if (r.waiting) {
+          document.getElementById('updateBanner').style.display = 'flex';
+        }
+      };
+      checkWaiting(reg);
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            document.getElementById('updateBanner').style.display = 'flex';
+          }
+        });
+      });
+    }).catch(err => console.log('SW erro:', err));
+
+    // Quando o SW novo assumir, recarrega a página automaticamente
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) { refreshing = true; window.location.reload(); }
+    });
+  }
+
+  window.aplicarAtualizacao = () => {
+    document.getElementById('updateBanner').style.display = 'none';
+    if (_swRegistration && _swRegistration.waiting) {
+      // Manda mensagem para o SW em espera assumir o controle
+      _swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+    } else {
+      window.location.reload();
+    }
+  };
+
+  // ── PWA: Banner de instalação ──
+  let _pwaPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    _pwaPrompt = e;
+    const banner = document.getElementById('installBanner');
+    if (banner) banner.style.display = 'flex';
+  });
+  window.instalarPWA = () => {
+    if (!_pwaPrompt) return;
+    _pwaPrompt.prompt();
+    _pwaPrompt.userChoice.then(choice => {
+      if (choice.outcome === 'accepted') {
+        document.getElementById('installBanner').style.display = 'none';
+        toast('✅ App instalado com sucesso!');
+      }
+      _pwaPrompt = null;
+    });
+  };
+  // Esconde banner se já está instalado
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('installBanner').style.display = 'none';
+    _pwaPrompt = null;
+  });
+});
+</script>
+</body>
+</html>
