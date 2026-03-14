@@ -216,52 +216,60 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink
 .no-db-banner{background:var(--yel-bg);border:1px solid var(--yel);border-radius:var(--radius);padding:14px 16px;font-size:13px;color:var(--accent3);margin-bottom:14px}
 
 /* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .15s}
-.card-head{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 14px 8px}
-.card-code{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:var(--accent);margin-bottom:2px}
-.card-desc{font-size:13px;color:var(--ink);line-height:1.3}
-.head-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;padding-left:8px}
-.card-brand{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid;white-space:nowrap}
-.card-brand.batavo{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
-.card-brand.itambe{background:var(--itm-bg);border-color:var(--itm);color:var(--itm)}
-.card-tags{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .15s;margin-bottom:8px}
+.card.vencido{background:var(--card-venc-bg);border-color:var(--red)}
+.card.critico{border-color:var(--ora)}
+.card.atencao{border-color:var(--yel)}
+.card-head{padding:11px 14px 5px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.card-code{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;line-height:1.2}
+.card-desc{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.3}
+.head-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.card-brand{font-size:10px;font-weight:700;white-space:nowrap;letter-spacing:.03em}
+.card-meta{padding:6px 14px 8px;font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center}
+.card-meta b{color:var(--ink);font-weight:600}
+.card-meta .cx{font-size:15px;font-weight:700;color:var(--ink)}
+.card-meta .end{font-size:15px;font-weight:700;color:var(--ink)}
+.card-meta .urg.vencido{color:var(--red);font-weight:700}
+.card-meta .urg.critico{color:var(--ora);font-weight:700}
+.card-meta .urg.atencao{color:var(--yel);font-weight:700}
+.card-actions{padding:0 14px 10px;display:flex;align-items:center;gap:6px}
+.card-actions-right{margin-left:auto;display:flex;gap:6px;align-items:center}
+.btn{background:transparent;border:1.5px solid var(--border);color:var(--ink);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s}
+.btn-card{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:6px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.btn-card:active{background:var(--surface2);color:var(--ink)}
+.btn-card.reservar{border-color:var(--accent3);color:var(--accent3);background:var(--accent3-light);font-size:10px;padding:3px 10px;font-weight:700;border-radius:4px;letter-spacing:.04em}
+.btn-card.reservar:active{background:var(--accent3);color:var(--bg)}
+.btn-reservar{border-color:var(--accent3);color:var(--accent3);background:var(--accent3-light)}
+.btn-reservar:active{background:var(--accent3);color:var(--bg)}
+.btn-baixa-pick{border-color:var(--border);color:var(--muted);background:transparent;font-size:11px;padding:6px 12px}
+.btn-baixa-pick:active{background:var(--surface2)}
+.btn-diverg{border-color:var(--border);color:var(--muted);background:transparent;font-size:11px;padding:6px 12px}
+.btn-diverg:active{background:var(--surface2)}
+.btn-voltar{border-color:var(--accent3);color:var(--accent3);background:var(--accent3-light)}
+.btn-baixa{border-color:var(--itm);color:var(--itm);background:var(--itm-bg)}
+.picking-label{font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--red);background:var(--red-bg);border:1px solid var(--red-soft);border-radius:4px;padding:3px 8px;align-self:center}
+.res-info{font-size:11px;color:var(--muted);padding:4px 14px 8px;border-top:1px solid var(--border)}
+.res-info b{color:var(--ink)}
+.val-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.val-badge.vencido{background:var(--red-bg);color:var(--red)}
+.val-badge.critico{background:var(--ora-bg);color:var(--ora)}
+.val-badge.atencao{background:var(--yel-bg);color:var(--accent3)}
 .tag{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--muted)}
 .tag b{color:var(--ink)}
 .tag.destaque{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
 .tag.destaque b{color:var(--accent)}
 .tag.endereco{font-size:15px}
-.card-actions{display:flex;gap:8px;padding:0 14px 12px;flex-wrap:wrap}
-.btn{background:transparent;border:1.5px solid var(--border);color:var(--ink);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s}
-.btn-reservar{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
-.btn-reservar:active{background:var(--accent);color:var(--bg)}
-.btn-baixa-pick{border-color:var(--baixa);color:var(--baixa);background:var(--baixa-bg);font-size:11px;padding:6px 12px}
-.btn-baixa-pick:active{background:var(--baixa);color:var(--bg)}
-.btn-diverg{border-color:var(--ora);color:var(--ora);background:var(--ora-bg);font-size:11px;padding:6px 12px;margin-left:6px}
-.btn-diverg:active{background:var(--ora);color:var(--bg)}
-.btn-voltar{border-color:var(--accent3);color:var(--accent3);background:var(--accent3-light)}
-.btn-baixa{border-color:var(--itm);color:var(--itm);background:var(--itm-bg)}
-.picking-label{font-size:11px;font-weight:700;color:var(--red);background:var(--red-bg);border:1px solid var(--red-soft);border-radius:20px;padding:4px 12px;align-self:center}
-.res-info{font-size:11px;color:var(--muted);padding:4px 14px 8px;border-top:1px solid var(--border)}
-.res-info b{color:var(--ink)}
-
-/* VALIDADE — totalmente via variáveis CSS, adaptam em todos os temas */
-.card.vencido{border-color:var(--card-venc-border);background:var(--card-venc-bg)}
-.card.critico{border-color:var(--card-crit-border);background:var(--card-crit-bg)}
-.card.atencao{border-color:var(--card-ate-border);background:var(--card-ate-bg)}
-.val-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid;letter-spacing:.4px;white-space:nowrap}
-.val-badge.vencido{background:var(--red-bg);border-color:var(--red);color:var(--red)}
-.val-badge.critico{background:var(--ora-bg);border-color:var(--ora);color:var(--ora)}
-.val-badge.atencao{background:var(--yel-bg);border-color:var(--yel);color:var(--accent3)}
-.tag-vencido{background:var(--red-bg)!important;border-color:var(--red)!important;color:var(--red)!important}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
+.tag-vencido{color:var(--red)!important}
 .tag-vencido b{color:var(--red)!important}
-.tag-critico{background:var(--ora-bg)!important;border-color:var(--ora)!important;color:var(--ora)!important}
+.tag-critico{color:var(--ora)!important}
 .tag-critico b{color:var(--ora)!important}
-.tag-atencao{background:var(--yel-bg)!important;border-color:var(--yel)!important;color:var(--accent3)!important}
-.tag-atencao b{color:var(--accent3)!important}
+.tag-atencao{color:var(--yel)!important}
+.tag-atencao b{color:var(--yel)!important}
 .venc-dias-tag{font-weight:700;font-size:12px}
-.venc-dias-tag.vencido{background:var(--red-bg);color:var(--red);border:1px solid var(--red-soft)}
-.venc-dias-tag.critico{background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-soft)}
-.venc-dias-tag.atencao{background:var(--yel-bg);color:var(--accent3);border:1px solid var(--yel-soft)}
+.venc-dias-tag.vencido{color:var(--red)}
+.venc-dias-tag.critico{color:var(--ora)}
+.venc-dias-tag.atencao{color:var(--yel)}
 
 /* ── CHAT ── */
 .chat-layout{display:flex;height:calc(100vh - 130px);min-height:300px;gap:0;overflow:hidden}
@@ -1137,6 +1145,7 @@ function fazerLogin() {
     if (senha !== _senhaAdm) { errEl.textContent = 'Senha incorreta'; return; }
     usuarioLogado = { nome: ADM_NOME, cracha: ADM_CRACHA, perfil: 'adm' };
     marcaAtiva = 'ambas';
+    salvarSessao();
     irParaApp();
     return;
   }
@@ -1151,6 +1160,7 @@ function fazerLogin() {
     }
     const u = snap.val();
     usuarioLogado = { nome: u.nome, cracha: String(cracha), perfil: 'comum', basePerm: u.basePerm||'ambas' };
+    salvarSessao();
     irParaBaseSelect();
   }).catch(() => {
     errEl.textContent = 'Erro de conexão. Verifique a internet.';
@@ -1160,6 +1170,7 @@ function fazerLogin() {
 function fazerLogout() {
   usuarioLogado = null;
   marcaAtiva = '';
+  limparSessao();
   document.body.classList.remove('marca-batavo','marca-itambe');
   document.getElementById('appPrincipal').style.display = 'none';
   document.getElementById('telaBaseSelect').style.display = 'none';
@@ -1207,13 +1218,13 @@ function irParaApp() {
 
 function selecionarBase(marca) {
   const perm = usuarioLogado?.basePerm || 'ambas';
-  // Bloqueia se o usuário não tem permissão para esta base
   if (perm !== 'ambas' && perm !== marca) {
     toast('⛔ Você não tem acesso à base ' + (marca === 'batavo' ? 'Batavo' : 'Itambé'));
     return;
   }
   if (!bases[marca].carregada) { toast('⚠️ Base não disponível. Aguarde o ADM.'); return; }
   marcaAtiva = marca;
+  salvarSessao();
   irParaApp();
 }
 
@@ -1685,28 +1696,30 @@ function renderReservados() {
   lista.innerHTML = items.map(({ item, marca, resInfo, idx }) => {
     const map = bases[marca].mapa;
     const cc  = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
-    const bl  = marca === 'batavo' ? '🟢 BATAVO' : '🔵 ITAMBÉ';
+    const bl  = marca === 'batavo' ? 'BATAVO' : 'ITAMBÉ';
     const cod = item[map.codigo]    ?? '—';
     const dsc = item[map.descricao] ?? '—';
     const cx  = item[map.caixas]    ?? '';
     const fab = fmtData(item[map.dtFab]);
     const val = fmtData(item[map.dtVal]);
     const end = item[map.endereco]  ?? '';
+    let meta = [];
+    if (cx)         meta.push('<span class="cx">📦 <b>' + cx + '</b> cx</span>');
+    if (end)        meta.push('<span class="end">📍 ' + end + '</span>');
+    if (fab !== '—') meta.push('<span>Fab <b>' + fab + '</b></span>');
+    if (val !== '—') meta.push('<span>Val <b>' + val + '</b></span>');
     return '<div class="card">' +
       '<div class="card-head"><div>' +
         '<div class="card-code" style="color:' + cc + '">' + cod + '</div>' +
         '<div class="card-desc">' + dsc + '</div>' +
-      '</div><div class="head-right"><span class="card-brand ' + marca + '">' + bl + '</span></div></div>' +
-      '<div class="card-tags">' +
-        (cx  ? '<span class="tag destaque">📦 <b>' + cx + '</b> cx</span>' : '') +
-        (fab !== '—' ? '<span class="tag">Fab: <b>' + fab + '</b></span>' : '') +
-        (val !== '—' ? '<span class="tag">Val: <b>' + val + '</b></span>' : '') +
-        (end ? '<span class="tag endereco">📍 <b>' + end + '</b></span>' : '') +
-      '</div>' +
-      '<div class="res-info">👤 Reservado por <b>' + resInfo.nome + '</b> (' + resInfo.cracha + ') · ' + resInfo.hora + '</div>' +
+      '</div><div class="head-right"><span class="card-brand" style="color:' + cc + '">' + bl + '</span></div></div>' +
+      (meta.length ? '<div class="card-meta">' + meta.join('') + '</div>' : '') +
+      '<div class="res-info">👤 <b>' + resInfo.nome + '</b> · ' + resInfo.hora + '</div>' +
       '<div class="card-actions">' +
-        '<button class="btn btn-voltar" onclick="voltarEstoque(\'' + idx + '\')">↩ Devolver</button>' +
-        '<button class="btn btn-baixa" onclick="darBaixa(\'' + idx + '\',\'' + marca + '\')">✓ Dar Baixa</button>' +
+        '<div class="card-actions-right">' +
+          '<button class="btn btn-voltar" onclick="voltarEstoque(\'' + idx + '\')">↩ Devolver</button>' +
+          '<button class="btn btn-baixa" onclick="darBaixa(\'' + idx + '\',\'' + marca + '\')">✓ Dar Baixa</button>' +
+        '</div>' +
       '</div></div>';
   }).join('');
 }
@@ -1736,18 +1749,18 @@ function renderBaixas() {
 
   lista.innerHTML = items.map(b => {
     const cc = b.marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
-    const bl = b.marca === 'batavo' ? '🟢 BATAVO' : '🔵 ITAMBÉ';
+    const bl = b.marca === 'batavo' ? 'BATAVO' : 'ITAMBÉ';
+    let meta = [];
+    if (b.caixas)                         meta.push('<span class="cx">📦 <b>' + b.caixas + '</b> cx</span>');
+    if (b.endereco)                        meta.push('<span class="end">📍 ' + b.endereco + '</span>');
+    if (b.fab && b.fab !== '—')           meta.push('<span>Fab <b>' + b.fab + '</b></span>');
+    if (b.val && b.val !== '—')           meta.push('<span>Val <b>' + b.val + '</b></span>');
     return '<div class="card">' +
       '<div class="card-head"><div>' +
         '<div class="card-code" style="color:' + cc + '">' + (b.codigo||'—') + '</div>' +
         '<div class="card-desc">' + (b.descricao||'—') + '</div>' +
-      '</div><div class="head-right"><span class="card-brand ' + (b.marca||'') + '">' + bl + '</span></div></div>' +
-      '<div class="card-tags">' +
-        (b.caixas ? '<span class="tag destaque">📦 <b>' + b.caixas + '</b> cx</span>' : '') +
-        (b.fab && b.fab !== '—' ? '<span class="tag">Fab: <b>' + b.fab + '</b></span>' : '') +
-        (b.val && b.val !== '—' ? '<span class="tag">Val: <b>' + b.val + '</b></span>' : '') +
-        (b.endereco ? '<span class="tag endereco">📍 <b>' + b.endereco + '</b></span>' : '') +
-      '</div>' +
+      '</div><div class="head-right"><span class="card-brand" style="color:' + cc + '">' + bl + '</span></div></div>' +
+      (meta.length ? '<div class="card-meta">' + meta.join('') + '</div>' : '') +
       '<div class="baixa-user-row"><span>👤 <b>' + b.nome + '</b> · ' + b.cracha + '</span><span>' + b.hora + '</span></div>' +
     '</div>';
   }).join('');
@@ -2009,26 +2022,28 @@ function renderVencimentos() {
   lista.innerHTML = res.map(e => {
     const marca  = e._marca;
     const cc     = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
-    const bl     = marca === 'batavo' ? '🟢 BATAVO' : '🔵 ITAMBÉ';
+    const bl     = marca === 'batavo' ? 'BATAVO' : 'ITAMBÉ';
     const { valClass, valBadge } = getValStatus(e._diasVal);
     const diasTxt = e._diasVal < 0
       ? 'Vencido há ' + Math.abs(e._diasVal) + ' dia(s)'
       : e._diasVal === 0 ? 'Vence HOJE'
       : 'Vence em ' + e._diasVal + ' dia(s)';
-    return '<div class="card ' + valClass + '" style="border-left-width:4px">' +
+    let meta = [];
+    if (e.cx)          meta.push('<span class="cx">📦 <b>' + e.cx + '</b> cx</span>');
+    if (e.end)         meta.push('<span class="end">📍 ' + e.end + '</span>');
+    if (e.fab !== '—') meta.push('<span>Fab <b>' + e.fab + '</b></span>');
+    if (e.val !== '—') meta.push('<span>Val <b>' + e.val + '</b></span>');
+    return '<div class="card ' + valClass + '">' +
       '<div class="card-head"><div>' +
         '<div class="card-code" style="color:' + cc + '">' + e.cod + '</div>' +
         '<div class="card-desc">' + e.desc + '</div>' +
       '</div><div class="head-right">' +
-        '<span class="card-brand ' + marca + '">' + bl + '</span>' +
-        '<span class="val-badge ' + valClass + '">' + valBadge + '</span>' +
+        '<span class="card-brand" style="color:' + cc + '">' + bl + '</span>' +
+        (valBadge ? '<span class="val-badge ' + valClass + '">' + valBadge + '</span>' : '') +
       '</div></div>' +
-      '<div class="card-tags">' +
-        '<span class="tag venc-dias-tag ' + valClass + '">' + diasTxt + '</span>' +
-        (e.val !== '—' ? '<span class="tag">Val: <b>' + e.val + '</b></span>' : '') +
-        (e.cx  ? '<span class="tag destaque">📦 <b>' + e.cx + '</b> cx</span>' : '') +
-        (e.end ? '<span class="tag endereco" style="font-size:16px;font-weight:700">📍 ' + e.end + '</span>' : '<span class="tag" style="color:var(--muted)">📍 Sem endereço</span>') +
-      '</div></div>';
+      (meta.length ? '<div class="card-meta">' + meta.join('') + '</div>' : '') +
+      '<div class="card-meta" style="padding-top:0"><span class="urg ' + valClass + '">' + diasTxt + '</span></div>' +
+    '</div>';
   }).join('');
 }
 
@@ -2049,34 +2064,47 @@ function cardHTMLFast(e) {
   const marca = e._marca;
   const idx   = e._ref._idx;
   const isPicking = /\s10$/.test(e._end.trim());
-  const cc  = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
-  const bl  = marca === 'batavo' ? '🟢 BATAVO' : '🔵 ITAMBÉ';
+  const cc   = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
+  const bl   = marca === 'batavo' ? 'BATAVO' : 'ITAMBÉ';
   const { valClass, valBadge, valTagClass } = getValStatus(e._diasVal, true);
 
-  const tags =
-    (e.cx  ? '<span class="tag destaque">📦 <b>' + e.cx + '</b> cx</span>' : '') +
-    (e.fab !== '—' ? '<span class="tag">Fab: <b>' + e.fab + '</b></span>' : '') +
-    (e.val !== '—' ? '<span class="tag ' + valTagClass + '">Val: <b>' + e.val + '</b></span>' : '') +
-    (e.end ? '<span class="tag endereco">📍 <b>' + e.end + '</b></span>' : '');
+  // Linha de meta-dados
+  let metaItems = [];
+  if (e.cx)          metaItems.push('<span class="cx">📦 <b>' + e.cx + '</b> cx</span>');
+  if (e.end)         metaItems.push('<span class="end">📍 ' + e.end + '</span>');
+  if (e.fab !== '—') metaItems.push('<span>Fab <b>' + e.fab + '</b></span>');
+  if (e.val !== '—') {
+    const urgCls = valTagClass ? 'urg ' + valClass : '';
+    metaItems.push('<span class="' + urgCls + '">Val <b>' + e.val + '</b>' + (valBadge ? '  ' + valBadge : '') + '</span>');
+  }
 
-  const acoes = isPicking
-    ? '<span class="picking-label">🔴 PICKING</span>' +
-      '<button class="btn btn-baixa-pick" onclick="darBaixaPicking(\'' + idx + '\',\'' + marca + '\')">✓ Dar Baixa</button>'
-    : '<button class="btn btn-reservar" onclick="reservarItem(\'' + idx + '\',\'' + marca + '\')">📋 Reservar</button>' +
-      '<button class="btn btn-contagem" onclick="abrirContagem(\'' + idx + '\',\'' + marca + '\')" style="margin-left:6px;font-size:11px;padding:7px 12px">📊 Contar</button>';
+  // Botões lado esquerdo
+  const acoesEsq = isPicking
+    ? '<span class="picking-label">PICKING</span>'
+    : '';
 
-  const btnDiv = '<button class="btn btn-diverg" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')">⚠️ Divergência</button>';
+  // Botões lado direito
+  const acoesDireita = isPicking
+    ? '<button class="btn-card" onclick="darBaixaPicking(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--red)">✓</span> Baixa</button>' +
+      '<button class="btn-card" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--ora)">⚠</span> Diverg.</button>'
+    : '<button class="btn-card reservar" onclick="reservarItem(\'' + idx + '\',\'' + marca + '\')">Reservar</button>' +
+      '<button class="btn-card" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--ora)">⚠</span> Diverg.</button>';
 
   return '<div class="card ' + valClass + '">' +
-    '<div class="card-head"><div>' +
-      '<div class="card-code" style="color:' + cc + '">' + e.cod + '</div>' +
-      '<div class="card-desc">' + e.desc + '</div>' +
-    '</div><div class="head-right">' +
-      '<span class="card-brand ' + marca + '">' + bl + '</span>' +
-      (valBadge ? '<span class="val-badge ' + valClass + '">' + valBadge + '</span>' : '') +
-    '</div></div>' +
-    (tags ? '<div class="card-tags">' + tags + '</div>' : '') +
-    '<div class="card-actions">' + acoes + btnDiv + '</div>' +
+    '<div class="card-head">' +
+      '<div>' +
+        '<div class="card-code" style="color:' + cc + '">' + e.cod + '</div>' +
+        '<div class="card-desc">' + e.desc + '</div>' +
+      '</div>' +
+      '<div class="head-right">' +
+        '<span class="card-brand" style="color:' + cc + '">' + bl + '</span>' +
+      '</div>' +
+    '</div>' +
+    (metaItems.length ? '<div class="card-meta">' + metaItems.join('') + '</div>' : '') +
+    '<div class="card-actions">' +
+      acoesEsq +
+      '<div class="card-actions-right">' + acoesDireita + '</div>' +
+    '</div>' +
   '</div>';
 }
 
@@ -2811,6 +2839,37 @@ function toast(msg) {
 }
 
 // ════ INIT ════════════════════════════════════════════════════════
+// ════ SESSÃO PERSISTENTE ══════════════════════════════════════════
+const SESSAO_KEY = 'estoque-sessao-v1';
+
+function salvarSessao() {
+  try {
+    localStorage.setItem(SESSAO_KEY, JSON.stringify({
+      usuarioLogado,
+      marcaAtiva,
+      ts: Date.now()
+    }));
+  } catch(e) {}
+}
+
+function limparSessao() {
+  try { localStorage.removeItem(SESSAO_KEY); } catch(e) {}
+}
+
+function restaurarSessao() {
+  try {
+    const raw = localStorage.getItem(SESSAO_KEY);
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    // Expira após 12 horas
+    if (Date.now() - (s.ts || 0) > 12 * 3600000) { limparSessao(); return false; }
+    if (!s.usuarioLogado) return false;
+    usuarioLogado = s.usuarioLogado;
+    marcaAtiva    = s.marcaAtiva || '';
+    return true;
+  } catch(e) { return false; }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Tema salvo
   try {
@@ -2822,6 +2881,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // Inicia listeners Firebase
   initListeners();
   carregarSenhaAdm();
+
+  // ── Restaura sessão automaticamente ──
+  if (restaurarSessao()) {
+    // Valida se usuário comum ainda está cadastrado no Firebase
+    if (usuarioLogado.perfil === 'adm') {
+      irParaApp();
+    } else {
+      // Re-verifica permissões no Firebase (podem ter mudado)
+      db.ref('usuarios/' + usuarioLogado.cracha).get().then(snap => {
+        if (!snap.exists()) { limparSessao(); return; }
+        const u = snap.val();
+        // Atualiza permissões caso tenham mudado
+        usuarioLogado.basePerm = u.basePerm || 'ambas';
+        salvarSessao();
+        if (marcaAtiva) {
+          irParaApp();
+        } else {
+          irParaBaseSelect();
+        }
+      }).catch(() => {
+        // Sem internet — usa sessão em cache mesmo assim
+        if (marcaAtiva) irParaApp();
+        else irParaBaseSelect();
+      });
+    }
+  }
 
   // Para de piscar o título quando o usuário volta para a aba
   document.addEventListener('visibilitychange', () => {
