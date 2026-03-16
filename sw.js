@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════
 // ESTOQUE CONTAGEM — Service Worker v4.0
 // ═══════════════════════════════════════════════
-const CACHE_NAME = 'estoque-v4';
+const CACHE_NAME = 'estoque-v5';
 
 // Recursos para cachear na instalação
 const PRECACHE = [
