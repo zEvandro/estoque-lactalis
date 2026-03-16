@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Fundo -->
+  <rect width="512" height="512" rx="100" fill="#0f1117"/>
+  <!-- Brilho sutil de fundo -->
+  <circle cx="256" cy="220" r="180" fill="#4fffb0" opacity="0.04"/>
+  <!-- Face superior -->
+  <polygon points="256,80 390,152 256,224 122,152" fill="#1e3d2a" stroke="#4fffb0" stroke-width="5"/>
+  <!-- Face esquerda -->
+  <polygon points="256,224 122,152 122,320 256,392" fill="#1a3024" stroke="#4fffb0" stroke-width="5"/>
+  <!-- Face direita -->
+  <polygon points="256,224 390,152 390,320 256,392" fill="#152a1e" stroke="#4fffb0" stroke-width="5"/>
+  <!-- Linha de destaque superior -->
+  <polygon points="256,80 390,152 256,224 122,152" fill="none" stroke="#4fffb0" stroke-width="5"/>
+  <!-- Check mark na face superior -->
+  <path d="M210,152 L242,185 L302,118" fill="none" stroke="#4fffb0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Ponto brilhante no vértice do topo -->
+  <circle cx="256" cy="80" r="8" fill="#4fffb0" opacity="0.8"/>
+  <!-- Pontos nos vértices -->
+  <circle cx="122" cy="152" r="5" fill="#4fffb0" opacity="0.5"/>
+  <circle cx="390" cy="152" r="5" fill="#4fffb0" opacity="0.5"/>
+  <circle cx="256" cy="392" r="5" fill="#4fffb0" opacity="0.5"/>
+  <!-- Linhas verticais das arestas -->
+  <line x1="122" y1="152" x2="122" y2="320" stroke="#4fffb0" stroke-width="5" opacity="0.6"/>
+  <line x1="390" y1="152" x2="390" y2="320" stroke="#4fffb0" stroke-width="5" opacity="0.6"/>
+  <line x1="256" y1="224" x2="256" y2="392" stroke="#4fffb0" stroke-width="5" opacity="0.3"/>
+  <!-- Letra E C pequena no rodapé -->
+  <text x="256" y="460" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="52" font-weight="600" fill="#4fffb0" opacity="0.5">EC</text>
+</svg>

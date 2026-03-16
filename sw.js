@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// ESTOQUE CONTAGEM — Service Worker v3.0
+// ESTOQUE CONTAGEM — Service Worker v4.0
 // ═══════════════════════════════════════════════
 const CACHE_NAME = 'estoque-v4';
 
@@ -7,6 +7,7 @@ const CACHE_NAME = 'estoque-v4';
 const PRECACHE = [
   './estoque-lactalis.html',
   './manifest.json',
+  './icon.svg',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
   'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js',
   'https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js',
