@@ -1448,15 +1448,23 @@ function atualizarCardsBase() {
       card.classList.add('loaded');
       elArq.textContent = b.arquivo; elArq.classList.remove('vazio');
       if (elMeta) {
-        const em = b.carregadoEm ? new Date(b.carregadoEm).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
-        elMeta.textContent = 'Por ' + b.carregadoPor + (em ? ' às ' + em : '');
+        const em  = b.carregadoEm ? new Date(b.carregadoEm).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+        const mp  = b.mapa || {};
+        const diagn = [
+          mp.dtVal    ? '✅ Val: ' + mp.dtVal    : '❌ Validade NÃO detectada',
+          mp.dtFab    ? '✅ Fab: ' + mp.dtFab    : '⚠️ Fabricação não detectada',
+          mp.endereco ? '✅ End: ' + mp.endereco : '⚠️ Endereço não detectado',
+          mp.caixas   ? '✅ Cx: '  + mp.caixas   : '⚠️ Caixas não detectado',
+        ].join('  ·  ');
+        elMeta.innerHTML = 'Por ' + b.carregadoPor + (em ? ' às ' + em : '') +
+          '<div style="font-size:10px;color:var(--muted);margin-top:4px;line-height:1.6">' + diagn + '</div>';
       }
       if (elAction) elAction.textContent = '✎ Clique para gerenciar';
       if (elBadge)  elBadge.textContent  = 'CARREGADO';
     } else {
       card.classList.remove('loaded');
       elArq.textContent = 'Nenhum arquivo carregado'; elArq.classList.add('vazio');
-      if (elMeta)   elMeta.textContent   = '';
+      if (elMeta)   elMeta.innerHTML    = '';
       if (elAction) elAction.textContent = '+ Clique para carregar';
       if (elBadge)  elBadge.textContent  = '';
     }
