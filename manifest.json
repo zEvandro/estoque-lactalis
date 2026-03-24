@@ -1,7 +1,7 @@
 {
-  "name": "Estoque Contagem",
-  "short_name": "Estoque",
-  "description": "Sistema de contagem de estoque Lactalis — Batavo e Itambé",
+  "name": "EstoqueCD",
+  "short_name": "EstoqueCD",
+  "description": "Controle de estoque de câmara fria — Batavo e Itambé",
   "start_url": "./estoque-lactalis.html",
   "display": "standalone",
   "background_color": "#0f1117",
@@ -9,15 +9,15 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "./icon.svg",
+      "src": "./Lacfrio.png",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icon.svg",
+      "src": "./Lacfrio.png",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ],

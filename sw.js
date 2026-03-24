@@ -1,13 +1,15 @@
 // ═══════════════════════════════════════════════
 // ESTOQUE CONTAGEM — Service Worker v4.0
 // ═══════════════════════════════════════════════
-const CACHE_NAME = 'estoque-v11';
+const CACHE_NAME = 'estoque-v12';
 
 // Recursos para cachear na instalação
 const PRECACHE = [
   './estoque-lactalis.html',
   './manifest.json',
-  './icon.svg',
+  './Lacfrio.png',
+  './batavo.png',
+  './itambe.png',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
   'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js',
   'https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js',
