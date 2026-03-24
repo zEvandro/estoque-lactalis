@@ -171,30 +171,38 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink
 .btn-sair:hover{border-color:var(--muted);color:var(--ink)}
 
 /* HEADER */
-.header{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100;flex-wrap:wrap}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100}
 .logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.5px}
-.header-right{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.user-pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--accent-light);border:1px solid var(--accent);color:var(--accent);letter-spacing:.3px}
-.base-pills{display:flex;gap:5px}
-.base-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid;letter-spacing:.4px;transition:opacity .2s}
-.base-pill.batavo{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
-.base-pill.itambe{background:var(--itm-bg);border-color:var(--itm);color:var(--itm)}
-.base-pill.off{opacity:.3}
-.db-pill{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:all .3s}
-.dot.on{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.header-right{display:flex;align-items:center;gap:8px}
 .conn-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid;letter-spacing:.3px;transition:all .3s}
 .conn-pill.online{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
 .conn-pill.offline{background:var(--red-bg);border-color:var(--red);color:var(--red)}
 .btn-hdr{background:transparent;border:1px solid var(--border);color:var(--ink);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s}
 .btn-hdr:hover{border-color:var(--accent);color:var(--accent)}
+.btn-hamburguer{background:transparent;border:none;color:var(--ink);font-size:22px;cursor:pointer;padding:4px 8px;line-height:1;display:flex;align-items:center}
 
-/* TABS */
-.tabs{display:flex;gap:0;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab{padding:11px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab:hover{color:var(--ink)}
+/* NAVIGATION DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer-overlay.show{opacity:1;pointer-events:all}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:280px;background:var(--surface);z-index:301;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}
+.drawer.show{transform:translateX(0)}
+.drawer-header{padding:20px 16px 14px;border-bottom:1px solid var(--border)}
+.drawer-user{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.drawer-sub{font-size:11px;color:var(--muted)}
+.drawer-pills{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.drawer-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid}
+.drawer-pill.batavo{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
+.drawer-pill.itambe{background:var(--itm-bg);border-color:var(--itm);color:var(--itm)}
+.drawer-nav{flex:1;overflow-y:auto;padding:8px 0}
+.drawer-item{display:flex;align-items:center;gap:14px;padding:13px 18px;cursor:pointer;font-size:14px;color:var(--muted);transition:all .15s;position:relative;border-left:3px solid transparent}
+.drawer-item:hover{background:var(--surface2);color:var(--ink)}
+.drawer-item.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.drawer-item-icon{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.drawer-item-label{flex:1}
+.drawer-item-badge{background:var(--red);color:#fff;border-radius:10px;font-size:10px;font-weight:700;padding:1px 7px;min-width:18px;text-align:center}
+.drawer-item-badge.green{background:var(--accent);color:var(--bg)}
+.drawer-sep{height:1px;background:var(--border);margin:6px 0}
+.drawer-footer{padding:14px 18px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between}
 
 /* CONTENT */
 .content{padding:14px;max-width:680px;margin:0 auto;padding-bottom:80px}
@@ -337,7 +345,13 @@ body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
 .toast.notif-base{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
 .toast.notif-reserva{background:var(--surface);border-color:var(--accent3);color:var(--accent3)}
 
-/* ── DIVERGÊNCIA ── */
+/* ── BLOQUEADO ── */
+.card-bloqueado-banner{padding:6px 14px;background:var(--red-bg);border-top:1px solid var(--red-soft);font-size:11px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:6px}
+.card-bloqueado-banner span{color:var(--muted);font-weight:400}
+.btn-card.desbloquear{border-color:var(--red-soft);color:var(--red)}
+.btn-card.desbloquear:active{background:var(--red-bg)}
+
+
 .btn-diverg-motivo{background:var(--surface2);border:1.5px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s}
 .btn-diverg-motivo.active{background:var(--ora-bg);border-color:var(--ora);color:var(--ora)}
 
@@ -521,22 +535,28 @@ body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
 <div id="appPrincipal" style="display:none">
 
   <div class="header">
+    <button class="btn-hamburguer" onclick="abrirDrawer()">☰</button>
     <div class="logo">📦 ESTOQUE CONTAGEM</div>
     <div class="header-right">
-      <div class="user-pill" id="userPill"></div>
-      <div class="base-pills">
-        <span class="base-pill batavo off" id="pillBatavo">🟢 BATAVO</span>
-        <span class="base-pill itambe off" id="pillItambe">🔵 ITAMBÉ</span>
-      </div>
-      <div class="db-pill"><div class="dot" id="dbDot"></div><span id="dbTxt">sem base</span></div>
       <div class="conn-pill" id="connPill">🔴 Offline</div>
-      <button class="btn-hdr" onclick="abrirTemas()">🎨</button>
-      <button class="btn-hdr" id="btnTrocarBase" onclick="irParaBaseSelect()" style="display:none">🔄 Base</button>
       <button class="btn-hdr" onclick="fazerLogout()">Sair</button>
     </div>
   </div>
 
-  <div class="tabs" id="appTabs"></div>
+  <!-- Navigation Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="fecharDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-user" id="drawerUser"></div>
+      <div class="drawer-sub" id="drawerSub"></div>
+      <div class="drawer-pills" id="drawerPills"></div>
+    </div>
+    <nav class="drawer-nav" id="drawerNav"></nav>
+    <div class="drawer-footer">
+      <span id="drawerEstoque">sem base</span>
+      <span>v6.0</span>
+    </div>
+  </div>
 
   <!-- CONSULTA -->
   <div class="content" id="tab-consulta">
@@ -873,6 +893,27 @@ body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
       <input type="file" id="divFotoCamera" accept="image/*" capture="environment" style="display:none" onchange="onFotoSelecionada(this)">
     </div>
 
+    <!-- Bloqueio -->
+    <div style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:16px;border:1.5px solid var(--border)" id="divSecBloqueio">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+        <input type="checkbox" id="divBloquearCheck" onchange="toggleBloquearSec()" style="width:16px;height:16px;accent-color:var(--red);cursor:pointer">
+        <span style="font-size:13px;font-weight:600;color:var(--ink)">🔒 Bloquear palete após registrar</span>
+      </label>
+      <div id="divBloquearMotivo" style="display:none;margin-top:10px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Motivo do bloqueio:</div>
+        <select id="divMotivoBloquear" style="width:100%;background:var(--bg);border:1.5px solid var(--accent3);border-radius:6px;padding:9px 12px;font-size:13px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;outline:none">
+          <option value="Divergência de estoque">⚠️ Divergência de estoque</option>
+          <option value="Bloqueado pela Qualidade">🔬 Bloqueado pela Qualidade</option>
+          <option value="Aguardando inspeção">📋 Aguardando inspeção</option>
+          <option value="Avaria — umidade">💧 Avaria — umidade</option>
+          <option value="Embalagem danificada">📦 Embalagem danificada</option>
+          <option value="Produto vencido">🚫 Produto vencido</option>
+          <option value="Devolução ao fornecedor">🔄 Devolução ao fornecedor</option>
+          <option value="Outro">📝 Outro</option>
+        </select>
+      </div>
+    </div>
+
     <!-- Observação -->
     <div style="margin-bottom:16px">
       <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:6px">Observação (opcional):</div>
@@ -884,6 +925,16 @@ body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
       <button class="btn btn-baixa" style="flex:1" onclick="salvarDivergencia()">💾 Só salvar</button>
       <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="fecharDiverg()">Cancelar</button>
     </div>
+  </div>
+</div>
+
+<!-- Modal seleção de aba -->
+<div class="overlay" id="modalAba" onclick="if(event.target===this)fecharModalAba()">
+  <div class="modal" style="max-width:420px">
+    <h3 style="margin-bottom:6px">📋 Selecionar Aba</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">O arquivo tem múltiplas abas. Escolha qual contém os dados de estoque:</p>
+    <div id="listaAbas" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow-y:auto;margin-bottom:16px"></div>
+    <button class="btn" style="width:100%;border-color:var(--border);color:var(--muted)" onclick="fecharModalAba()">Cancelar</button>
   </div>
 </div>
 
@@ -948,6 +999,7 @@ let bases = {
 };
 let reservasDB   = {}; // { [idx]: { nome, cracha, hora } }
 let baixadosDB   = {}; // { [idx]: true }
+let bloqueiosDB  = {}; // { [idx]: { motivo, nome, cracha, hora, ts } }
 let baixasDB     = []; // sorted array
 let usuariosDB   = {}; // { [cracha]: { nome, basePerm } }
 let logDB        = []; // sorted array of all actions
@@ -1047,6 +1099,12 @@ function initListeners() {
 
   db.ref('baixados').on('value', snap => {
     baixadosDB = snap.val() || {};
+    reconstruirIndice();
+    if (appVisivel()) { buscar(); renderReservados(); }
+  });
+
+  db.ref('bloqueios').on('value', snap => {
+    bloqueiosDB = snap.val() || {};
     reconstruirIndice();
     if (appVisivel()) { buscar(); renderReservados(); }
   });
@@ -1204,8 +1262,6 @@ function irParaApp() {
   document.getElementById('telaLogin').style.display = 'none';
   document.getElementById('telaBaseSelect').style.display = 'none';
   document.getElementById('appPrincipal').style.display = '';
-  document.getElementById('userPill').textContent = '👤 ' + usuarioLogado.nome;
-  document.getElementById('btnTrocarBase').style.display = usuarioLogado.perfil === 'comum' ? '' : 'none';
   // Tema por marca
   document.body.classList.remove('marca-batavo','marca-itambe');
   if (marcaAtiva === 'batavo') document.body.classList.add('marca-batavo');
@@ -1257,27 +1313,84 @@ function atualizarBaseSelectCards() {
   });
 }
 
-// ════ TABS ════════════════════════════════════════════════════════
-function configurarTabs() {
-  const tabsEl = document.getElementById('appTabs');
-  const isAdm  = usuarioLogado && usuarioLogado.perfil === 'adm';
-  const tabs = [
-    { id:'consulta',    label:'🔍 Consulta' },
-    { id:'vencimentos', label:'⏳ Vencimentos', badge:'badgeVenc' },
-    { id:'reservados',  label:'📋 Reservados',  badge:'badgeRes' },
-    { id:'baixas',      label:'📉 Baixas',       badge:'badgeDel' },
-    { id:'log',         label:'📋 Log',           badge:'badgeLog' },
-    { id:'chat',        label:'💬 Chat',          badge:'badgeChat' },
+// ════ DRAWER ══════════════════════════════════════════════════════
+function abrirDrawer() {
+  document.getElementById('drawer').classList.add('show');
+  document.getElementById('drawerOverlay').classList.add('show');
+  renderDrawer();
+}
+function fecharDrawer() {
+  document.getElementById('drawer').classList.remove('show');
+  document.getElementById('drawerOverlay').classList.remove('show');
+}
+
+function renderDrawer() {
+  const isAdm = usuarioLogado?.perfil === 'adm';
+
+  // Header do drawer
+  document.getElementById('drawerUser').textContent = '👤 ' + (usuarioLogado?.nome || '');
+  document.getElementById('drawerSub').textContent  = marcaAtiva === 'ambas' ? 'Acesso completo' : 'Base ' + (marcaAtiva === 'batavo' ? 'Batavo' : 'Itambé');
+
+  // Pills de base
+  const pillsEl = document.getElementById('drawerPills');
+  let pills = '';
+  if (marcaAtiva === 'ambas' || marcaAtiva === 'batavo')
+    pills += '<span class="drawer-pill batavo">🟢 BATAVO</span>';
+  if (marcaAtiva === 'ambas' || marcaAtiva === 'itambe')
+    pills += '<span class="drawer-pill itambe">🔵 ITAMBÉ</span>';
+  pillsEl.innerHTML = pills;
+
+  // Nav items
+  const naoLidasChat = Object.values(_chatNaoLidas).reduce((s,n) => s+n, 0);
+  const vencCount    = document.getElementById('badgeVenc')?.textContent || '';
+  const resCount     = document.getElementById('badgeRes')?.textContent  || '';
+
+  const items = [
+    { id:'consulta',    icon:'🔍', label:'Consulta' },
+    { id:'vencimentos', icon:'⏳', label:'Vencimentos', badge: vencCount },
+    { id:'reservados',  icon:'📋', label:'Reservados',  badge: resCount },
+    { id:'baixas',      icon:'📉', label:'Baixas' },
+    { id:'log',         icon:'📋', label:'Log' },
+    { id:'chat',        icon:'💬', label:'Chat', badge: naoLidasChat > 0 ? naoLidasChat : '' },
+    { sep: true },
   ];
   if (isAdm) {
-    tabs.push({ id:'base',  label:'📂 Base de Dados' });
-    tabs.push({ id:'admin', label:'👑 Admin' });
+    items.push({ id:'base',  icon:'📂', label:'Base de Dados' });
+    items.push({ id:'admin', icon:'👑', label:'Admin' });
+    items.push({ sep: true });
   }
-  _abasVisiveis = tabs.map(t => t.id);
-  tabsEl.innerHTML = tabs.map((t,i) =>
-    '<div class="tab' + (i===0?' active':'') + '" onclick="showTab(\'' + t.id + '\')">' +
-    t.label + (t.badge ? ' <span id="' + t.badge + '"></span>' : '') + '</div>'
-  ).join('');
+  items.push({ id:'_temas', icon:'🎨', label:'Temas' });
+  if (usuarioLogado?.perfil === 'comum') {
+    items.push({ id:'_trocarbase', icon:'🔄', label:'Trocar Base' });
+  }
+
+  const nav = document.getElementById('drawerNav');
+  nav.innerHTML = items.map(it => {
+    if (it.sep) return '<div class="drawer-sep"></div>';
+    const isActive = it.id === _tabAtual;
+    const badge    = it.badge ? '<span class="drawer-item-badge">' + it.badge + '</span>' : '';
+    return '<div class="drawer-item' + (isActive ? ' active' : '') + '" onclick="drawerNavegar(\'' + it.id + '\')">' +
+      '<span class="drawer-item-icon">' + it.icon + '</span>' +
+      '<span class="drawer-item-label">' + it.label + '</span>' +
+      badge +
+    '</div>';
+  }).join('');
+}
+
+function drawerNavegar(id) {
+  fecharDrawer();
+  if (id === '_temas')      { abrirTemas(); return; }
+  if (id === '_trocarbase') { irParaBaseSelect(); return; }
+  showTab(id);
+}
+
+// ════ TABS (mantido internamente para controle de conteúdo) ════════
+function configurarTabs() {
+  const isAdm = usuarioLogado && usuarioLogado.perfil === 'adm';
+  const tabs = ['consulta','vencimentos','reservados','baixas','log','chat'];
+  if (isAdm) { tabs.push('base'); tabs.push('admin'); }
+  _abasVisiveis = tabs;
+  // Esconde todos e mostra só consulta
   ['consulta','vencimentos','reservados','baixas','log','chat','base','admin'].forEach(id => {
     const el = document.getElementById('tab-' + id);
     if (el) el.style.display = _abasVisiveis.includes(id) ? (id==='consulta'?'':'none') : 'none';
@@ -1290,15 +1403,12 @@ function showTab(t) {
     const el = document.getElementById('tab-' + id);
     if (el) el.style.display = id === t ? '' : 'none';
   });
-  document.querySelectorAll('.tab').forEach((el, i) => {
-    el.classList.toggle('active', _abasVisiveis[i] === t);
-  });
   if (t === 'reservados')  renderReservados();
   if (t === 'baixas')      renderBaixas();
   if (t === 'consulta')    { buscar(); renderHistBusca(); }
   if (t === 'vencimentos') renderVencimentos();
   if (t === 'log')         renderLog();
-  if (t === 'chat')        { renderChatConvList(); if(_chatConvAtual) renderChat(); atualizarBadgeChat(); }
+  if (t === 'chat')        { renderChatConvList(); if(_chatConvAtual) renderChat(); _chatNaoLidas = {}; atualizarBadgeChat(); }
   if (t === 'admin')       { renderUsuarios(); renderResumoBaixas(); renderLoginAttempts(); }
 }
 
@@ -1379,59 +1489,108 @@ function retirarBase() {
   });
 }
 
+let _wbCache = null;      // workbook em memória aguardando seleção de aba
+let _wbMarca = null;      // marca aguardando seleção de aba
+let _wbFile  = null;      // nome do arquivo
+
 function processarArquivo(file, marca) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function(ev) {
     try {
       const wb = XLSX.read(ev.target.result, { type:'array', cellDates:false, raw:false, cellFormula:false, dateNF:'dd/mm/yyyy' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws, { defval:'', raw:false });
-      if (!rows.length) { toast('⚠️ Arquivo vazio'); return; }
-      const primeiraLinha = {};
-      Object.keys(rows[0]).forEach(k => {
-        const chave = k.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '') || 'col0';
-        primeiraLinha[chave] = rows[0][k];
-      });
-      const mapa = detectarMapa(Object.keys(primeiraLinha));
-      if (!mapa.codigo) { toast('⚠️ Coluna de código não encontrada'); return; }
 
-      // Sanitiza os valores do mapa para bater com as chaves dos dados
-      const sanitize = s => s ? s.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g,'_').replace(/^_|_$/g,'') : '';
-      const mapaSanitizado = {};
-      Object.entries(mapa).forEach(([k,v]) => { mapaSanitizado[k] = sanitize(v); });
-      const dados = rows.map((r, i) => {
-        const limpo = { _idx: marca + '_' + i };
-        Object.entries(r).forEach(([k,v]) => {
-          // Sanitiza chave: remove caracteres inválidos para Firebase
-          const chave = k.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '') || 'col' + i;
-          limpo[chave] = (typeof v==='string' && v.startsWith('=')) ? '' : v;
-        });
-        return limpo;
-      });
-      toast('⏳ Salvando no servidor...');
-      // Clear old reservas/baixados for this marca first
-      const upd = {};
-      Object.keys(reservasDB).forEach(idx => { if (idx.startsWith(marca + '_')) upd['reservas/' + idx] = null; });
-      Object.keys(baixadosDB).forEach(idx => { if (idx.startsWith(marca + '_')) upd['baixados/' + idx] = null; });
-      if (Object.keys(upd).length) db.ref().update(upd);
+      // Se tem mais de 1 aba, mostra seletor
+      if (wb.SheetNames.length > 1) {
+        _wbCache = wb;
+        _wbMarca = marca;
+        _wbFile  = file.name;
+        abrirModalAba(wb);
+        return;
+      }
 
-      db.ref('bases/' + marca).set({
-        carregada: true,
-        arquivo: file.name,
-        mapa: mapaSanitizado,
-        dados,
-        carregadoPor: usuarioLogado ? usuarioLogado.nome : 'ADM',
-        carregadoEm: Date.now()
-      }).then(() => {
-        const cap = marca === 'batavo' ? 'Batavo' : 'Itambé';
-        toast('✓ ' + dados.length + ' registros ' + cap + ' carregados');
-        registrarLog('base', { marca, arquivo: file.name, total: dados.length });
-        showTab('consulta');
-      }).catch(e => toast('Erro ao salvar: ' + e.message));
+      // Arquivo com aba única — processa direto
+      processarSheet(wb, wb.SheetNames[0], marca, file.name);
     } catch(err) { toast('Erro: ' + err.message); }
   };
   reader.readAsArrayBuffer(file);
+}
+
+function abrirModalAba(wb) {
+  const lista = document.getElementById('listaAbas');
+  lista.innerHTML = wb.SheetNames.map((nome, i) => {
+    const ws   = wb.Sheets[nome];
+    const rows = XLSX.utils.sheet_to_json(ws, { defval:'', raw:false, header:1 });
+    // Pega os headers da primeira linha não vazia
+    const headerRow = rows.find(r => r.some(c => c && String(c).trim()));
+    const headers   = headerRow ? headerRow.filter(c => c).slice(0, 5).join(', ') : '(sem colunas visíveis)';
+    const nLinhas   = rows.length > 1 ? rows.length - 1 + ' linhas' : '(vazia)';
+    return '<div onclick="selecionarAba(\'' + nome.replace(/'/g,"\\'") + '\')" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor=\'var(--accent)\'" onmouseout="this.style.borderColor=\'var(--border)\'">' +
+      '<div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px">📋 ' + nome + '</div>' +
+      '<div style="font-size:11px;color:var(--muted)">' + nLinhas + ' · ' + headers + '</div>' +
+    '</div>';
+  }).join('');
+  document.getElementById('modalAba').classList.add('show');
+}
+
+function fecharModalAba() {
+  document.getElementById('modalAba').classList.remove('show');
+  _wbCache = _wbMarca = _wbFile = null;
+}
+
+function selecionarAba(nomeAba) {
+  if (!_wbCache || !_wbMarca) return;
+  fecharModalAba();
+  processarSheet(_wbCache, nomeAba, _wbMarca, _wbFile);
+}
+
+function processarSheet(wb, nomAba, marca, nomeArquivo) {
+  try {
+    const ws   = wb.Sheets[nomAba];
+    const rows = XLSX.utils.sheet_to_json(ws, { defval:'', raw:false });
+    if (!rows.length) { toast('⚠️ Aba "' + nomAba + '" está vazia'); return; }
+
+    const primeiraLinha = {};
+    Object.keys(rows[0]).forEach(k => {
+      const chave = k.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '') || 'col0';
+      primeiraLinha[chave] = rows[0][k];
+    });
+    const mapa = detectarMapa(Object.keys(primeiraLinha));
+    if (!mapa.codigo) { toast('⚠️ Coluna de código não encontrada na aba "' + nomAba + '"'); return; }
+
+    const sanitize = s => s ? s.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g,'_').replace(/^_|_$/g,'') : '';
+    const mapaSanitizado = {};
+    Object.entries(mapa).forEach(([k,v]) => { mapaSanitizado[k] = sanitize(v); });
+
+    const dados = rows.map((r, i) => {
+      const limpo = { _idx: marca + '_' + i };
+      Object.entries(r).forEach(([k,v]) => {
+        const chave = k.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '') || 'col' + i;
+        limpo[chave] = (typeof v==='string' && v.startsWith('=')) ? '' : v;
+      });
+      return limpo;
+    });
+
+    toast('⏳ Salvando no servidor...');
+    const upd = {};
+    Object.keys(reservasDB).forEach(idx => { if (idx.startsWith(marca + '_')) upd['reservas/' + idx] = null; });
+    Object.keys(baixadosDB).forEach(idx => { if (idx.startsWith(marca + '_')) upd['baixados/' + idx] = null; });
+    if (Object.keys(upd).length) db.ref().update(upd);
+
+    db.ref('bases/' + marca).set({
+      carregada: true,
+      arquivo: nomeArquivo + (nomAba ? ' [' + nomAba + ']' : ''),
+      mapa: mapaSanitizado,
+      dados,
+      carregadoPor: usuarioLogado ? usuarioLogado.nome : 'ADM',
+      carregadoEm: Date.now()
+    }).then(() => {
+      const cap = marca === 'batavo' ? 'Batavo' : 'Itambé';
+      toast('✓ ' + dados.length + ' registros ' + cap + ' carregados · Aba: ' + nomAba);
+      registrarLog('base', { marca, arquivo: nomeArquivo, total: dados.length });
+      showTab('consulta');
+    }).catch(e => toast('Erro ao salvar: ' + e.message));
+  } catch(err) { toast('Erro: ' + err.message); }
 }
 
 function atualizarCardsBase() {
@@ -1484,15 +1643,17 @@ function reconstruirIndice() {
       if (!idx) return;
       if (reservasDB[idx]) return;
       if (baixadosDB[idx]) return;
-      const valTs = parseData(r[b.mapa.dtVal]);
-      const diasVal = valTs === Infinity ? null : Math.ceil((valTs - hoje) / 86400000);
+      const valTs    = parseData(r[b.mapa.dtVal]);
+      const diasVal  = valTs === Infinity ? null : Math.ceil((valTs - hoje) / 86400000);
+      const bloqueio = bloqueiosDB[idx] || null;
       _indice.push({
         _ref: r, _marca: m,
-        _cod:  String(r[b.mapa.codigo]    ?? '').toLowerCase(),
-        _desc: String(r[b.mapa.descricao] ?? '').toLowerCase(),
-        _end:  String(r[b.mapa.endereco]  ?? ''),
-        _fab:  parseData(r[b.mapa.dtFab]),
-        _diasVal: diasVal,
+        _cod:      String(r[b.mapa.codigo]    ?? '').toLowerCase(),
+        _desc:     String(r[b.mapa.descricao] ?? '').toLowerCase(),
+        _end:      String(r[b.mapa.endereco]  ?? ''),
+        _fab:      parseData(r[b.mapa.dtFab]),
+        _diasVal:  diasVal,
+        _bloqueio: bloqueio,
         cod:  r[b.mapa.codigo]    ?? '—',
         desc: r[b.mapa.descricao] ?? '—',
         cx:   r[b.mapa.caixas]    ?? '',
@@ -1514,19 +1675,18 @@ function atualizarStatus() {
     return idx.startsWith(marcaAtiva + '_');
   }).length;
   const ok = total > 0 || resCount > 0;
-  const dbDot = document.getElementById('dbDot');
-  const dbTxt = document.getElementById('dbTxt');
-  const noDB  = document.getElementById('noDB');
-  if (dbDot) dbDot.className = 'dot' + (ok ? ' on' : '');
-  if (dbTxt) dbTxt.textContent = ok ? total + ' em estoque' : 'sem base';
-  if (noDB)  noDB.style.display = ok ? 'none' : '';
-  const badgeRes = document.getElementById('badgeRes');
-  if (badgeRes) badgeRes.textContent = resCount > 0 ? ' (' + resCount + ')' : '';
+  const noDB = document.getElementById('noDB');
+  if (noDB) noDB.style.display = ok ? 'none' : '';
+
+  // Atualiza rodapé do drawer
+  const drawerEstoque = document.getElementById('drawerEstoque');
+  if (drawerEstoque) drawerEstoque.textContent = ok ? total + ' em estoque' : 'sem base';
+
+  // Badges guardados em variáveis para o drawer ler
   const vCount = _indice.filter(e => e._diasVal !== null && e._diasVal <= 30).length;
-  const badgeVenc = document.getElementById('badgeVenc');
-  if (badgeVenc) badgeVenc.textContent = vCount > 0 ? ' (' + vCount + ')' : '';
-  document.getElementById('pillBatavo')?.classList.toggle('off', !bases.batavo.carregada);
-  document.getElementById('pillItambe')?.classList.toggle('off', !bases.itambe.carregada);
+  // Atualiza drawer se estiver aberto
+  if (document.getElementById('drawer')?.classList.contains('show')) renderDrawer();
+
   atualizarCardsBase();
 }
 
@@ -1796,6 +1956,7 @@ function limparTudo() {
         'contagens':     null,
         'loginAttempts': null,
         'divergencias':  null,
+        'bloqueios':     null,
       }).then(() => {
         try { localStorage.removeItem(CACHE_KEY); } catch(e) {}
         toast('✓ Dia resetado com sucesso!');
@@ -1930,11 +2091,13 @@ function renderLog() {
   if (vazio) vazio.style.display = 'none';
 
   const acaoConfig = {
-    reserva:    { icon:'📋', label:'Reservou',          cls:'reserva' },
-    baixa:      { icon:'✓',  label:'Deu baixa em',      cls:'baixa' },
-    devolucao:  { icon:'↩',  label:'Devolveu',           cls:'devolucao' },
-    base:       { icon:'📂', label:'Carregou base',      cls:'base' },
-    divergencia:{ icon:'⚠️', label:'Divergência em',    cls:'devolucao' },
+    reserva:     { icon:'📋', label:'Reservou',          cls:'reserva' },
+    baixa:       { icon:'✓',  label:'Deu baixa em',      cls:'baixa' },
+    devolucao:   { icon:'↩',  label:'Devolveu',           cls:'devolucao' },
+    base:        { icon:'📂', label:'Carregou base',      cls:'base' },
+    divergencia: { icon:'⚠️', label:'Divergência em',    cls:'devolucao' },
+    bloqueio:    { icon:'🔒', label:'Bloqueou',           cls:'baixa' },
+    desbloqueio: { icon:'🔓', label:'Desbloqueou',        cls:'reserva' },
   };
 
   lista.innerHTML = '<div class="timeline">' + items.map((e, i) => {
@@ -2069,14 +2232,14 @@ function getValStatus(dias, apenasUrgente = false) {
 }
 
 function cardHTMLFast(e) {
-  const marca = e._marca;
-  const idx   = e._ref._idx;
-  const isPicking = /\s10$/.test(e._end.trim());
-  const cc   = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
-  const bl   = marca === 'batavo' ? 'BATAVO' : 'ITAMBÉ';
+  const marca       = e._marca;
+  const idx         = e._ref._idx;
+  const isPicking   = /\s10$/.test(e._end.trim());
+  const isBloqueado = !!e._bloqueio;
+  const cc  = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
+  const bl  = marca === 'batavo' ? 'BATAVO' : 'ITAMBÉ';
   const { valClass, valBadge, valTagClass } = getValStatus(e._diasVal, true);
 
-  // Linha de meta-dados
   let metaItems = [];
   if (e.cx)          metaItems.push('<span class="cx">📦 <b>' + e.cx + '</b> cx</span>');
   if (e.end)         metaItems.push('<span class="end">📍 ' + e.end + '</span>');
@@ -2086,17 +2249,32 @@ function cardHTMLFast(e) {
     metaItems.push('<span class="' + urgCls + '">Val <b>' + e.val + '</b>' + (valBadge ? '  ' + valBadge : '') + '</span>');
   }
 
-  // Botões lado esquerdo
-  const acoesEsq = isPicking
-    ? '<span class="picking-label">PICKING</span>'
+  const bannerBloqueio = isBloqueado
+    ? '<div class="card-bloqueado-banner">🔒 BLOQUEADO · ' + (e._bloqueio.motivo || '') +
+      ' <span>· ' + (e._bloqueio.nome || '') + ' · ' + (e._bloqueio.hora || '') + '</span></div>'
     : '';
 
-  // Botões lado direito
-  const acoesDireita = isPicking
-    ? '<button class="btn-card" onclick="darBaixaPicking(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--red)">✓</span> Baixa</button>' +
-      '<button class="btn-card" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--ora)">⚠</span> Diverg.</button>'
-    : '<button class="btn-card reservar" onclick="reservarItem(\'' + idx + '\',\'' + marca + '\')">Reservar</button>' +
+  let acoesEsq = '';
+  if (isBloqueado) {
+    acoesEsq = '<span class="picking-label" style="background:var(--red-bg);border-color:var(--red-soft);color:var(--red)">🔒 BLOQUEADO</span>';
+  } else if (isPicking) {
+    acoesEsq = '<span class="picking-label">PICKING</span>';
+  }
+
+  let acoesDireita = '';
+  if (isBloqueado) {
+    acoesDireita =
+      '<button class="btn-card desbloquear" onclick="desbloquearItem(\'' + idx + '\')">🔓 Desbloquear</button>' +
       '<button class="btn-card" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--ora)">⚠</span> Diverg.</button>';
+  } else if (isPicking) {
+    acoesDireita =
+      '<button class="btn-card" onclick="darBaixaPicking(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--red)">✓</span> Baixa</button>' +
+      '<button class="btn-card" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--ora)">⚠</span> Diverg.</button>';
+  } else {
+    acoesDireita =
+      '<button class="btn-card reservar" onclick="reservarItem(\'' + idx + '\',\'' + marca + '\')">Reservar</button>' +
+      '<button class="btn-card" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--ora)">⚠</span> Diverg.</button>';
+  }
 
   return '<div class="card ' + valClass + '">' +
     '<div class="card-head">' +
@@ -2109,6 +2287,7 @@ function cardHTMLFast(e) {
       '</div>' +
     '</div>' +
     (metaItems.length ? '<div class="card-meta">' + metaItems.join('') + '</div>' : '') +
+    bannerBloqueio +
     '<div class="card-actions">' +
       acoesEsq +
       '<div class="card-actions-right">' + acoesDireita + '</div>' +
@@ -2402,16 +2581,10 @@ function renderChat() {
 }
 
 function atualizarBadgeChat() {
-  const el = document.getElementById('badgeChat');
-  if (!el) return;
   const total = Object.values(_chatNaoLidas).reduce((s, n) => s + n, 0);
-
-  // Badge numérico dentro da aba
-  el.innerHTML = total > 0
-    ? '<span class="tab-notif-dot"></span>'
-    : '';
-
-  // Título da página pisca quando há mensagens não lidas e o usuário está em outra aba
+  // Atualiza drawer se estiver aberto
+  if (document.getElementById('drawer')?.classList.contains('show')) renderDrawer();
+  // Título pisca quando mensagens não lidas e fora da aba
   if (total > 0 && document.hidden) {
     if (!_chatTitleInterval) {
       const orig = document.title;
@@ -2600,6 +2773,49 @@ function darBaixaPicking(idx, marca) {
   });
 }
 
+// ════ BLOQUEIO DE PALETE ════════════════════════════════════════
+function toggleBloquearSec() {
+  const checked = document.getElementById('divBloquearCheck').checked;
+  document.getElementById('divBloquearMotivo').style.display = checked ? '' : 'none';
+  // Auto-seleciona o motivo baseado na divergência escolhida
+  if (checked) {
+    const motivoDiv = _divergMotivo;
+    const sel = document.getElementById('divMotivoBloquear');
+    if (motivoDiv === 'etiqueta') sel.value = 'Divergência de estoque';
+    else if (motivoDiv === 'qtd' || motivoDiv === 'ambos') sel.value = 'Divergência de estoque';
+    else if (motivoDiv === 'data') sel.value = 'Divergência de estoque';
+  }
+}
+
+function bloquearItem(idx, motivo) {
+  const entry = {
+    motivo,
+    nome:   usuarioLogado.nome,
+    cracha: usuarioLogado.cracha,
+    hora:   new Date().toLocaleString('pt-BR'),
+    ts:     Date.now()
+  };
+  db.ref('bloqueios/' + idx).set(entry).then(() => {
+    registrarLog('bloqueio', {
+      marca:   idx.startsWith('batavo') ? 'batavo' : 'itambe',
+      idx,
+      motivo
+    });
+  }).catch(e => toast('Erro ao bloquear: ' + e.message));
+}
+
+function desbloquearItem(idx) {
+  confirmar('Desbloquear palete?', 'O produto voltará a ficar disponível para reserva.', () => {
+    db.ref('bloqueios/' + idx).remove().then(() => {
+      toast('✓ Palete desbloqueado');
+      registrarLog('desbloqueio', {
+        marca: idx.startsWith('batavo') ? 'batavo' : 'itambe',
+        idx
+      });
+    }).catch(e => toast('Erro: ' + e.message));
+  });
+}
+
 // ════ DIVERGÊNCIA ════════════════════════════════════════════════
 function abrirDivergencia(idx, marca) {
   _divergIdx    = idx;
@@ -2628,6 +2844,8 @@ function abrirDivergencia(idx, marca) {
   document.getElementById('divObs').value = '';
   document.getElementById('divFotoPreview').style.display = 'none';
   document.getElementById('btnRemoverFoto').style.display = 'none';
+  document.getElementById('divBloquearCheck').checked = false;
+  document.getElementById('divBloquearMotivo').style.display = 'none';
 
   setMotivoDiv('qtd');
   document.getElementById('modalDiverg').classList.add('show');
@@ -2803,28 +3021,35 @@ async function _salvarDivergenciaDB() {
   if (!item) return;
 
   const entry = {
-    idx:      _divergIdx,
-    marca:    _divergMarca,
-    motivo:   _divergMotivo,
-    codigo:   item[b.mapa.codigo]    ?? '—',
-    descricao:item[b.mapa.descricao] ?? '—',
-    endereco: item[b.mapa.endereco]  ?? '—',
-    qtdSis:   document.getElementById('divQtdSis').value   || null,
-    qtdReal:  document.getElementById('divQtdReal').value  || null,
-    dataSis:  document.getElementById('divDataSis').value  || null,
-    dataReal: document.getElementById('divDataReal').value || null,
-    etiqSis:  document.getElementById('divEtiqSis').value  || null,
-    etiqReal: document.getElementById('divEtiqReal').value || null,
-    obs:      document.getElementById('divObs').value.trim() || null,
-    foto:     _divergFotoB64 || null,
-    nome:     usuarioLogado.nome,
-    cracha:   usuarioLogado.cracha,
-    hora:     new Date().toLocaleString('pt-BR'),
-    ts:       Date.now(),
+    idx:       _divergIdx,
+    marca:     _divergMarca,
+    motivo:    _divergMotivo,
+    codigo:    item[b.mapa.codigo]    ?? '—',
+    descricao: item[b.mapa.descricao] ?? '—',
+    endereco:  item[b.mapa.endereco]  ?? '—',
+    qtdSis:    document.getElementById('divQtdSis').value   || null,
+    qtdReal:   document.getElementById('divQtdReal').value  || null,
+    dataSis:   document.getElementById('divDataSis').value  || null,
+    dataReal:  document.getElementById('divDataReal').value || null,
+    etiqSis:   document.getElementById('divEtiqSis').value  || null,
+    etiqReal:  document.getElementById('divEtiqReal').value || null,
+    obs:       document.getElementById('divObs').value.trim() || null,
+    foto:      _divergFotoB64 || null,
+    nome:      usuarioLogado.nome,
+    cracha:    usuarioLogado.cracha,
+    hora:      new Date().toLocaleString('pt-BR'),
+    ts:        Date.now(),
   };
   try {
     await db.ref('divergencias').push(entry);
     registrarLog('divergencia', { marca: _divergMarca, codigo: entry.codigo, descricao: entry.descricao, endereco: entry.endereco });
+
+    // Bloqueia se checkbox marcado
+    const bloquear = document.getElementById('divBloquearCheck').checked;
+    if (bloquear) {
+      const motivo = document.getElementById('divMotivoBloquear').value;
+      bloquearItem(_divergIdx, motivo);
+    }
   } catch(e) { toast('Erro ao salvar: ' + e.message); }
 }
 
