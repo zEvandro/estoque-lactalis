@@ -322,13 +322,6 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink
   .chat-main{width:100%}
 }
 
-/* ── HISTÓRICO DE BUSCA ── */
-.hist-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.hist-chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--muted);cursor:pointer;font-family:'IBM Plex Mono',monospace;transition:all .15s;display:flex;align-items:center;gap:5px}
-.hist-chip:hover{border-color:var(--accent);color:var(--accent)}
-.hist-chip-x{font-size:10px;opacity:.5;padding:0 1px}
-.hist-chip-x:hover{opacity:1;color:var(--red)}
-
 /* ── CONTAGEM PARCIAL ── */
 .btn-contagem{border-color:var(--accent3);color:var(--accent3);background:var(--accent3-light)}
 
@@ -571,10 +564,9 @@ body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
         <input id="searchInput" type="text" placeholder="Código, descrição ou endereço (ex: A 001)…" oninput="debounceBuscar()" onkeydown="if(event.key==='Escape'){this.value='';buscar();}" autocomplete="off">
         <span class="search-icon">⌕</span>
       </div>
-      <div id="histBuscaWrap" class="hist-wrap" style="display:none"></div>
       <div class="filtro-wrap">
         <button class="btn-filtro active" id="filtroTodos" onclick="setFiltro('todos')">Todos</button>
-        <button class="btn-filtro" id="filtroReserva" onclick="setFiltro('reserva')">📋 Reserva</button>
+        <button class="btn-filtro" id="filtroReserva" onclick="setFiltro('reserva')">📦 Aéreo</button>
         <button class="btn-filtro" id="filtroPicking" onclick="setFiltro('picking')">🔴 Picking</button>
       </div>
       <div class="stats" id="statsBar"></div>
@@ -1013,7 +1005,7 @@ let _chatNaoLidas = {};     // { [canal]: count }
 let _chatUltimaLeitura = {}; // { [canal]: timestamp }
 let _chatTitleInterval = null; // intervalo para piscar o título
 let _tabAtual    = 'consulta';
-let _histBusca   = [];  // últimos 10 termos buscados
+
 let _filtroVencCustom = false;
 let _divergIdx   = null;
 let _divergMarca = null;
@@ -1240,7 +1232,7 @@ function fazerLogout() {
   _chatNaoLidas = {};
   _chatConvAtual = null;
   _chatUltimaLeitura = {};
-  _histBusca = [];
+
 }
 
 // ════ NAVEGAÇÃO ════════════════════════════════════════════════════
@@ -1405,7 +1397,7 @@ function showTab(t) {
   });
   if (t === 'reservados')  renderReservados();
   if (t === 'baixas')      renderBaixas();
-  if (t === 'consulta')    { buscar(); renderHistBusca(); }
+  if (t === 'consulta')    { buscar(); }
   if (t === 'vencimentos') renderVencimentos();
   if (t === 'log')         renderLog();
   if (t === 'chat')        { renderChatConvList(); if(_chatConvAtual) renderChat(); _chatNaoLidas = {}; atualizarBadgeChat(); }
@@ -2608,47 +2600,12 @@ function escapeHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ════ HISTÓRICO DE BUSCA ══════════════════════════════════════════
-function salvarHistBusca(q) {
-  if (!q || q.length < 2) return;
-  _histBusca = [q, ..._histBusca.filter(h => h !== q)].slice(0, 10);
-  renderHistBusca();
-}
-
-function renderHistBusca() {
-  const wrap = document.getElementById('histBuscaWrap');
-  if (!wrap) return;
-  if (!_histBusca.length) { wrap.style.display = 'none'; return; }
-  wrap.style.display = 'flex';
-  wrap.innerHTML = '<span style="font-size:10px;color:var(--muted);align-self:center;margin-right:2px">🕐</span>' +
-    _histBusca.map((h, i) =>
-      '<div class="hist-chip" onclick="usarHistBusca(\'' + escapeHtml(h) + '\')">' +
-        escapeHtml(h) +
-        '<span class="hist-chip-x" onclick="event.stopPropagation();removerHistBusca(' + i + ')">✕</span>' +
-      '</div>'
-    ).join('');
-}
-
-function usarHistBusca(q) {
-  const inp = document.getElementById('searchInput');
-  if (inp) { inp.value = q; buscar(); }
-}
-
-function removerHistBusca(i) {
-  _histBusca.splice(i, 1);
-  renderHistBusca();
-}
-
-// Integra histórico com buscar: salva quando usuário para de digitar com resultado
-const _buscarOriginal = window.debounceBuscar;
+// ════ DEBOUNCE BUSCA ══════════════════════════════════════════════
 function debounceBuscar() {
   clearTimeout(_buscarTimer);
   const q = document.getElementById('searchInput')?.value.trim() ?? '';
   if (q.length === 0) { buscar(); return; }
-  _buscarTimer = setTimeout(() => {
-    buscar();
-    if (q.length >= 2) salvarHistBusca(q);
-  }, 180);
+  _buscarTimer = setTimeout(buscar, 180);
 }
 
 // ════ CONTAGEM PARCIAL ════════════════════════════════════════════
