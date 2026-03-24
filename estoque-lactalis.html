@@ -326,8 +326,57 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink
 .btn-contagem{border-color:var(--accent3);color:var(--accent3);background:var(--accent3-light)}
 
 /* ── TEMA POR MARCA (sobrescreve --accent quando marcaAtiva é definida) ── */
-body.marca-batavo{--accent:var(--bat);--accent-light:var(--bat-bg)}
-body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
+/* ── TEMA CÂMARA BATAVO — fundo azul clarinho, fontes azul escuro ── */
+body.marca-batavo{
+  --bg:#f0f5ff;
+  --surface:#eaf2ff;
+  --surface2:#ddeaff;
+  --border:#c8d8f0;
+  --ink:#003f8a;
+  --muted:#5580aa;
+  --accent:#003f8a;
+  --accent-light:#d0e4ff;
+  --accent3:#0055bb;
+  --accent3-light:#d0e4ff;
+  --bat:#003f8a;--bat-bg:#d0e4ff;--bat-border:#003f8a;
+  --itm:#2255aa;--itm-bg:#ddeaff;--itm-border:#2255aa;
+  --red:#cc2200;--red-bg:#fde8e4;--red-soft:rgba(204,34,0,.2);
+  --card-venc-bg:#fff0ee;--card-venc-border:#cc2200;
+  --ora:#bb4400;--ora-bg:#fff0e0;--ora-soft:rgba(187,68,0,.2);
+  --card-crit-bg:#fff8f0;--card-crit-border:#bb4400;
+  --yel:#886600;--yel-bg:#fffbe0;--yel-soft:rgba(136,102,0,.2);
+  --card-ate-bg:#fffff0;--card-ate-border:#886600;
+  --baixa:#003f8a;--baixa-bg:#d0e4ff;--baixa-border:#003f8a;
+  --pick:#cc2200;--pick-bg:#fde8e4;--pick-border:rgba(204,34,0,.3);
+  --shadow:0 1px 4px rgba(0,63,138,.1);
+  --radius:10px;
+}
+
+/* ── TEMA CÂMARA ITAMBÉ — fundo azul escuro, fontes azul claro ── */
+body.marca-itambe{
+  --bg:#003f8a;
+  --surface:#002d66;
+  --surface2:#004aaa;
+  --border:rgba(200,216,240,.25);
+  --ink:#d0e4ff;
+  --muted:#7a9cc0;
+  --accent:#c8d8f0;
+  --accent-light:rgba(200,216,240,.2);
+  --accent3:#a8c8f0;
+  --accent3-light:rgba(168,200,240,.15);
+  --bat:#c8d8f0;--bat-bg:rgba(200,216,240,.15);--bat-border:rgba(200,216,240,.4);
+  --itm:#d0e4ff;--itm-bg:rgba(200,216,240,.2);--itm-border:rgba(200,216,240,.5);
+  --red:#ff7a6a;--red-bg:rgba(255,80,60,.15);--red-soft:rgba(255,80,60,.3);
+  --card-venc-bg:rgba(255,80,60,.1);--card-venc-border:#ff7a6a;
+  --ora:#ffaa70;--ora-bg:rgba(255,150,80,.12);--ora-soft:rgba(255,150,80,.3);
+  --card-crit-bg:rgba(255,150,80,.08);--card-crit-border:#ffaa70;
+  --yel:#ffd080;--yel-bg:rgba(255,200,80,.12);--yel-soft:rgba(255,200,80,.3);
+  --card-ate-bg:rgba(255,200,80,.08);--card-ate-border:#ffd080;
+  --baixa:#a8c8f0;--baixa-bg:rgba(168,200,240,.15);--baixa-border:rgba(168,200,240,.4);
+  --pick:#ff7a6a;--pick-bg:rgba(255,80,60,.15);--pick-border:rgba(255,80,60,.3);
+  --shadow:0 1px 4px rgba(0,0,0,.3);
+  --radius:10px;
+}
 
 /* ── LOGIN ATTEMPTS ── */
 .attempt-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-radius:8px;margin-bottom:6px;font-size:12px}
@@ -339,8 +388,30 @@ body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
 .toast.notif-reserva{background:var(--surface);border-color:var(--accent3);color:var(--accent3)}
 
 /* ── BLOQUEADO ── */
-.card-bloqueado-banner{padding:6px 14px;background:var(--red-bg);border-top:1px solid var(--red-soft);font-size:11px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:6px}
-.card-bloqueado-banner span{color:var(--muted);font-weight:400}
+.card.bloqueado{
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 8px,
+    rgba(229,57,53,.06) 8px,
+    rgba(229,57,53,.06) 16px
+  );
+  border-color:var(--red) !important;
+}
+.card-bloqueado-placa{
+  margin:0 14px 10px;
+  border:2px dashed var(--red);
+  border-radius:6px;
+  background:var(--red-bg);
+  padding:8px 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.card-bloqueado-placa-icon{font-size:20px;flex-shrink:0}
+.card-bloqueado-placa-info{flex:1;min-width:0}
+.card-bloqueado-placa-titulo{font-size:12px;font-weight:700;color:var(--red);letter-spacing:.06em;text-transform:uppercase}
+.card-bloqueado-placa-detalhe{font-size:11px;color:var(--muted);margin-top:2px}
 .btn-card.desbloquear{border-color:var(--red-soft);color:var(--red)}
 .btn-card.desbloquear:active{background:var(--red-bg)}
 
@@ -529,7 +600,10 @@ body.marca-itambe{--accent:var(--itm);--accent-light:var(--itm-bg)}
 
   <div class="header">
     <button class="btn-hamburguer" onclick="abrirDrawer()">☰</button>
-    <div class="logo">📦 ESTOQUE CONTAGEM</div>
+    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+      <img id="headerLogo" src="" alt="" style="width:32px;height:32px;border-radius:8px;object-fit:cover;display:none;flex-shrink:0">
+      <div class="logo" id="headerTitulo">📦 ESTOQUE CONTAGEM</div>
+    </div>
     <div class="header-right">
       <div class="conn-pill" id="connPill">🔴 Offline</div>
       <button class="btn-hdr" onclick="fazerLogout()">Sair</button>
@@ -1222,6 +1296,10 @@ function fazerLogout() {
   marcaAtiva = '';
   limparSessao();
   document.body.classList.remove('marca-batavo','marca-itambe');
+  const logoEl = document.getElementById('headerLogo');
+  const tituloEl = document.getElementById('headerTitulo');
+  if (logoEl) { logoEl.src = ''; logoEl.style.display = 'none'; }
+  if (tituloEl) tituloEl.textContent = '📦 ESTOQUE CONTAGEM';
   document.getElementById('appPrincipal').style.display = 'none';
   document.getElementById('telaBaseSelect').style.display = 'none';
   document.getElementById('telaLogin').style.display = '';
@@ -1232,7 +1310,6 @@ function fazerLogout() {
   _chatNaoLidas = {};
   _chatConvAtual = null;
   _chatUltimaLeitura = {};
-
 }
 
 // ════ NAVEGAÇÃO ════════════════════════════════════════════════════
@@ -1256,8 +1333,20 @@ function irParaApp() {
   document.getElementById('appPrincipal').style.display = '';
   // Tema por marca
   document.body.classList.remove('marca-batavo','marca-itambe');
-  if (marcaAtiva === 'batavo') document.body.classList.add('marca-batavo');
-  if (marcaAtiva === 'itambe') document.body.classList.add('marca-itambe');
+  const logoEl  = document.getElementById('headerLogo');
+  const tituloEl = document.getElementById('headerTitulo');
+  if (marcaAtiva === 'batavo') {
+    document.body.classList.add('marca-batavo');
+    if (logoEl)  { logoEl.src = './batavo.png'; logoEl.style.display = ''; }
+    if (tituloEl) tituloEl.textContent = 'CÂMARA BATAVO';
+  } else if (marcaAtiva === 'itambe') {
+    document.body.classList.add('marca-itambe');
+    if (logoEl)  { logoEl.src = './itambe.png'; logoEl.style.display = ''; }
+    if (tituloEl) tituloEl.textContent = 'CÂMARA ITAMBÉ';
+  } else {
+    if (logoEl)  { logoEl.src = ''; logoEl.style.display = 'none'; }
+    if (tituloEl) tituloEl.textContent = '📦 ESTOQUE CONTAGEM';
+  }
   configurarTabs();
   reconstruirIndice();
   atualizarStatus();
@@ -2241,15 +2330,22 @@ function cardHTMLFast(e) {
     metaItems.push('<span class="' + urgCls + '">Val <b>' + e.val + '</b>' + (valBadge ? '  ' + valBadge : '') + '</span>');
   }
 
-  const bannerBloqueio = isBloqueado
-    ? '<div class="card-bloqueado-banner">🔒 BLOQUEADO · ' + (e._bloqueio.motivo || '') +
-      ' <span>· ' + (e._bloqueio.nome || '') + ' · ' + (e._bloqueio.hora || '') + '</span></div>'
+  const placaBloqueio = isBloqueado
+    ? '<div class="card-bloqueado-placa">' +
+        '<div class="card-bloqueado-placa-icon">🚫</div>' +
+        '<div class="card-bloqueado-placa-info">' +
+          '<div class="card-bloqueado-placa-titulo">Bloqueado</div>' +
+          '<div class="card-bloqueado-placa-detalhe">' +
+            (e._bloqueio.motivo || '') + ' · ' +
+            (e._bloqueio.nome   || '') + ' · ' +
+            (e._bloqueio.hora   || '') +
+          '</div>' +
+        '</div>' +
+      '</div>'
     : '';
 
   let acoesEsq = '';
-  if (isBloqueado) {
-    acoesEsq = '<span class="picking-label" style="background:var(--red-bg);border-color:var(--red-soft);color:var(--red)">🔒 BLOQUEADO</span>';
-  } else if (isPicking) {
+  if (isPicking && !isBloqueado) {
     acoesEsq = '<span class="picking-label">PICKING</span>';
   }
 
@@ -2268,7 +2364,7 @@ function cardHTMLFast(e) {
       '<button class="btn-card" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--ora)">⚠</span> Diverg.</button>';
   }
 
-  return '<div class="card ' + valClass + '">' +
+  return '<div class="card ' + valClass + (isBloqueado ? ' bloqueado' : '') + '">' +
     '<div class="card-head">' +
       '<div>' +
         '<div class="card-code" style="color:' + cc + '">' + e.cod + '</div>' +
@@ -2279,7 +2375,7 @@ function cardHTMLFast(e) {
       '</div>' +
     '</div>' +
     (metaItems.length ? '<div class="card-meta">' + metaItems.join('') + '</div>' : '') +
-    bannerBloqueio +
+    placaBloqueio +
     '<div class="card-actions">' +
       acoesEsq +
       '<div class="card-actions-right">' + acoesDireita + '</div>' +
