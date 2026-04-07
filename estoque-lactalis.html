@@ -1053,8 +1053,8 @@ const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
 const ADM_CRACHA = '564216';
-const ADM_SENHA  = '043533333504';
 const ADM_NOME   = 'Chicão';
+// ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
 
 // ════ ESTADO ══════════════════════════════════════════════════════
 let usuarioLogado    = null;
@@ -1266,6 +1266,12 @@ function fazerLogin() {
       return;
     }
     const senha = document.getElementById('loginSenha').value;
+    // Guard: senha não carregou do Firebase ainda (sem conexão ou nó inexistente)
+    if (_senhaAdm === null) {
+      errEl.textContent = 'Aguardando configuração do servidor. Verifique a conexão.';
+      carregarSenhaAdm(); // tenta recarregar
+      return;
+    }
     if (senha !== _senhaAdm) { errEl.textContent = 'Senha incorreta'; return; }
     usuarioLogado = { nome: ADM_NOME, cracha: ADM_CRACHA, perfil: 'adm' };
     marcaAtiva = 'ambas';
@@ -2470,11 +2476,16 @@ function restaurarCache() {
     return restaurou;
   } catch(e) { return false; }
 }
-let _senhaAdm = ADM_SENHA;
+// null = ainda não carregada do Firebase; nunca inicializar com valor hardcoded
+let _senhaAdm = null;
 
 function carregarSenhaAdm() {
   db.ref('config/senhaAdm').get().then(snap => {
     if (snap.exists()) _senhaAdm = snap.val();
+    // Se não existir no Firebase ainda: _senhaAdm permanece null
+    // → login ADM ficará bloqueado até que uma senha seja definida manualmente no Firebase
+  }).catch(() => {
+    // Falha de rede: _senhaAdm permanece null — login ADM indisponível offline
   });
 }
 
