@@ -2696,14 +2696,6 @@ function escapeHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ════ DEBOUNCE BUSCA ══════════════════════════════════════════════
-function debounceBuscar() {
-  clearTimeout(_buscarTimer);
-  const q = document.getElementById('searchInput')?.value.trim() ?? '';
-  if (q.length === 0) { buscar(); return; }
-  _buscarTimer = setTimeout(buscar, 180);
-}
-
 // ════ CONTAGEM PARCIAL ════════════════════════════════════════════
 let _contagemIdx = null, _contagemMarca = null;
 
