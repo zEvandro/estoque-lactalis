@@ -1063,7 +1063,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.2';
+const APP_VERSION = 'v6.3';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -1986,6 +1986,7 @@ function renderReservados() {
   if (vazio) vazio.style.display = 'none';
 
   lista.innerHTML = items.map(({ item, marca, resInfo, idx }) => {
+    const h   = escapeHtml;
     const map = bases[marca].mapa;
     const cc  = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
     const bl  = marca === 'batavo' ? 'BATAVO' : 'ITAMBÉ';
@@ -1996,17 +1997,17 @@ function renderReservados() {
     const val = fmtData(item[map.dtVal]);
     const end = item[map.endereco]  ?? '';
     let meta = [];
-    if (cx)         meta.push('<span class="cx">📦 <b>' + cx + '</b> cx</span>');
-    if (end)        meta.push('<span class="end">📍 ' + end + '</span>');
-    if (fab !== '—') meta.push('<span>Fab <b>' + fab + '</b></span>');
-    if (val !== '—') meta.push('<span>Val <b>' + val + '</b></span>');
+    if (cx)         meta.push('<span class="cx">📦 <b>' + h(cx) + '</b> cx</span>');
+    if (end)        meta.push('<span class="end">📍 ' + h(end) + '</span>');
+    if (fab !== '—') meta.push('<span>Fab <b>' + h(fab) + '</b></span>');
+    if (val !== '—') meta.push('<span>Val <b>' + h(val) + '</b></span>');
     return '<div class="card">' +
       '<div class="card-head"><div>' +
-        '<div class="card-code" style="color:' + cc + '">' + cod + '</div>' +
-        '<div class="card-desc">' + dsc + '</div>' +
+        '<div class="card-code" style="color:' + cc + '">' + h(cod) + '</div>' +
+        '<div class="card-desc">' + h(dsc) + '</div>' +
       '</div><div class="head-right"><span class="card-brand" style="color:' + cc + '">' + bl + '</span></div></div>' +
       (meta.length ? '<div class="card-meta">' + meta.join('') + '</div>' : '') +
-      '<div class="res-info">👤 <b>' + resInfo.nome + '</b> · ' + resInfo.hora + '</div>' +
+      '<div class="res-info">👤 <b>' + h(resInfo.nome) + '</b> · ' + h(resInfo.hora) + '</div>' +
       '<div class="card-actions">' +
         '<div class="card-actions-right">' +
           '<button class="btn btn-voltar" onclick="voltarEstoque(\'' + idx + '\')">↩ Devolver</button>' +
@@ -2040,20 +2041,21 @@ function renderBaixas() {
   if (vazio) vazio.style.display = 'none';
 
   lista.innerHTML = items.map(b => {
+    const h  = escapeHtml;
     const cc = b.marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
     const bl = b.marca === 'batavo' ? 'BATAVO' : 'ITAMBÉ';
     let meta = [];
-    if (b.caixas)                         meta.push('<span class="cx">📦 <b>' + b.caixas + '</b> cx</span>');
-    if (b.endereco)                        meta.push('<span class="end">📍 ' + b.endereco + '</span>');
-    if (b.fab && b.fab !== '—')           meta.push('<span>Fab <b>' + b.fab + '</b></span>');
-    if (b.val && b.val !== '—')           meta.push('<span>Val <b>' + b.val + '</b></span>');
+    if (b.caixas)              meta.push('<span class="cx">📦 <b>' + h(b.caixas) + '</b> cx</span>');
+    if (b.endereco)            meta.push('<span class="end">📍 ' + h(b.endereco) + '</span>');
+    if (b.fab && b.fab !== '—') meta.push('<span>Fab <b>' + h(b.fab) + '</b></span>');
+    if (b.val && b.val !== '—') meta.push('<span>Val <b>' + h(b.val) + '</b></span>');
     return '<div class="card">' +
       '<div class="card-head"><div>' +
-        '<div class="card-code" style="color:' + cc + '">' + (b.codigo||'—') + '</div>' +
-        '<div class="card-desc">' + (b.descricao||'—') + '</div>' +
+        '<div class="card-code" style="color:' + cc + '">' + h(b.codigo||'—') + '</div>' +
+        '<div class="card-desc">' + h(b.descricao||'—') + '</div>' +
       '</div><div class="head-right"><span class="card-brand" style="color:' + cc + '">' + bl + '</span></div></div>' +
       (meta.length ? '<div class="card-meta">' + meta.join('') + '</div>' : '') +
-      '<div class="baixa-user-row"><span>👤 <b>' + b.nome + '</b> · ' + b.cracha + '</span><span>' + b.hora + '</span></div>' +
+      '<div class="baixa-user-row"><span>👤 <b>' + h(b.nome) + '</b> · ' + h(b.cracha) + '</span><span>' + h(b.hora) + '</span></div>' +
     '</div>';
   }).join('');
 }
@@ -2315,6 +2317,7 @@ function renderVencimentos() {
   if (vazio) vazio.style.display = 'none';
 
   lista.innerHTML = res.map(e => {
+    const h      = escapeHtml;
     const marca  = e._marca;
     const cc     = marca === 'itambe' ? 'var(--itm)' : 'var(--bat)';
     const bl     = marca === 'batavo' ? 'BATAVO' : 'ITAMBÉ';
@@ -2324,14 +2327,14 @@ function renderVencimentos() {
       : e._diasVal === 0 ? 'Vence HOJE'
       : 'Vence em ' + e._diasVal + ' dia(s)';
     let meta = [];
-    if (e.cx)          meta.push('<span class="cx">📦 <b>' + e.cx + '</b> cx</span>');
-    if (e.end)         meta.push('<span class="end">📍 ' + e.end + '</span>');
-    if (e.fab !== '—') meta.push('<span>Fab <b>' + e.fab + '</b></span>');
-    if (e.val !== '—') meta.push('<span>Val <b>' + e.val + '</b></span>');
+    if (e.cx)          meta.push('<span class="cx">📦 <b>' + h(e.cx) + '</b> cx</span>');
+    if (e.end)         meta.push('<span class="end">📍 ' + h(e.end) + '</span>');
+    if (e.fab !== '—') meta.push('<span>Fab <b>' + h(e.fab) + '</b></span>');
+    if (e.val !== '—') meta.push('<span>Val <b>' + h(e.val) + '</b></span>');
     return '<div class="card ' + valClass + '">' +
       '<div class="card-head"><div>' +
-        '<div class="card-code" style="color:' + cc + '">' + e.cod + '</div>' +
-        '<div class="card-desc">' + e.desc + '</div>' +
+        '<div class="card-code" style="color:' + cc + '">' + h(e.cod) + '</div>' +
+        '<div class="card-desc">' + h(e.desc) + '</div>' +
       '</div><div class="head-right">' +
         '<span class="card-brand" style="color:' + cc + '">' + bl + '</span>' +
         (valBadge ? '<span class="val-badge ' + valClass + '">' + valBadge + '</span>' : '') +
@@ -2356,6 +2359,7 @@ function getValStatus(dias, apenasUrgente = false) {
 }
 
 function cardHTMLFast(e) {
+  const h           = escapeHtml; // alias para sanitização de dados externos
   const marca       = e._marca;
   const idx         = e._ref._idx;
   const isPicking   = /\s10$/.test(e._end.trim());
@@ -2365,12 +2369,12 @@ function cardHTMLFast(e) {
   const { valClass, valBadge, valTagClass } = getValStatus(e._diasVal, true);
 
   let metaItems = [];
-  if (e.cx)          metaItems.push('<span class="cx">📦 <b>' + e.cx + '</b> cx</span>');
-  if (e.end)         metaItems.push('<span class="end">📍 ' + e.end + '</span>');
-  if (e.fab !== '—') metaItems.push('<span>Fab <b>' + e.fab + '</b></span>');
+  if (e.cx)          metaItems.push('<span class="cx">📦 <b>' + h(e.cx) + '</b> cx</span>');
+  if (e.end)         metaItems.push('<span class="end">📍 ' + h(e.end) + '</span>');
+  if (e.fab !== '—') metaItems.push('<span>Fab <b>' + h(e.fab) + '</b></span>');
   if (e.val !== '—') {
     const urgCls = valTagClass ? 'urg ' + valClass : '';
-    metaItems.push('<span class="' + urgCls + '">Val <b>' + e.val + '</b>' + (valBadge ? '  ' + valBadge : '') + '</span>');
+    metaItems.push('<span class="' + urgCls + '">Val <b>' + h(e.val) + '</b>' + (valBadge ? '  ' + valBadge : '') + '</span>');
   }
 
   const placaBloqueio = isBloqueado
@@ -2379,9 +2383,9 @@ function cardHTMLFast(e) {
         '<div class="card-bloqueado-placa-info">' +
           '<div class="card-bloqueado-placa-titulo">Bloqueado</div>' +
           '<div class="card-bloqueado-placa-detalhe">' +
-            (e._bloqueio.motivo || '') + ' · ' +
-            (e._bloqueio.nome   || '') + ' · ' +
-            (e._bloqueio.hora   || '') +
+            h(e._bloqueio.motivo || '') + ' · ' +
+            h(e._bloqueio.nome   || '') + ' · ' +
+            h(e._bloqueio.hora   || '') +
           '</div>' +
         '</div>' +
       '</div>'
@@ -2425,8 +2429,8 @@ function cardHTMLFast(e) {
   return '<div class="card ' + valClass + (isBloqueado ? ' bloqueado' : '') + '">' +
     '<div class="card-head">' +
       '<div>' +
-        '<div class="card-code" style="color:' + cc + '">' + e.cod + '</div>' +
-        '<div class="card-desc">' + e.desc + '</div>' +
+        '<div class="card-code" style="color:' + cc + '">' + h(e.cod) + '</div>' +
+        '<div class="card-desc">' + h(e.desc) + '</div>' +
       '</div>' +
       '<div class="head-right">' +
         '<span class="card-brand" style="color:' + cc + '">' + bl + '</span>' +
