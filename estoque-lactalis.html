@@ -564,6 +564,7 @@ body.marca-itambe{
   <div class="login-wrap">
     <div class="login-logo">📦 ESTOQUE CONTAGEM</div>
     <div class="login-sub">Base Lactalis · Faça login para continuar</div>
+    <div id="loginVersion" style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:20px;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px"></div>
     <div class="login-card">
       <div class="lf">
         <label>Número do Crachá</label>
@@ -631,7 +632,7 @@ body.marca-itambe{
     <nav class="drawer-nav" id="drawerNav"></nav>
     <div class="drawer-footer">
       <span id="drawerEstoque">sem base</span>
-      <span>v6.0</span>
+      <span id="drawerVersion"></span>
     </div>
   </div>
 
@@ -1062,6 +1063,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
+const APP_VERSION = 'v6.1';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -3190,6 +3192,12 @@ function restaurarSessao() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Versão — injetada em todos os pontos via constante única
+  const verEl = document.getElementById('loginVersion');
+  if (verEl) verEl.textContent = APP_VERSION;
+  const drawerVer = document.getElementById('drawerVersion');
+  if (drawerVer) drawerVer.textContent = APP_VERSION;
+
   // Tema salvo
   try {
     const saved = localStorage.getItem('estoque-tema') ?? '';
