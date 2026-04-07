@@ -1063,7 +1063,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.5';
+const APP_VERSION = 'v6.6';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -3163,7 +3163,7 @@ async function _salvarDivergenciaDB() {
     etiqSis:   document.getElementById('divEtiqSis').value  || null,
     etiqReal:  document.getElementById('divEtiqReal').value || null,
     obs:       document.getElementById('divObs').value.trim() || null,
-    foto:      _divergFotoB64 || null,
+    // foto: não persiste no Firebase — usada apenas para compartilhamento e descartada
     nome:      usuarioLogado.nome,
     cracha:    usuarioLogado.cracha,
     hora:      new Date().toLocaleString('pt-BR'),
