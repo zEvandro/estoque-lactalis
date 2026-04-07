@@ -131,18 +131,34 @@ body.t-roxo{
 body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
 
 /* LOGIN */
-#telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
-.login-wrap{width:100%;max-width:360px}
-.login-logo{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:var(--accent);text-align:center;margin-bottom:4px}
-.login-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:28px}
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 22px;box-shadow:var(--shadow)}
-.lf{margin-bottom:16px}
-.lf label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+#telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
+.login-wrap{width:100%;max-width:380px}
+/* Branding */
+.login-brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px}
+.login-brand-logo{width:48px;height:48px;border-radius:12px;object-fit:cover}
+.login-brand-text{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;color:var(--accent);letter-spacing:.5px}
+.login-brand-sub{text-align:center;color:var(--muted);font-size:12px;margin-bottom:4px;letter-spacing:.3px}
+.login-version-tag{text-align:center;margin-bottom:18px}
+/* Aviso institucional */
+.login-aviso{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
+.login-aviso-titulo{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.login-aviso-texto{font-size:12px;color:var(--muted);line-height:1.6}
+.login-aviso-alerta{font-size:11px;color:var(--accent3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;align-items:flex-start;gap:6px;line-height:1.5}
+/* Card de login */
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow)}
+.login-card-titulo{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:18px;display:flex;align-items:center;gap:6px}
+.lf{margin-bottom:14px}
+.lf label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
 .lf input{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:13px 14px;font-size:16px;color:var(--ink);font-family:'IBM Plex Mono',monospace;outline:none;transition:border-color .15s}
 .lf input:focus{border-color:var(--accent)}
-.btn-login{width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;margin-top:4px;transition:opacity .15s}
+.btn-login{width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;margin-top:4px;transition:opacity .15s;letter-spacing:.3px}
 .btn-login:active{opacity:.8}
-.login-erro{color:var(--red);font-size:13px;text-align:center;margin-top:12px;min-height:18px}
+.login-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--muted);font-size:11px}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.btn-consultor{width:100%;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;padding:11px;font-size:13px;font-weight:600;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-consultor:hover{border-color:var(--accent);color:var(--accent)}
+.login-consultor-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.4}
+.login-erro{color:var(--red);font-size:13px;text-align:center;margin-top:10px;min-height:18px}
 .login-hint{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
 /* Modal criação de PIN */
 .pin-modal-titulo{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px}
@@ -562,10 +578,33 @@ body.marca-itambe{
 <!-- ══ TELA LOGIN ══ -->
 <div id="telaLogin">
   <div class="login-wrap">
-    <div class="login-logo">📦 ESTOQUE CONTAGEM</div>
-    <div class="login-sub">Base Lactalis · Faça login para continuar</div>
-    <div id="loginVersion" style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:20px;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px"></div>
+
+    <!-- Branding -->
+    <div class="login-brand">
+      <img src="./Lacfrio.png" class="login-brand-logo" alt="Lacfrio">
+      <span class="login-brand-text">LACFRIO</span>
+    </div>
+    <div class="login-brand-sub">Distribuidora · Câmara Fria</div>
+    <div class="login-version-tag">
+      <span id="loginVersion" style="font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.5px"></span>
+    </div>
+
+    <!-- Aviso institucional -->
+    <div class="login-aviso">
+      <div class="login-aviso-titulo">📋 Sobre este aplicativo</div>
+      <div class="login-aviso-texto">
+        Ferramenta de <b style="color:var(--ink)">consulta de endereços e localização de produtos</b> na câmara fria.
+        Desenvolvida para substituir a lista impressa em papel, agilizando a separação e conferência de paletes.
+      </div>
+      <div class="login-aviso-alerta">
+        <span>⚠️</span>
+        <span>Este app <b>não substitui o WMS Basic</b>. É uma ferramenta de apoio operacional — use sempre em conjunto com o sistema oficial da empresa.</span>
+      </div>
+    </div>
+
+    <!-- Card de login -->
     <div class="login-card">
+      <div class="login-card-titulo">🔐 Acesso com crachá</div>
       <div class="lf">
         <label>Número do Crachá</label>
         <input id="loginCracha" type="number" placeholder="Digite seu crachá" onkeydown="if(event.key==='Enter')fazerLogin()">
@@ -576,7 +615,15 @@ body.marca-itambe{
       </div>
       <button class="btn-login" onclick="fazerLogin()">Entrar</button>
       <div class="login-erro" id="loginErro"></div>
+
+      <div class="login-divider">ou</div>
+
+      <button class="btn-consultor" onclick="entrarComoConsultor()">
+        <span>👁</span> Entrar como Consultor
+      </button>
+      <div class="login-consultor-hint">Acesso de leitura sem cadastro · somente consulta de produtos</div>
     </div>
+
   </div>
 </div>
 
@@ -1063,7 +1110,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.6';
+const APP_VERSION = 'v6.7';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -1309,7 +1356,12 @@ function fazerLogin() {
   });
 }
 
-function fazerLogout() {
+function entrarComoConsultor() {
+  // Acesso de leitura sem cadastro — sem sessão persistida
+  usuarioLogado = { nome: 'Consultor', cracha: 'guest', perfil: 'guest' };
+  marcaAtiva = 'ambas';
+  irParaApp();
+}
   usuarioLogado = null;
   marcaAtiva = '';
   limparSessao();
@@ -1454,6 +1506,10 @@ function renderDrawer() {
     { id:'admin', icon:'👑', label:'Admin' },
     { sep: true },
     { id:'_temas', icon:'🎨', label:'Temas' },
+  ] : usuarioLogado?.perfil === 'guest' ? [
+    { id:'consulta', icon:'🔍', label:'Consulta' },
+    { sep: true },
+    { id:'_temas',   icon:'🎨', label:'Temas' },
   ] : [
     { id:'consulta',    icon:'🔍', label:'Consulta' },
     { id:'vencimentos', icon:'⏳', label:'Vencimentos', badge: vencCount },
@@ -1484,11 +1540,13 @@ function drawerNavegar(id) {
 
 // ════ TABS (mantido internamente para controle de conteúdo) ════════
 function configurarTabs() {
-  const isAdm = usuarioLogado && usuarioLogado.perfil === 'adm';
-  // Operadores comuns: somente consulta e vencimentos (modo leitura)
+  const isAdm   = usuarioLogado && usuarioLogado.perfil === 'adm';
+  const isGuest = usuarioLogado && usuarioLogado.perfil === 'guest';
   const tabs = isAdm
     ? ['consulta','vencimentos','reservados','baixas','log','chat','base','admin']
-    : ['consulta','vencimentos'];
+    : isGuest
+      ? ['consulta']                    // consultor: só consulta, sem ações
+      : ['consulta','vencimentos'];     // operador: consulta + vencimentos
   _abasVisiveis = tabs;
   // Esconde todos e mostra só consulta
   ['consulta','vencimentos','reservados','baixas','log','chat','base','admin'].forEach(id => {
@@ -1921,6 +1979,7 @@ function voltarEstoque(idx) {
 }
 
 function darBaixa(idx, marca) {
+  if (usuarioLogado?.perfil === 'guest') return;
   confirmar('Dar baixa?', 'O item será removido do estoque e registrado no histórico.', () => {
     const b = bases[marca];
     if (!b) return;
@@ -2409,12 +2468,13 @@ function cardHTMLFast(e) {
       '<button class="btn-card" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--ora)">⚠</span> Diverg.</button>';
   }
 
-  // Operador comum: somente botão de baixa (não bloqueados) — evita pedido duplicado no mesmo endereço
-  const isAdm = usuarioLogado?.perfil === 'adm';
+  // Define ações por perfil
+  const isAdm   = usuarioLogado?.perfil === 'adm';
+  const isGuest = usuarioLogado?.perfil === 'guest';
   let acoesHTML = '';
   if (isAdm) {
     acoesHTML = '<div class="card-actions">' + acoesEsq + '<div class="card-actions-right">' + acoesDireita + '</div></div>';
-  } else if (!isBloqueado) {
+  } else if (!isGuest && !isBloqueado) {
     // Operador: label PICKING (se aplicável) + apenas botão Baixa
     acoesHTML = '<div class="card-actions">' +
       acoesEsq +
@@ -2422,7 +2482,11 @@ function cardHTMLFast(e) {
         '<button class="btn-card btn-baixa" onclick="darBaixa(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--itm)">✓</span> Baixa</button>' +
       '</div>' +
     '</div>';
+  } else if (!isGuest && isBloqueado) {
+    // Operador com item bloqueado: só label PICKING se aplicável
+    acoesHTML = acoesEsq ? '<div class="card-actions">' + acoesEsq + '</div>' : '';
   }
+  // Guest: acoesHTML permanece '' — sem nenhum botão
 
   return '<div class="card ' + valClass + (isBloqueado ? ' bloqueado' : '') + '">' +
     '<div class="card-head">' +
