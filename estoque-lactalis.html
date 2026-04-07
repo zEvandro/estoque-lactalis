@@ -143,6 +143,16 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink
 .btn-login{width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;margin-top:4px;transition:opacity .15s}
 .btn-login:active{opacity:.8}
 .login-erro{color:var(--red);font-size:13px;text-align:center;margin-top:12px;min-height:18px}
+.login-hint{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+/* Modal criação de PIN */
+.pin-modal-titulo{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.pin-modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.pin-input-wrap{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
+.pin-digit{width:54px;height:60px;background:var(--surface2);border:2px solid var(--border);border-radius:10px;font-size:24px;font-weight:700;text-align:center;color:var(--ink);font-family:'IBM Plex Mono',monospace;outline:none;transition:border-color .15s;-webkit-text-security:disc}
+.pin-digit:focus{border-color:var(--accent)}
+.pin-status-adm{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block;margin-top:2px}
+.pin-ok{background:var(--bat-bg);color:var(--bat)}
+.pin-no{background:var(--surface2);color:var(--muted)}
 
 /* BASE SELECT */
 #telaBaseSelect{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
@@ -1432,7 +1442,7 @@ function renderDrawer() {
   const vencCount    = document.getElementById('badgeVenc')?.textContent || '';
   const resCount     = document.getElementById('badgeRes')?.textContent  || '';
 
-  const items = [
+  const items = isAdm ? [
     { id:'consulta',    icon:'🔍', label:'Consulta' },
     { id:'vencimentos', icon:'⏳', label:'Vencimentos', badge: vencCount },
     { id:'reservados',  icon:'📋', label:'Reservados',  badge: resCount },
@@ -1440,16 +1450,17 @@ function renderDrawer() {
     { id:'log',         icon:'📋', label:'Log' },
     { id:'chat',        icon:'💬', label:'Chat', badge: naoLidasChat > 0 ? naoLidasChat : '' },
     { sep: true },
+    { id:'base',  icon:'📂', label:'Base de Dados' },
+    { id:'admin', icon:'👑', label:'Admin' },
+    { sep: true },
+    { id:'_temas', icon:'🎨', label:'Temas' },
+  ] : [
+    { id:'consulta',    icon:'🔍', label:'Consulta' },
+    { id:'vencimentos', icon:'⏳', label:'Vencimentos', badge: vencCount },
+    { sep: true },
+    { id:'_temas',      icon:'🎨', label:'Temas' },
+    { id:'_trocarbase', icon:'🔄', label:'Trocar Base' },
   ];
-  if (isAdm) {
-    items.push({ id:'base',  icon:'📂', label:'Base de Dados' });
-    items.push({ id:'admin', icon:'👑', label:'Admin' });
-    items.push({ sep: true });
-  }
-  items.push({ id:'_temas', icon:'🎨', label:'Temas' });
-  if (usuarioLogado?.perfil === 'comum') {
-    items.push({ id:'_trocarbase', icon:'🔄', label:'Trocar Base' });
-  }
 
   const nav = document.getElementById('drawerNav');
   nav.innerHTML = items.map(it => {
@@ -1474,8 +1485,10 @@ function drawerNavegar(id) {
 // ════ TABS (mantido internamente para controle de conteúdo) ════════
 function configurarTabs() {
   const isAdm = usuarioLogado && usuarioLogado.perfil === 'adm';
-  const tabs = ['consulta','vencimentos','reservados','baixas','log','chat'];
-  if (isAdm) { tabs.push('base'); tabs.push('admin'); }
+  // Operadores comuns: somente consulta e vencimentos (modo leitura)
+  const tabs = isAdm
+    ? ['consulta','vencimentos','reservados','baixas','log','chat','base','admin']
+    : ['consulta','vencimentos'];
   _abasVisiveis = tabs;
   // Esconde todos e mostra só consulta
   ['consulta','vencimentos','reservados','baixas','log','chat','base','admin'].forEach(id => {
@@ -1855,6 +1868,7 @@ function registrarLog(acao, dados) {
 }
 
 function reservarItem(idx, marca) {
+  if (usuarioLogado?.perfil !== 'adm') return;
   if (!_estaOnline) { toast('⚠️ Sem conexão — não é possível reservar offline'); return; }
   const b    = bases[marca];
   const item = b?.dados.find(r => r._idx === idx);
@@ -1871,6 +1885,7 @@ function reservarItem(idx, marca) {
 }
 
 function voltarEstoque(idx) {
+  if (usuarioLogado?.perfil !== 'adm') return;
   const marca  = idx.startsWith('batavo') ? 'batavo' : 'itambe';
   const b      = bases[marca];
   const item   = b?.dados.find(r => r._idx === idx);
@@ -2370,6 +2385,21 @@ function cardHTMLFast(e) {
       '<button class="btn-card" onclick="abrirDivergencia(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--ora)">⚠</span> Diverg.</button>';
   }
 
+  // Operador comum: somente botão de baixa (não bloqueados) — evita pedido duplicado no mesmo endereço
+  const isAdm = usuarioLogado?.perfil === 'adm';
+  let acoesHTML = '';
+  if (isAdm) {
+    acoesHTML = '<div class="card-actions">' + acoesEsq + '<div class="card-actions-right">' + acoesDireita + '</div></div>';
+  } else if (!isBloqueado) {
+    // Operador: label PICKING (se aplicável) + apenas botão Baixa
+    acoesHTML = '<div class="card-actions">' +
+      acoesEsq +
+      '<div class="card-actions-right">' +
+        '<button class="btn-card btn-baixa" onclick="darBaixa(\'' + idx + '\',\'' + marca + '\')"><span style="color:var(--itm)">✓</span> Baixa</button>' +
+      '</div>' +
+    '</div>';
+  }
+
   return '<div class="card ' + valClass + (isBloqueado ? ' bloqueado' : '') + '">' +
     '<div class="card-head">' +
       '<div>' +
@@ -2382,10 +2412,7 @@ function cardHTMLFast(e) {
     '</div>' +
     (metaItems.length ? '<div class="card-meta">' + metaItems.join('') + '</div>' : '') +
     placaBloqueio +
-    '<div class="card-actions">' +
-      acoesEsq +
-      '<div class="card-actions-right">' + acoesDireita + '</div>' +
-    '</div>' +
+    acoesHTML +
   '</div>';
 }
 
@@ -2481,9 +2508,8 @@ let _senhaAdm = null;
 
 function carregarSenhaAdm() {
   db.ref('config/senhaAdm').get().then(snap => {
-    if (snap.exists()) _senhaAdm = snap.val();
-    // Se não existir no Firebase ainda: _senhaAdm permanece null
-    // → login ADM ficará bloqueado até que uma senha seja definida manualmente no Firebase
+    // String() garante comparação correta mesmo se Firebase salvar como número
+    if (snap.exists()) _senhaAdm = String(snap.val());
   }).catch(() => {
     // Falha de rede: _senhaAdm permanece null — login ADM indisponível offline
   });
@@ -2800,6 +2826,7 @@ function limparLoginAttempts() {
 
 // ════ PICKING — DAR BAIXA DIRETO ════════════════════════════════
 function darBaixaPicking(idx, marca) {
+  if (usuarioLogado?.perfil !== 'adm') return;
   confirmar('Dar baixa no picking?', 'O item será removido do estoque definitivamente.', () => {
     const b    = bases[marca];
     const item = b?.dados.find(r => r._idx === idx);
@@ -2844,6 +2871,7 @@ function toggleBloquearSec() {
 }
 
 function bloquearItem(idx, motivo) {
+  if (usuarioLogado?.perfil !== 'adm') return;
   const entry = {
     motivo,
     nome:   usuarioLogado.nome,
@@ -2861,6 +2889,7 @@ function bloquearItem(idx, motivo) {
 }
 
 function desbloquearItem(idx) {
+  if (usuarioLogado?.perfil !== 'adm') return;
   confirmar('Desbloquear palete?', 'O produto voltará a ficar disponível para reserva.', () => {
     db.ref('bloqueios/' + idx).remove().then(() => {
       toast('✓ Palete desbloqueado');
@@ -2874,6 +2903,7 @@ function desbloquearItem(idx) {
 
 // ════ DIVERGÊNCIA ════════════════════════════════════════════════
 function abrirDivergencia(idx, marca) {
+  if (usuarioLogado?.perfil !== 'adm') return;
   _divergIdx    = idx;
   _divergMarca  = marca;
   _divergMotivo = 'qtd';
