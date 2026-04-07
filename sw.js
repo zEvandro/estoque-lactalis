@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════
 // ESTOQUE CONTAGEM — Service Worker v4.1
 // ═══════════════════════════════════════════════
-const CACHE_NAME = 'estoque-v14';
+const CACHE_NAME = 'estoque-v15';
 
 // Recursos para cachear na instalação
 const PRECACHE = [
@@ -16,12 +16,12 @@ const PRECACHE = [
   'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap'
 ];
 
-// Instalação — pré-cache dos recursos principais
+// Instalação — pré-cache dos recursos principais + ativa imediatamente
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(PRECACHE).catch(() => {}))
-    // NÃO chama skipWaiting aqui — espera o usuário confirmar a atualização
+      .then(() => self.skipWaiting()) // ativa o novo SW sem esperar o usuário confirmar
   );
 });
 
