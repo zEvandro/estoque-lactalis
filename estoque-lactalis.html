@@ -1063,7 +1063,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.4';
+const APP_VERSION = 'v6.5';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -2997,15 +2997,34 @@ function escolherFoto() { document.getElementById('divFotoInput').click(); }
 function onFotoSelecionada(input) {
   const file = input.files[0];
   if (!file) return;
+  input.value = ''; // limpa input para permitir reenvio do mesmo arquivo
+
   const reader = new FileReader();
   reader.onload = e => {
-    _divergFotoB64 = e.target.result;
-    document.getElementById('divFotoImg').src = _divergFotoB64;
-    document.getElementById('divFotoPreview').style.display = '';
-    document.getElementById('btnRemoverFoto').style.display = '';
+    const img = new Image();
+    img.onload = () => {
+      // Redimensiona mantendo proporção — máximo 800px no lado maior
+      const MAX = 800;
+      let w = img.width;
+      let h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+        else        { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      // Comprime via Canvas — JPEG 75% de qualidade
+      const canvas = document.createElement('canvas');
+      canvas.width  = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      _divergFotoB64 = canvas.toDataURL('image/jpeg', 0.75);
+
+      document.getElementById('divFotoImg').src = _divergFotoB64;
+      document.getElementById('divFotoPreview').style.display = '';
+      document.getElementById('btnRemoverFoto').style.display = '';
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
-  input.value = '';
 }
 
 function removerFotoDiverg() {
