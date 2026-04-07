@@ -1063,7 +1063,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.1';
+const APP_VERSION = 'v6.2';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -1664,14 +1664,34 @@ function processarSheet(wb, nomAba, marca, nomeArquivo) {
     const mapaSanitizado = {};
     Object.entries(mapa).forEach(([k,v]) => { mapaSanitizado[k] = sanitize(v); });
 
-    const dados = rows.map((r, i) => {
-      const limpo = { _idx: marca + '_' + i };
-      Object.entries(r).forEach(([k,v]) => {
-        const chave = k.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '') || 'col' + i;
-        limpo[chave] = (typeof v==='string' && v.startsWith('=')) ? '' : v;
+    const dados = (() => {
+      const seenCodes = new Set(); // detecta códigos duplicados na mesma planilha
+      return rows.map((r, i) => {
+        // 1. Sanitiza todos os campos primeiro
+        const limpo = {};
+        Object.entries(r).forEach(([k,v]) => {
+          const chave = k.replace(/[.#$\[\]/\s]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '') || 'col' + i;
+          limpo[chave] = (typeof v==='string' && v.startsWith('=')) ? '' : v;
+        });
+
+        // 2. Extrai o código do produto para usar como chave estável
+        const codBruto  = mapaSanitizado.codigo ? String(limpo[mapaSanitizado.codigo] ?? '').trim() : '';
+        const codKey    = sanitize(codBruto);
+
+        // 3. Monta _idx: código único → "marca_COD"; duplicado → "marca_COD_i"; vazio → "marca_row_i"
+        let idxSufixo;
+        if (codKey && !seenCodes.has(codKey)) {
+          idxSufixo = codKey;
+          seenCodes.add(codKey);
+        } else if (codKey) {
+          idxSufixo = codKey + '_' + i; // duplicata: usa código + posição
+        } else {
+          idxSufixo = 'row_' + i;       // sem código: fallback seguro
+        }
+        limpo._idx = marca + '_' + idxSufixo;
+        return limpo;
       });
-      return limpo;
-    });
+    })();
 
     toast('⏳ Salvando no servidor...');
     const upd = {};
