@@ -2,7 +2,7 @@
   "name": "EstoqueCD",
   "short_name": "EstoqueCD",
   "description": "Controle de estoque de câmara fria — Batavo e Itambé",
-  "start_url": "./estoque-lactalis.html",
+  "start_url": "./estoque-lactalis.html?v=6.8.2",
   "display": "standalone",
   "background_color": "#0f1117",
   "theme_color": "#0f1117",

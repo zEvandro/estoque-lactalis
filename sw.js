@@ -1,19 +1,21 @@
 // ═══════════════════════════════════════════════
-// ESTOQUE CONTAGEM — Service Worker v4.1
+// ESTOQUE CONTAGEM — Service Worker v4.3
 // ═══════════════════════════════════════════════
-const CACHE_NAME = 'estoque-v22';
+const CACHE_NAME = 'estoque-v24';
 
 // Recursos para cachear na instalação
 const PRECACHE = [
   './estoque-lactalis.html',
+  './estoque-lactalis.html?v=6.8.2',
   './manifest.json',
   './Lacfrio.png',
   './batavo.png',
   './itambe.png',
+  'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
   'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js',
   'https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js',
-  'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap'
+  'https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap'
 ];
 
 // Instalação — pré-cache dos recursos principais + ativa imediatamente
