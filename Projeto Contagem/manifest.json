@@ -1,0 +1,26 @@
+{
+  "name": "EstoqueCD",
+  "short_name": "EstoqueCD",
+  "description": "Controle de estoque de câmara fria — Batavo e Itambé",
+  "start_url": "./estoque-lactalis.html",
+  "display": "standalone",
+  "background_color": "#0f1117",
+  "theme_color": "#0f1117",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./Lacfrio.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./Lacfrio.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "lang": "pt-BR"
+}
