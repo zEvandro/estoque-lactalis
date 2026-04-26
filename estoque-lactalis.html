@@ -53,6 +53,8 @@
   /* Baixa / picking */
   --baixa:#4fc3f7;--baixa-bg:#081c28;--baixa-border:rgba(79,195,247,.3);
   --pick:#e53935; --pick-bg:#1c0d0d;  --pick-border:rgba(229,57,53,.35);
+  /* Login */
+  --login-bg-image:url('https://i.ibb.co/sDsfzg2/file-00000000ece0720e90ed5d2ebe968788.png');
 }
 body.t-claro{
   --bg:#f4f1eb;--surface:#fff;--surface2:#f0ede6;
@@ -132,8 +134,10 @@ body.t-roxo{
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
 
 /* LOGIN */
-#telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
-.login-wrap{width:100%;max-width:380px}
+#telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);position:relative;overflow:hidden;isolation:isolate}
+#telaLogin::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(8,12,18,.86),rgba(8,12,18,.72)),var(--login-bg-image) center/cover no-repeat;z-index:-2}
+#telaLogin::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(77,163,255,.22),transparent 45%),radial-gradient(ellipse at bottom left,rgba(245,166,35,.18),transparent 45%);z-index:-1}
+.login-wrap{width:100%;max-width:380px;position:relative;z-index:1}
 /* Branding */
 .login-brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px}
 .login-brand-logo{width:48px;height:48px;border-radius:12px;object-fit:cover}
@@ -141,12 +145,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .login-brand-sub{text-align:center;color:var(--muted);font-size:12px;margin-bottom:4px;letter-spacing:.3px}
 .login-version-tag{text-align:center;margin-bottom:18px}
 /* Aviso institucional */
-.login-aviso{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
+.login-aviso{background:rgba(21,26,34,.82);border:1px solid rgba(255,255,255,.16);border-left:3px solid var(--accent);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;backdrop-filter:blur(6px)}
 .login-aviso-titulo{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .login-aviso-texto{font-size:12px;color:var(--muted);line-height:1.6}
 .login-aviso-alerta{font-size:11px;color:var(--accent3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;align-items:flex-start;gap:6px;line-height:1.5}
 /* Card de login */
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow)}
+.login-card{background:rgba(21,26,34,.86);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow);backdrop-filter:blur(7px)}
 .login-card-titulo{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:18px;display:flex;align-items:center;gap:6px}
 .lf{margin-bottom:14px}
 .lf label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
@@ -1112,7 +1116,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.8.2';
+const APP_VERSION = 'v6.8.4';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)

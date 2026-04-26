@@ -1,12 +1,12 @@
 // ═══════════════════════════════════════════════
-// ESTOQUE CONTAGEM — Service Worker v4.3
+// ESTOQUE CONTAGEM — Service Worker v4.5
 // ═══════════════════════════════════════════════
-const CACHE_NAME = 'estoque-v24';
+const CACHE_NAME = 'estoque-v26';
 
 // Recursos para cachear na instalação
 const PRECACHE = [
   './estoque-lactalis.html',
-  './estoque-lactalis.html?v=6.8.2',
+  './estoque-lactalis.html?v=6.8.4',
   './manifest.json',
   './Lacfrio.png',
   './batavo.png',
