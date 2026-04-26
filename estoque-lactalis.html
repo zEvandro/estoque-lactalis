@@ -14,20 +14,21 @@
 <meta name="theme-color" content="#0f1117">
 <!-- Ícone para iOS (Safari não lê o manifest) -->
 <link rel="apple-touch-icon" href="./Lacfrio.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
   /* Base */
-  --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;
-  --border:#2e3352;--ink:#e8eaf6;--muted:#6b7280;
-  --accent:#4fffb0;--accent-light:#1a2a22;
-  --accent3:#ffd166;--accent3-light:#2a2516;
-  --radius:10px;
-  --shadow:0 2px 8px rgba(0,0,0,.4);
+  --bg:#0F1217;--surface:#151A22;--surface2:#1D2430;
+  --border:rgba(255,255,255,.12);--ink:#F3F6FA;--muted:#A8B3C2;
+  --accent:#F5A623;--accent-light:rgba(245,166,35,.14);
+  --accent3:#4DA3FF;--accent3-light:rgba(77,163,255,.14);
+  --radius:12px;
+  --shadow:0 16px 35px rgba(0,0,0,.35);
   /* Marcas — fixas em todos os temas */
   --bat:#4fffb0;--bat-bg:#1a2a22;--bat-border:rgba(79,255,176,.35);
   --itm:#3b9eff;--itm-bg:#0d2a45;--itm-border:rgba(59,158,255,.35);
@@ -128,7 +129,7 @@ body.t-roxo{
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
 
 /* LOGIN */
 #telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
@@ -198,14 +199,15 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink
 
 /* HEADER */
 .header{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100}
-.logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.5px}
+.logo{font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:.4px}
 .header-right{display:flex;align-items:center;gap:8px}
 .conn-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid;letter-spacing:.3px;transition:all .3s}
 .conn-pill.online{background:var(--bat-bg);border-color:var(--bat);color:var(--bat)}
 .conn-pill.offline{background:var(--red-bg);border-color:var(--red);color:var(--red)}
 .btn-hdr{background:transparent;border:1px solid var(--border);color:var(--ink);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s}
 .btn-hdr:hover{border-color:var(--accent);color:var(--accent)}
-.btn-hamburguer{background:transparent;border:none;color:var(--ink);font-size:22px;cursor:pointer;padding:4px 8px;line-height:1;display:flex;align-items:center}
+.btn-hamburguer{background:var(--surface2);border:1px solid var(--border);color:var(--ink);font-size:18px;cursor:pointer;padding:6px 10px;line-height:1;display:flex;align-items:center;border-radius:8px}
+.btn-hamburguer:hover{border-color:var(--accent);color:var(--accent)}
 
 /* NAVIGATION DRAWER */
 .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;opacity:0;pointer-events:none;transition:opacity .25s}
@@ -235,7 +237,7 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink
 .search-box{position:relative;margin-bottom:12px}
 .search-box input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 44px 12px 14px;font-size:14px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;outline:none;transition:border-color .15s}
 .search-box input:focus{border-color:var(--accent)}
-.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--muted)}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--muted);display:flex;align-items:center}
 .filtro-wrap{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
 .btn-filtro{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;white-space:nowrap}
 .btn-filtro.active{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
@@ -529,10 +531,10 @@ body.marca-itambe{
 
 /* TEMAS */
 .temas-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.tema-btn{display:flex;align-items:center;gap:10px;background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;color:var(--ink);text-align:left}
+.tema-btn{display:flex;align-items:center;gap:10px;background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;color:var(--ink);text-align:left}
 .tema-btn:hover,.tema-btn.ativo{border-color:var(--accent)}
 .tema-preview{width:28px;height:28px;border-radius:6px;flex-shrink:0;border:1px solid rgba(0,0,0,.1)}
-.t-dark{background:linear-gradient(135deg,#0f1117 50%,#4fffb0 50%)}
+.t-dark{background:linear-gradient(135deg,#0F1217 50%,#F5A623 50%)}
 .t-claro-prev{background:linear-gradient(135deg,#f4f1eb 50%,#2c7a4b 50%)}
 .t-industrial-prev{background:linear-gradient(135deg,#1a1a18 50%,#f5c518 50%)}
 .t-oceano-prev{background:linear-gradient(135deg,#050e1a 50%,#38bdf8 50%)}
@@ -555,12 +557,12 @@ body.marca-itambe{
 
 <!-- Banner de atualização disponível -->
 <div id="updateBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:10000;background:var(--surface);border-bottom:2px solid var(--accent3);padding:12px 16px;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.5);animation:slideDown .3s ease">
-  <div style="font-size:22px">🔄</div>
+  <div style="font-size:22px"><i class="bi bi-arrow-clockwise"></i></div>
   <div style="flex:1">
     <div style="font-size:13px;font-weight:700;color:var(--ink)">Nova versão disponível!</div>
     <div style="font-size:11px;color:var(--muted)">Toque em Atualizar para aplicar as novidades</div>
   </div>
-  <button onclick="aplicarAtualizacao()" style="background:var(--accent3);color:var(--bg);border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif">🔄 Atualizar</button>
+  <button onclick="aplicarAtualizacao()" style="background:var(--accent3);color:var(--bg);border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif"><i class="bi bi-arrow-clockwise"></i> Atualizar</button>
   <button onclick="document.getElementById('updateBanner').style.display='none'" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 8px">✕</button>
 </div>
 
@@ -582,9 +584,9 @@ body.marca-itambe{
     <!-- Branding -->
     <div class="login-brand">
       <img src="./Lacfrio.png" class="login-brand-logo" alt="Lacfrio">
-      <span class="login-brand-text">CONTAGEM LACTALIS CD RJ</span>
+      <span class="login-brand-text">LACFRIO</span>
     </div>
-    <div class="login-brand-sub">Contagem · Câmara Fria</div>
+    <div class="login-brand-sub">Distribuidora · Câmara Fria</div>
     <div class="login-version-tag">
       <span id="loginVersion" style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.5px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 10px;display:inline-block"></span>
     </div>
@@ -598,7 +600,7 @@ body.marca-itambe{
       </div>
       <div class="login-aviso-alerta">
         <span>⚠️</span>
-        <span>Este app <b>não substitui o WMS Basic</b>. É uma ferramenta de apoio operacional — use em conjunto com o sistema oficial da empresa.</span>
+        <span>Este app <b>não substitui o WMS Basic</b>. É uma ferramenta de apoio operacional — use sempre em conjunto com o sistema oficial da empresa.</span>
       </div>
     </div>
 
@@ -619,7 +621,7 @@ body.marca-itambe{
       <div class="login-divider">ou</div>
 
       <button class="btn-consultor" onclick="entrarComoConsultor()">
-        <span>👁</span> Entrar como Consultor
+        <span><i class="bi bi-eye"></i></span> Entrar como Consultor
       </button>
       <div class="login-consultor-hint">Acesso de leitura sem cadastro · somente consulta de produtos</div>
     </div>
@@ -629,12 +631,12 @@ body.marca-itambe{
 
 <!-- ══ TELA SELEÇÃO BASE ══ -->
 <div id="telaBaseSelect" style="display:none">
-  <div class="bs-logo">📦 CONTAGEM ESTOQUE LACTALIS RJ</div>
+  <div class="bs-logo">ESTOQUE CONTAGEM</div>
   <div class="bs-user" id="bsUserInfo"></div>
   <div class="bs-title">Escolha a base de dados</div>
   <div class="bs-grid">
     <div class="bs-card batavo indisponivel" id="bsCardBatavo" onclick="selecionarBase('batavo')">
-      <div class="bs-icon">🟢</div>
+      <div class="bs-icon"><i class="bi bi-circle-fill"></i></div>
       <div class="bs-nome">BATAVO</div>
       <div id="bsStatusBatavo">
         <span class="bs-status bs-no">⚠️ Base ausente</span>
@@ -642,7 +644,7 @@ body.marca-itambe{
       </div>
     </div>
     <div class="bs-card itambe indisponivel" id="bsCardItambe" onclick="selecionarBase('itambe')">
-      <div class="bs-icon">🔵</div>
+      <div class="bs-icon"><i class="bi bi-circle-fill"></i></div>
       <div class="bs-nome">ITAMBÉ</div>
       <div id="bsStatusItambe">
         <span class="bs-status bs-no">⚠️ Base ausente</span>
@@ -650,20 +652,20 @@ body.marca-itambe{
       </div>
     </div>
   </div>
-  <button class="btn-sair" onclick="fazerLogout()">↩ Sair</button>
+  <button class="btn-sair" onclick="fazerLogout()"><i class="bi bi-box-arrow-left"></i> Sair</button>
 </div>
 
 <!-- ══ APP PRINCIPAL ══ -->
 <div id="appPrincipal" style="display:none">
 
   <div class="header">
-    <button class="btn-hamburguer" onclick="abrirDrawer()">☰</button>
+    <button class="btn-hamburguer" onclick="abrirDrawer()"><i class="bi bi-list"></i></button>
     <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
       <img id="headerLogo" src="" alt="" style="width:32px;height:32px;border-radius:8px;object-fit:cover;display:none;flex-shrink:0">
-      <div class="logo" id="headerTitulo">📦 CONTAGEM ESTOQUE LACTALIS RJ</div>
+      <div class="logo" id="headerTitulo">ESTOQUE CONTAGEM</div>
     </div>
     <div class="header-right">
-      <div class="conn-pill" id="connPill">🔴 Offline</div>
+      <div class="conn-pill" id="connPill">Offline</div>
       <button class="btn-hdr" onclick="fazerLogout()">Sair</button>
     </div>
   </div>
@@ -1077,13 +1079,13 @@ body.marca-itambe{
 <!-- Modal temas -->
 <div class="overlay" id="modalTemas">
   <div class="modal" style="max-width:380px">
-    <h3 style="margin-bottom:16px">🎨 Escolher Tema</h3>
+    <h3 style="margin-bottom:16px"><i class="bi bi-palette"></i> Escolher Tema</h3>
     <div class="temas-grid">
-      <button class="tema-btn" onclick="aplicarTema('')" data-tema=""><span class="tema-preview t-dark"></span><span class="tema-label">🖤 Dark Pro</span><span class="tema-check" id="check-">✓</span></button>
-      <button class="tema-btn" onclick="aplicarTema('t-claro')" data-tema="t-claro"><span class="tema-preview t-claro-prev"></span><span class="tema-label">☀️ Claro</span><span class="tema-check" id="check-t-claro"></span></button>
-      <button class="tema-btn" onclick="aplicarTema('t-industrial')" data-tema="t-industrial"><span class="tema-preview t-industrial-prev"></span><span class="tema-label">🏭 Industrial</span><span class="tema-check" id="check-t-industrial"></span></button>
-      <button class="tema-btn" onclick="aplicarTema('t-oceano')" data-tema="t-oceano"><span class="tema-preview t-oceano-prev"></span><span class="tema-label">🌊 Oceano</span><span class="tema-check" id="check-t-oceano"></span></button>
-      <button class="tema-btn" onclick="aplicarTema('t-roxo')" data-tema="t-roxo"><span class="tema-preview t-roxo-prev"></span><span class="tema-label">🔮 Roxo</span><span class="tema-check" id="check-t-roxo"></span></button>
+      <button class="tema-btn" onclick="aplicarTema('')" data-tema=""><span class="tema-preview t-dark"></span><span class="tema-label">Dark Pro</span><span class="tema-check" id="check-">OK</span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-claro')" data-tema="t-claro"><span class="tema-preview t-claro-prev"></span><span class="tema-label">Claro</span><span class="tema-check" id="check-t-claro"></span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-industrial')" data-tema="t-industrial"><span class="tema-preview t-industrial-prev"></span><span class="tema-label">Industrial</span><span class="tema-check" id="check-t-industrial"></span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-oceano')" data-tema="t-oceano"><span class="tema-preview t-oceano-prev"></span><span class="tema-label">Oceano</span><span class="tema-check" id="check-t-oceano"></span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-roxo')" data-tema="t-roxo"><span class="tema-preview t-roxo-prev"></span><span class="tema-label">Roxo</span><span class="tema-check" id="check-t-roxo"></span></button>
     </div>
     <button class="btn-acao-base cancelar" style="width:100%;margin-top:14px" onclick="fecharTemas()">Fechar</button>
   </div>
@@ -1110,7 +1112,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.7';
+const APP_VERSION = 'v6.8';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -1151,6 +1153,58 @@ let _indice          = [];
 let _marcaGerenciar  = '';
 let _abasVisiveis    = [];
 
+function normalizarUIVisual(){
+  const consultorBtnIcon=document.querySelector('.btn-consultor span');
+  if(consultorBtnIcon) consultorBtnIcon.innerHTML='<i class="bi bi-eye"></i>';
+
+  const bsLogo=document.querySelector('.bs-logo');
+  if(bsLogo) bsLogo.textContent='ESTOQUE CONTAGEM';
+
+  const headerTitulo=document.getElementById('headerTitulo');
+  if(headerTitulo) headerTitulo.textContent='ESTOQUE CONTAGEM';
+
+  const btnHamb=document.querySelector('.btn-hamburguer');
+  if(btnHamb) btnHamb.innerHTML='<i class="bi bi-list"></i>';
+
+  const conn=document.getElementById('connPill');
+  if(conn && /online/i.test(conn.textContent||'')) conn.textContent='Online';
+  if(conn && /offline/i.test(conn.textContent||'')) conn.textContent='Offline';
+
+  const bsBat=document.querySelector('#bsCardBatavo .bs-icon');
+  if(bsBat) bsBat.innerHTML='<i class="bi bi-circle-fill"></i>';
+  const bsIta=document.querySelector('#bsCardItambe .bs-icon');
+  if(bsIta) bsIta.innerHTML='<i class="bi bi-circle-fill"></i>';
+
+  document.querySelectorAll('.search-icon').forEach(function(el){
+    el.innerHTML='<i class="bi bi-search"></i>';
+  });
+
+  const bsSair=document.querySelector('#telaBaseSelect .btn-sair');
+  if(bsSair) bsSair.innerHTML='<i class="bi bi-box-arrow-left"></i> Sair';
+
+  const offlineBanner=document.getElementById('offlineBanner');
+  if(offlineBanner && offlineBanner.textContent){
+    offlineBanner.textContent='Modo offline - consultando cache local. Reservas nao serao salvas.';
+  }
+  const noDb=document.getElementById('noDB');
+  if(noDb && noDb.textContent){
+    noDb.textContent='Base nao carregada. Aguarde o ADM carregar a base do dia.';
+  }
+
+  const modalTemas=document.getElementById('modalTemas');
+  if(modalTemas){
+    const h3=modalTemas.querySelector('h3');
+    if(h3) h3.textContent='Escolher Tema';
+    const labels=modalTemas.querySelectorAll('.tema-label');
+    const nomes=['Dark Pro','Claro','Industrial','Oceano','Roxo'];
+    labels.forEach(function(el,idx){ if(nomes[idx]) el.textContent=nomes[idx]; });
+  }
+
+  document.querySelectorAll('button').forEach(function(btn){
+    if((btn.textContent||'').includes('Atualizar')) btn.innerHTML='<i class="bi bi-arrow-clockwise"></i> Atualizar';
+  });
+}
+
 // ════ FIREBASE LISTENERS ══════════════════════════════════════════
 function initListeners() {
   // Indicador de conexão + offline mode
@@ -1158,8 +1212,9 @@ function initListeners() {
     _estaOnline = snap.val() === true;
     const pill = document.getElementById('connPill');
     if (pill) {
-      pill.textContent = _estaOnline ? '🟢 Online' : '🔴 Offline';
+      pill.textContent = _estaOnline ? 'Online' : 'Offline';
       pill.className   = 'conn-pill ' + (_estaOnline ? 'online' : 'offline');
+      pill.textContent = _estaOnline ? 'Online' : 'Offline';
     }
     const banner = document.getElementById('offlineBanner');
     // Quando fica offline, tenta restaurar cache
@@ -1297,6 +1352,7 @@ function onBaseAtualizada() {
   reconstruirIndice();
   atualizarStatus();
   atualizarBaseSelectCards();
+  normalizarUIVisual();
   salvarCache(); // persiste localmente para uso offline
   if (appVisivel()) {
     buscar();
@@ -1371,7 +1427,7 @@ function fazerLogout() {
   const logoEl = document.getElementById('headerLogo');
   const tituloEl = document.getElementById('headerTitulo');
   if (logoEl) { logoEl.src = ''; logoEl.style.display = 'none'; }
-  if (tituloEl) tituloEl.textContent = '📦 ESTOQUE CONTAGEM';
+  if (tituloEl) tituloEl.textContent = 'ESTOQUE CONTAGEM';
   document.getElementById('appPrincipal').style.display = 'none';
   document.getElementById('telaBaseSelect').style.display = 'none';
   document.getElementById('telaLogin').style.display = '';
@@ -1415,12 +1471,13 @@ function irParaApp() {
     if (tituloEl) tituloEl.textContent = 'CÂMARA ITAMBÉ';
   } else {
     if (logoEl)  { logoEl.src = ''; logoEl.style.display = 'none'; }
-    if (tituloEl) tituloEl.textContent = '📦 ESTOQUE CONTAGEM';
+    if (tituloEl) tituloEl.textContent = 'ESTOQUE CONTAGEM';
   }
   configurarTabs();
   reconstruirIndice();
   atualizarStatus();
   buscar();
+  normalizarUIVisual();
 }
 
 function selecionarBase(marca) {
@@ -3298,6 +3355,174 @@ function restaurarSessao() {
   } catch(e) { return false; }
 }
 
+function renderDrawer() {
+  const isAdm = usuarioLogado?.perfil === 'adm';
+  document.getElementById('drawerUser').textContent = (usuarioLogado?.nome || '');
+  document.getElementById('drawerSub').textContent  = marcaAtiva === 'ambas' ? 'Acesso completo' : 'Base ' + (marcaAtiva === 'batavo' ? 'Batavo' : 'Itambe');
+
+  const pillsEl = document.getElementById('drawerPills');
+  let pills = '';
+  if (marcaAtiva === 'ambas' || marcaAtiva === 'batavo') pills += '<span class="drawer-pill batavo">BATAVO</span>';
+  if (marcaAtiva === 'ambas' || marcaAtiva === 'itambe') pills += '<span class="drawer-pill itambe">ITAMBE</span>';
+  pillsEl.innerHTML = pills;
+
+  const naoLidasChat = Object.values(_chatNaoLidas).reduce((s,n) => s+n, 0);
+  const vencCount    = document.getElementById('badgeVenc')?.textContent || '';
+  const resCount     = document.getElementById('badgeRes')?.textContent  || '';
+  const icon=function(name){ return '<i class="bi '+name+'"></i>'; };
+
+  const items = isAdm ? [
+    { id:'consulta',    icon:icon('bi-search'), label:'Consulta' },
+    { id:'vencimentos', icon:icon('bi-hourglass-split'), label:'Vencimentos', badge: vencCount },
+    { id:'reservados',  icon:icon('bi-bookmark-check'), label:'Reservados',  badge: resCount },
+    { id:'baixas',      icon:icon('bi-graph-down-arrow'), label:'Baixas' },
+    { id:'log',         icon:icon('bi-list-check'), label:'Log' },
+    { id:'chat',        icon:icon('bi-chat-dots'), label:'Chat', badge: naoLidasChat > 0 ? naoLidasChat : '' },
+    { sep: true },
+    { id:'base',  icon:icon('bi-database'), label:'Base de Dados' },
+    { id:'admin', icon:icon('bi-person-gear'), label:'Admin' },
+    { sep: true },
+    { id:'_temas', icon:icon('bi-palette'), label:'Temas' },
+  ] : usuarioLogado?.perfil === 'guest' ? [
+    { id:'consulta', icon:icon('bi-search'), label:'Consulta' },
+    { sep: true },
+    { id:'_temas',   icon:icon('bi-palette'), label:'Temas' },
+  ] : [
+    { id:'consulta',    icon:icon('bi-search'), label:'Consulta' },
+    { id:'vencimentos', icon:icon('bi-hourglass-split'), label:'Vencimentos', badge: vencCount },
+    { sep: true },
+    { id:'_temas',      icon:icon('bi-palette'), label:'Temas' },
+    { id:'_trocarbase', icon:icon('bi-arrow-repeat'), label:'Trocar Base' },
+  ];
+
+  const nav = document.getElementById('drawerNav');
+  nav.innerHTML = items.map(function(it){
+    if (it.sep) return '<div class="drawer-sep"></div>';
+    const isActive = it.id === _tabAtual;
+    const badge    = it.badge ? '<span class="drawer-item-badge">' + it.badge + '</span>' : '';
+    return '<div class="drawer-item' + (isActive ? ' active' : '') + '" onclick="drawerNavegar(\'' + it.id + '\')">' +
+      '<span class="drawer-item-icon">' + it.icon + '</span>' +
+      '<span class="drawer-item-label">' + it.label + '</span>' +
+      badge +
+    '</div>';
+  }).join('');
+}
+
+function abrirConversa(canal) {
+  _chatConvAtual = canal;
+  _chatNaoLidas[canal] = 0;
+  _chatUltimaLeitura[canal] = Date.now();
+  const headerEl = document.getElementById('chatConvNome');
+  const backBtn  = document.getElementById('chatBackBtn');
+  const inputWrap = document.getElementById('chatInputWrap');
+  if (canal === 'todos') {
+    if (headerEl) headerEl.textContent = 'Todos - Equipe';
+  } else {
+    const outroCracha = canal.replace('dm_','').split('_').find(function(c){ return c !== usuarioLogado.cracha; });
+    const outro = usuariosDB[outroCracha] || { nome: outroCracha };
+    if (headerEl) headerEl.textContent = outro.nome;
+  }
+  if (backBtn) backBtn.style.display = '';
+  if (inputWrap) inputWrap.style.display = 'flex';
+  document.getElementById('chatSidebar')?.classList.add('hidden');
+  renderChat();
+  atualizarBadgeChat();
+  renderChatConvList();
+  setTimeout(function(){ document.getElementById('chatInput')?.focus(); }, 80);
+}
+
+function voltarChatSidebar() {
+  _chatConvAtual = null;
+  document.getElementById('chatSidebar')?.classList.remove('hidden');
+  document.getElementById('chatBackBtn').style.display = 'none';
+  document.getElementById('chatInputWrap').style.display = 'none';
+  document.getElementById('chatConvNome').textContent = 'Selecione uma conversa';
+  document.getElementById('chatMsgs').innerHTML = '';
+  renderChatConvList();
+}
+
+function renderChatConvList() {
+  const el = document.getElementById('chatConvList');
+  if (!el) return;
+  const myCracha = usuarioLogado?.cracha;
+  const convs = [];
+  const msgsGrupo = chatDB['todos'] || [];
+  const ultimaGrupo = msgsGrupo[msgsGrupo.length - 1];
+  const naoLidasGrupo = _chatNaoLidas['todos'] || 0;
+  convs.push({
+    canal: 'todos',
+    avatar: '<i class="bi bi-megaphone"></i>',
+    nome: 'Todos - Equipe',
+    preview: ultimaGrupo ? ultimaGrupo.nome + ': ' + ultimaGrupo.texto : 'Mensagem para toda a equipe',
+    naoLidas: naoLidasGrupo,
+    ts: ultimaGrupo?.ts || 0,
+  });
+
+  const todos = { ...usuariosDB };
+  if (myCracha !== ADM_CRACHA) todos[ADM_CRACHA] = { nome: ADM_NOME, cracha: ADM_CRACHA };
+  delete todos[myCracha];
+
+  Object.values(todos).forEach(function(u){
+    const canal = dmCanal(u.cracha || u.nome);
+    const msgsDM = chatDB[canal] || [];
+    const ultimaDM = msgsDM[msgsDM.length - 1];
+    const naoLidasDM = _chatNaoLidas[canal] || 0;
+    convs.push({
+      canal:canal,
+      avatar:'<i class="bi bi-person-circle"></i>',
+      nome:u.nome,
+      preview: ultimaDM ? (ultimaDM.cracha === myCracha ? 'Voce: ' : '') + ultimaDM.texto : 'Iniciar conversa privada',
+      naoLidas:naoLidasDM,
+      ts:ultimaDM?.ts || 0,
+    });
+  });
+
+  convs.sort(function(a,b){ return b.ts - a.ts || (a.canal === 'todos' ? -1 : 1); });
+  el.innerHTML = convs.map(function(c){
+    return '<div class="chat-conv-item' + (c.canal === _chatConvAtual ? ' active' : '') + '" onclick="abrirConversa(\'' + c.canal + '\')">' +
+      '<div class="chat-conv-avatar">' + c.avatar + '</div>' +
+      '<div class="chat-conv-info">' +
+        '<div class="chat-conv-name">' + escapeHtml(c.nome) + '</div>' +
+        '<div class="chat-conv-preview">' + escapeHtml(c.preview.slice(0, 40)) + '</div>' +
+      '</div>' +
+      (c.naoLidas > 0 ? '<div class="chat-conv-badge">' + c.naoLidas + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function atualizarBadgeChat() {
+  const total = Object.values(_chatNaoLidas).reduce((s, n) => s + n, 0);
+  if (document.getElementById('drawer')?.classList.contains('show')) renderDrawer();
+  if (total > 0 && document.hidden) {
+    if (!_chatTitleInterval) {
+      const orig = document.title;
+      let tog = false;
+      _chatTitleInterval = setInterval(function(){
+        document.title = tog ? 'Chat: ' + total + ' nova(s)' : orig;
+        tog = !tog;
+      }, 1200);
+    }
+  } else {
+    if (_chatTitleInterval) {
+      clearInterval(_chatTitleInterval);
+      _chatTitleInterval = null;
+      document.title = 'EstoqueCD';
+    }
+  }
+}
+
+function aplicarTema(tema) {
+  TEMAS.forEach(function(t){ if (t) document.body.classList.remove(t); });
+  if (tema) document.body.classList.add(tema);
+  TEMAS.forEach(function(t){
+    const el = document.getElementById('check-' + t);
+    if (el) el.textContent = t === tema ? 'OK' : '';
+  });
+  document.querySelectorAll('.tema-btn').forEach(function(b){ b.classList.toggle('ativo', b.dataset.tema === tema); });
+  fecharTemas();
+  try { localStorage.setItem('estoque-tema', tema); } catch(e) {}
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Versão — injetada em todos os pontos via constante única
   const verEl = document.getElementById('loginVersion');
@@ -3311,6 +3536,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saved) aplicarTema(saved);
     else document.getElementById('check-').textContent = '✓';
   } catch(e) { document.getElementById('check-').textContent = '✓'; }
+
+  const checkPadrao = document.getElementById('check-');
+  if (checkPadrao) checkPadrao.textContent = 'OK';
+  normalizarUIVisual();
 
   // Inicia listeners Firebase
   initListeners();
