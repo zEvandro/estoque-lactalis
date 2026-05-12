@@ -2260,7 +2260,45 @@ function aplicarTema(tema) {
   try { localStorage.setItem('estoque-tema', tema); } catch(e) {}
 }
 
+function initTypewriter() {
+  const el1 = document.querySelector('.ll-type-1');
+  const el2 = document.querySelector('.ll-type-2');
+  const cursor = document.querySelector('.ll-cursor');
+  if (!el1 || !el2) return;
+  el1.textContent = '';
+  el2.textContent = '';
+
+  const word1 = 'Estoque';
+  const word2 = 'CD';
+  let i = 0;
+
+  function typeWord1() {
+    if (i < word1.length) {
+      el1.textContent += word1[i++];
+      setTimeout(typeWord1, 100);
+    } else {
+      setTimeout(typeWord2, 220);
+    }
+  }
+
+  let j = 0;
+  function typeWord2() {
+    if (j < word2.length) {
+      el2.textContent += word2[j++];
+      setTimeout(typeWord2, 160);
+    } else {
+      setTimeout(() => {
+        if (cursor) { cursor.style.animation = 'none'; cursor.style.opacity = '0'; }
+      }, 1800);
+    }
+  }
+
+  setTimeout(typeWord1, 550);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  initTypewriter();
+
   // Versão — injetada em todos os pontos via constante única
   const verEl = document.getElementById('loginVersion');
   if (verEl) verEl.textContent = APP_VERSION;

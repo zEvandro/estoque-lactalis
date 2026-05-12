@@ -160,9 +160,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   background-size:200% 200%;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   filter:drop-shadow(0 3px 12px rgba(0,0,0,.9));
-  animation:fadeInUp .7s ease .35s both, shimmerTitle 6s ease-in-out 1.2s infinite
+  animation:shimmerTitle 6s ease-in-out 1.5s infinite
 }
-.ll-title span{color:var(--accent);-webkit-text-fill-color:var(--accent)}
+.ll-type-2{color:var(--accent);-webkit-text-fill-color:var(--accent)}
+.ll-cursor{display:inline-block;-webkit-text-fill-color:var(--accent);color:var(--accent);font-weight:300;margin-left:3px;vertical-align:middle;animation:cursorBlink .7s step-end infinite}
+@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
 .ll-desc{font-size:14px;color:#ddd;line-height:1.75;margin-bottom:36px;max-width:400px;animation:fadeInUp .6s ease .45s both;text-shadow:0 1px 8px rgba(0,0,0,.9)}
 .ll-features{list-style:none;padding:0;margin:0 0 44px;display:flex;flex-direction:column;gap:14px}
 .ll-features li{display:flex;align-items:center;gap:13px;font-size:13px;color:#eee;opacity:0;animation:fadeInUp .5s ease both;text-shadow:0 1px 6px rgba(0,0,0,.9)}
