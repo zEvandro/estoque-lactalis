@@ -12,7 +12,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.9.0';
+const APP_VERSION = 'v6.9.1';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -32,7 +32,10 @@ let usuariosDB   = {}; // { [cracha]: { nome, basePerm } }
 let logDB        = []; // sorted array of all actions
 let loginAttemptsDB = []; // login attempts
 let contagensDB  = {}; // { [idx]: { real, sistema, diff, nome, hora } }
-let _filtroLog   = 'todos';
+let _filtroLog        = 'todos';
+let _filtroLogMarca   = 'todas';
+let _filtroLogUsuario = 'todos';
+let _filtroLogBusca   = '';
 let _estaOnline  = false;
 let _tabAtual    = 'consulta';
 
@@ -400,6 +403,14 @@ function fazerLogout() {
   document.getElementById('loginSenha').value = '';
   document.getElementById('loginSenhaWrap').style.display = 'none';
   document.getElementById('loginErro').textContent = '';
+  _filtroLog = 'todos';
+  _filtroLogMarca = 'todas';
+  _filtroLogUsuario = 'todos';
+  _filtroLogBusca = '';
+  const logBusca = document.getElementById('logBusca');
+  if (logBusca) logBusca.value = '';
+  const logSel = document.getElementById('logFiltroUsuario');
+  if (logSel) { logSel.innerHTML = '<option value="todos">Todos os operadores</option>'; }
 }
 
 // ════ NAVEGAÇÃO ════════════════════════════════════════════════════
@@ -1256,9 +1267,27 @@ function renderResumoBaixas() {
 // ════ LOG DE ATIVIDADE ════════════════════════════════════════════
 function setFiltroLog(f) {
   _filtroLog = f;
-  ['Todos','Reserva','Baixa','Base'].forEach(n => {
+  ['Todos','Reserva','Baixa','Divergencia','Base'].forEach(n => {
     document.getElementById('logFiltro' + n)?.classList.toggle('active', f === n.toLowerCase());
   });
+  renderLog();
+}
+
+function setFiltroLogMarca(m) {
+  _filtroLogMarca = m;
+  ['Todas','Batavo','Itambe'].forEach(n => {
+    document.getElementById('logMarca' + n)?.classList.toggle('active', m === n.toLowerCase());
+  });
+  renderLog();
+}
+
+function setFiltroLogUsuario(u) {
+  _filtroLogUsuario = u;
+  renderLog();
+}
+
+function setFiltroLogBusca(q) {
+  _filtroLogBusca = q.toLowerCase().trim();
   renderLog();
 }
 
@@ -1277,11 +1306,47 @@ function renderLog() {
   if (!lista) return;
   const isAdm = usuarioLogado?.perfil === 'adm';
 
+  // Mostra/oculta filtros exclusivos do ADM
+  const admFiltros = document.getElementById('logFiltrosAdm');
+  if (admFiltros) admFiltros.style.display = isAdm ? '' : 'none';
+
+  // Popula dropdown de usuários (só uma vez)
+  if (isAdm) {
+    const sel = document.getElementById('logFiltroUsuario');
+    if (sel && sel.options.length <= 1) {
+      const todos = { ...usuariosDB };
+      todos[ADM_CRACHA] = { nome: ADM_NOME, cracha: ADM_CRACHA };
+      Object.values(todos).sort((a,b) => a.nome.localeCompare(b.nome)).forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.cracha;
+        opt.textContent = u.nome + ' (' + u.cracha + ')';
+        sel.appendChild(opt);
+      });
+    }
+  }
+
   let items = isAdm ? logDB
     : logDB.filter(e => e.cracha === usuarioLogado?.cracha);
 
   if (_filtroLog !== 'todos')
     items = items.filter(e => e.acao === _filtroLog);
+
+  if (isAdm && _filtroLogMarca !== 'todas')
+    items = items.filter(e => e.marca === _filtroLogMarca);
+
+  if (isAdm && _filtroLogUsuario !== 'todos')
+    items = items.filter(e => e.cracha === _filtroLogUsuario);
+
+  if (_filtroLogBusca) {
+    const q = _filtroLogBusca;
+    items = items.filter(e =>
+      (e.codigo    || '').toLowerCase().includes(q) ||
+      (e.descricao || '').toLowerCase().includes(q) ||
+      (e.nome      || '').toLowerCase().includes(q) ||
+      (e.endereco  || '').toLowerCase().includes(q) ||
+      (e.arquivo   || '').toLowerCase().includes(q)
+    );
+  }
 
   if (!items.length) {
     lista.innerHTML = '';

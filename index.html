@@ -231,11 +231,26 @@
 
   <!-- LOG DE ATIVIDADE -->
   <div class="content" id="tab-log" style="display:none">
-    <div class="filtro-wrap">
-      <button class="btn-filtro active" id="logFiltroTodos"   onclick="setFiltroLog('todos')">Todos</button>
-      <button class="btn-filtro"        id="logFiltroReserva" onclick="setFiltroLog('reserva')">📋 Reservas</button>
-      <button class="btn-filtro"        id="logFiltroBaixa"   onclick="setFiltroLog('baixa')">✓ Baixas</button>
-      <button class="btn-filtro"        id="logFiltroBase"    onclick="setFiltroLog('base')">📂 Bases</button>
+    <div class="log-filtros">
+      <div class="filtro-wrap">
+        <button class="btn-filtro active" id="logFiltroTodos"       onclick="setFiltroLog('todos')">Todos</button>
+        <button class="btn-filtro"        id="logFiltroReserva"     onclick="setFiltroLog('reserva')">📋 Reservas</button>
+        <button class="btn-filtro"        id="logFiltroBaixa"       onclick="setFiltroLog('baixa')">✓ Baixas</button>
+        <button class="btn-filtro"        id="logFiltroDivergencia" onclick="setFiltroLog('divergencia')">⚠ Diverg.</button>
+        <button class="btn-filtro"        id="logFiltroBase"        onclick="setFiltroLog('base')">📂 Bases</button>
+      </div>
+      <div class="filtro-wrap" id="logFiltrosAdm" style="display:none">
+        <button class="btn-filtro active" id="logMarcaTodas"  onclick="setFiltroLogMarca('todas')">Todas</button>
+        <button class="btn-filtro"        id="logMarcaBatavo" onclick="setFiltroLogMarca('batavo')">🔵 Batavo</button>
+        <button class="btn-filtro"        id="logMarcaItambe" onclick="setFiltroLogMarca('itambe')">🟣 Itambé</button>
+        <select id="logFiltroUsuario" onchange="setFiltroLogUsuario(this.value)" class="log-select-user">
+          <option value="todos">Todos os operadores</option>
+        </select>
+      </div>
+      <div class="log-busca-wrap">
+        <i class="bi bi-search"></i>
+        <input id="logBusca" type="search" placeholder="Buscar código, produto ou operador…" oninput="setFiltroLogBusca(this.value)" autocomplete="off">
+      </div>
     </div>
     <div id="listaLog"></div>
     <div id="vazioLog" class="empty" style="display:none">
