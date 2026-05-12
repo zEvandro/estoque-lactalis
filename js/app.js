@@ -2263,34 +2263,32 @@ function aplicarTema(tema) {
 function initTypewriter() {
   const el1 = document.querySelector('.ll-type-1');
   const el2 = document.querySelector('.ll-type-2');
+  const el3 = document.querySelector('.ll-type-3');
   const cursor = document.querySelector('.ll-cursor');
   if (!el1 || !el2) return;
   el1.textContent = '';
   el2.textContent = '';
+  if (el3) el3.textContent = '';
 
   const word1 = 'Estoque';
   const word2 = 'CD';
-  let i = 0;
+  const word3 = 'Rio de Janeiro';
+  let i = 0, j = 0, k = 0;
 
   function typeWord1() {
-    if (i < word1.length) {
-      el1.textContent += word1[i++];
-      setTimeout(typeWord1, 100);
-    } else {
-      setTimeout(typeWord2, 220);
-    }
+    if (i < word1.length) { el1.textContent += word1[i++]; setTimeout(typeWord1, 100); }
+    else setTimeout(typeWord2, 220);
   }
-
-  let j = 0;
   function typeWord2() {
-    if (j < word2.length) {
-      el2.textContent += word2[j++];
-      setTimeout(typeWord2, 160);
-    } else {
-      setTimeout(() => {
-        if (cursor) { cursor.style.animation = 'none'; cursor.style.opacity = '0'; }
-      }, 1800);
-    }
+    if (j < word2.length) { el2.textContent += word2[j++]; setTimeout(typeWord2, 160); }
+    else setTimeout(typeWord3, 280);
+  }
+  function typeWord3() {
+    if (!el3) return;
+    if (k < word3.length) { el3.textContent += word3[k++]; setTimeout(typeWord3, 75); }
+    else setTimeout(() => {
+      if (cursor) { cursor.style.animation = 'none'; cursor.style.opacity = '0'; }
+    }, 1800);
   }
 
   setTimeout(typeWord1, 550);
