@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>EstoqueCD</title>
+
+<!-- PWA -->
+<link rel="manifest" href="./manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EstoqueCD">
+<meta name="theme-color" content="#0f1117">
+<link rel="apple-touch-icon" href="./assets/images/Lacfrio.png">
+
+<!-- Ícones e bibliotecas externas -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<!-- Estilos da aplicação -->
+<link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+
+<!-- Banner de atualização disponível -->
+<div id="updateBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:10000;background:var(--surface);border-bottom:2px solid var(--accent3);padding:12px 16px;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.5);animation:slideDown .3s ease">
+  <div style="font-size:22px"><i class="bi bi-arrow-clockwise"></i></div>
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:700;color:var(--ink)">Nova versão disponível!</div>
+    <div style="font-size:11px;color:var(--muted)">Toque em Atualizar para aplicar as novidades</div>
+  </div>
+  <button onclick="aplicarAtualizacao()" style="background:var(--accent3);color:var(--bg);border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif"><i class="bi bi-arrow-clockwise"></i> Atualizar</button>
+  <button onclick="document.getElementById('updateBanner').style.display='none'" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 8px">✕</button>
+</div>
+
+<!-- Banner de instalação PWA -->
+<div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--surface);border-top:2px solid var(--accent);padding:14px 18px;display:none;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.4)">
+  <div style="font-size:28px">📦</div>
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:700;color:var(--ink)">Instalar Estoque Contagem</div>
+    <div style="font-size:11px;color:var(--muted)">Acesse como app no seu celular, sem navegador</div>
+  </div>
+  <button onclick="instalarPWA()" style="background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif">Instalar</button>
+  <button onclick="document.getElementById('installBanner').style.display='none'" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 8px">✕</button>
+</div>
+
+<!-- ══ TELA LOGIN ══ -->
+<div id="telaLogin">
+  <div class="login-wrap">
+
+    <!-- Branding -->
+    <div class="login-brand">
+      <img src="./assets/images/Lacfrio.png" class="login-brand-logo" alt="Lacfrio">
+      <span class="login-brand-text">LACFRIO</span>
+    </div>
+    <div class="login-brand-sub">Distribuidora · Câmara Fria</div>
+    <div class="login-version-tag">
+      <span id="loginVersion" style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.5px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 10px;display:inline-block"></span>
+    </div>
+
+    <!-- Aviso institucional -->
+    <div class="login-aviso">
+      <div class="login-aviso-titulo">📋 Sobre este aplicativo</div>
+      <div class="login-aviso-texto">
+        Ferramenta de <b style="color:var(--ink)">consulta de endereços e localização de produtos</b> na câmara fria.
+        Desenvolvida para substituir a lista impressa em papel, agilizando a separação e conferência de paletes.
+      </div>
+      <div class="login-aviso-alerta">
+        <span>⚠️</span>
+        <span>Este app <b>não substitui o WMS Basic</b>. É uma ferramenta de apoio operacional — use sempre em conjunto com o sistema oficial da empresa.</span>
+      </div>
+    </div>
+
+    <!-- Card de login -->
+    <div class="login-card">
+      <div class="login-card-titulo">🔐 Acesso com crachá</div>
+      <div class="lf">
+        <label>Número do Crachá</label>
+        <input id="loginCracha" type="number" placeholder="Digite seu crachá" onkeydown="if(event.key==='Enter')fazerLogin()">
+      </div>
+      <div class="lf" id="loginSenhaWrap" style="display:none">
+        <label>Senha ADM</label>
+        <input id="loginSenha" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()">
+      </div>
+      <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+      <div class="login-erro" id="loginErro"></div>
+
+      <div class="login-divider">ou</div>
+
+      <button class="btn-consultor" onclick="entrarComoConsultor()">
+        <span><i class="bi bi-eye"></i></span> Entrar como Consultor
+      </button>
+      <div class="login-consultor-hint">Acesso de leitura sem cadastro · somente consulta de produtos</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ TELA SELEÇÃO BASE ══ -->
+<div id="telaBaseSelect" style="display:none">
+  <div class="bs-logo">ESTOQUE CONTAGEM</div>
+  <div class="bs-user" id="bsUserInfo"></div>
+  <div class="bs-title">Escolha a base de dados</div>
+  <div class="bs-grid">
+    <div class="bs-card batavo indisponivel" id="bsCardBatavo" onclick="selecionarBase('batavo')">
+      <div class="bs-icon"><i class="bi bi-circle-fill"></i></div>
+      <div class="bs-nome">BATAVO</div>
+      <div id="bsStatusBatavo">
+        <span class="bs-status bs-no">⚠️ Base ausente</span>
+        <div class="bs-aviso">Não houve contagem hoje</div>
+      </div>
+    </div>
+    <div class="bs-card itambe indisponivel" id="bsCardItambe" onclick="selecionarBase('itambe')">
+      <div class="bs-icon"><i class="bi bi-circle-fill"></i></div>
+      <div class="bs-nome">ITAMBÉ</div>
+      <div id="bsStatusItambe">
+        <span class="bs-status bs-no">⚠️ Base ausente</span>
+        <div class="bs-aviso">Não houve contagem hoje</div>
+      </div>
+    </div>
+  </div>
+  <button class="btn-sair" onclick="fazerLogout()"><i class="bi bi-box-arrow-left"></i> Sair</button>
+</div>
+
+<!-- ══ APP PRINCIPAL ══ -->
+<div id="appPrincipal" style="display:none">
+
+  <div class="header">
+    <button class="btn-hamburguer" onclick="abrirDrawer()"><i class="bi bi-list"></i></button>
+    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+      <img id="headerLogo" src="" alt="" style="width:32px;height:32px;border-radius:8px;object-fit:cover;display:none;flex-shrink:0">
+      <div class="logo" id="headerTitulo">ESTOQUE CONTAGEM</div>
+    </div>
+    <div class="header-right">
+      <div class="conn-pill" id="connPill">Offline</div>
+      <button class="btn-hdr" onclick="fazerLogout()">Sair</button>
+    </div>
+  </div>
+
+  <!-- Navigation Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="fecharDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-user" id="drawerUser"></div>
+      <div class="drawer-sub" id="drawerSub"></div>
+      <div class="drawer-pills" id="drawerPills"></div>
+    </div>
+    <nav class="drawer-nav" id="drawerNav"></nav>
+    <div class="drawer-footer">
+      <span id="drawerEstoque">sem base</span>
+      <span id="drawerVersion"></span>
+    </div>
+  </div>
+
+  <!-- CONSULTA -->
+  <div class="content" id="tab-consulta">
+    <div id="noDB" class="no-db-banner" style="display:none">
+      ⚠️ Base não carregada. Aguarde o ADM carregar a base do dia.
+    </div>
+    <div id="offlineBanner" class="offline-banner" style="display:none">
+      📴 Modo offline — consultando cache local. Reservas não serão salvas.
+    </div>
+    <div id="areaConsulta">
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Código, descrição ou endereço (ex: A 001)…" oninput="debounceBuscar()" onkeydown="if(event.key==='Escape'){this.value='';buscar();}" autocomplete="off">
+        <span class="search-icon">⌕</span>
+      </div>
+      <div class="filtro-wrap">
+        <button class="btn-filtro active" id="filtroTodos" onclick="setFiltro('todos')">Todos</button>
+        <button class="btn-filtro" id="filtroReserva" onclick="setFiltro('reserva')">📦 Aéreo</button>
+        <button class="btn-filtro" id="filtroPicking" onclick="setFiltro('picking')">🔴 Picking</button>
+      </div>
+      <div class="stats" id="statsBar"></div>
+      <div class="results" id="listaResultados"></div>
+    </div>
+  </div>
+
+  <!-- VENCIMENTOS -->
+  <div class="content" id="tab-vencimentos" style="display:none">
+    <div class="filtro-wrap">
+      <button class="btn-filtro active" id="fv2"  onclick="setFiltroVenc(2)">⚠️ 2 dias</button>
+      <button class="btn-filtro"        id="fv5"  onclick="setFiltroVenc(5)">5 dias</button>
+      <button class="btn-filtro"        id="fv10" onclick="setFiltroVenc(10)">10 dias</button>
+      <button class="btn-filtro"        id="fv30" onclick="setFiltroVenc(30)">30 dias</button>
+      <button class="btn-filtro"        id="fvCustom" onclick="toggleFiltroCustom()">✏️ Personalizado</button>
+    </div>
+    <div id="filtroCustomWrap" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Vence entre:</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:6px">
+          <input id="vencMin" type="number" min="0" max="365" value="0" style="width:64px;background:var(--surface2);border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-size:14px;color:var(--ink);font-family:'IBM Plex Mono',monospace;outline:none" oninput="renderVencimentos()">
+          <span style="font-size:12px;color:var(--muted)">e</span>
+          <input id="vencMax" type="number" min="0" max="365" value="30" style="width:64px;background:var(--surface2);border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-size:14px;color:var(--ink);font-family:'IBM Plex Mono',monospace;outline:none" oninput="renderVencimentos()">
+          <span style="font-size:12px;color:var(--muted)">dias</span>
+        </div>
+        <button class="btn-filtro active" style="margin:0" onclick="renderVencimentos()">Aplicar</button>
+      </div>
+    </div>
+    <div class="stats" id="statsVenc"></div>
+    <div class="results" id="listaVencimentos"></div>
+    <div id="vazioVenc" class="empty" style="display:none">
+      <div class="icon">✅</div><h3>Nenhum produto vencendo</h3>
+      <p>Nenhum item vence dentro do prazo selecionado</p>
+    </div>
+  </div>
+
+  <!-- RESERVADOS -->
+  <div class="content" id="tab-reservados" style="display:none">
+    <div class="results" id="listaReservados"></div>
+    <div id="vazioReservados" class="empty">
+      <div class="icon">🗂️</div><h3>Nenhum produto reservado</h3>
+      <p>Na aba Consulta, clique em <b>Reservar</b> para mover itens aqui</p>
+    </div>
+  </div>
+
+  <!-- BAIXAS -->
+  <div class="content" id="tab-baixas" style="display:none">
+    <div class="search-box" style="margin-bottom:10px">
+      <input id="searchBaixas" type="text" placeholder="Buscar por código ou descrição..." oninput="renderBaixas()" autocomplete="off">
+      <span class="search-icon">⌕</span>
+    </div>
+    <div id="listaBaixas"></div>
+    <div id="vazioBaixas" class="empty">
+      <div class="icon">📉</div><h3>Nenhuma baixa registrada</h3>
+      <p>As baixas que você registrar aparecem aqui</p>
+    </div>
+  </div>
+
+  <!-- LOG DE ATIVIDADE -->
+  <div class="content" id="tab-log" style="display:none">
+    <div class="filtro-wrap">
+      <button class="btn-filtro active" id="logFiltroTodos"   onclick="setFiltroLog('todos')">Todos</button>
+      <button class="btn-filtro"        id="logFiltroReserva" onclick="setFiltroLog('reserva')">📋 Reservas</button>
+      <button class="btn-filtro"        id="logFiltroBaixa"   onclick="setFiltroLog('baixa')">✓ Baixas</button>
+      <button class="btn-filtro"        id="logFiltroBase"    onclick="setFiltroLog('base')">📂 Bases</button>
+    </div>
+    <div id="listaLog"></div>
+    <div id="vazioLog" class="empty" style="display:none">
+      <div class="icon">📋</div><h3>Nenhuma atividade ainda</h3>
+      <p>As ações do dia aparecerão aqui em tempo real</p>
+    </div>
+  </div>
+
+
+  <!-- BASE DE DADOS (ADM) -->
+  <div class="content" id="tab-base" style="display:none">
+    <div class="help">
+      <b>Gerenciamento de bases — ADM</b><br>
+      Carregue o arquivo Excel do dia para cada marca. Os usuários verão a base automaticamente.
+    </div>
+    <div class="bases-grid">
+      <div class="base-card batavo" id="baseCardBatavo" onclick="cardClick('batavo')">
+        <div class="base-card-header">
+          <span class="base-card-icon">🟢</span>
+          <span class="base-card-nome">BATAVO</span>
+          <span class="base-card-badge" id="badgeBatavo"></span>
+        </div>
+        <div class="base-card-arquivo vazio" id="arquivoBatavo">Nenhum arquivo carregado</div>
+        <div class="base-card-meta" id="metaBatavo"></div>
+        <div class="base-card-action" id="actionBatavo">+ Clique para carregar</div>
+      </div>
+      <div class="base-card itambe" id="baseCardItambe" onclick="cardClick('itambe')">
+        <div class="base-card-header">
+          <span class="base-card-icon">🔵</span>
+          <span class="base-card-nome">ITAMBÉ</span>
+          <span class="base-card-badge" id="badgeItambe"></span>
+        </div>
+        <div class="base-card-arquivo vazio" id="arquivoItambe">Nenhum arquivo carregado</div>
+        <div class="base-card-meta" id="metaItambe"></div>
+        <div class="base-card-action" id="actionItambe">+ Clique para carregar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="content" id="tab-admin" style="display:none">
+
+    <!-- Alterar senha ADM -->
+    <div class="admin-section">
+      <h3>🔑 Alterar Senha ADM</h3>
+      <div class="form-row">
+        <input id="senhaAtual" type="password" placeholder="Senha atual">
+      </div>
+      <div class="form-row">
+        <input id="senhaNova" type="password" placeholder="Nova senha">
+        <input id="senhaConfirm" type="password" placeholder="Confirmar nova senha">
+      </div>
+      <div class="form-row">
+        <button class="btn-add" onclick="alterarSenha()">💾 Salvar nova senha</button>
+      </div>
+    </div>
+
+    <!-- Cadastrar usuário -->
+    <div class="admin-section">
+      <h3>👤 Cadastrar Usuário</h3>
+      <div class="form-row">
+        <input id="novoNome" type="text" placeholder="Nome completo">
+        <input id="novoCracha" type="number" placeholder="Crachá">
+      </div>
+      <div class="form-row">
+        <select id="novaBase">
+          <option value="batavo">🟢 Batavo</option>
+          <option value="itambe">🔵 Itambé</option>
+          <option value="ambas">🔄 Ambas</option>
+        </select>
+        <button class="btn-add" onclick="cadastrarUsuario()">+ Cadastrar</button>
+      </div>
+    </div>
+
+    <!-- Lista de usuários -->
+    <div class="admin-section">
+      <h3>👥 Usuários Cadastrados</h3>
+      <div id="listaUsuarios"><div class="empty" style="padding:16px 0"><p>Nenhum usuário cadastrado</p></div></div>
+    </div>
+
+    <!-- Tentativas de login inválidas -->
+    <div class="admin-section">
+      <h3>🔒 Tentativas de Login Inválidas</h3>
+      <div id="listaLoginAttempts"><p style="font-size:13px;color:var(--muted)">Nenhuma tentativa registrada</p></div>
+      <button class="btn-limpar-dia" style="margin-top:12px;border-color:var(--border);color:var(--muted)" onclick="limparLoginAttempts()">🗑 Limpar</button>
+    </div>
+
+    <!-- Baixas do dia -->
+    <div class="admin-section">
+      <h3>📊 Baixas do Dia</h3>
+      <div id="resumoBaixas"><p style="font-size:13px;color:var(--muted)">Nenhuma baixa registrada</p></div>
+      <button class="btn-limpar-dia" style="margin-top:12px" onclick="limparBaixas()">🗑 Limpar histórico de baixas</button>
+    </div>
+
+    <!-- Reset do dia -->
+    <div class="admin-section" style="border-color:var(--red-soft)">
+      <h3 style="color:var(--red)">🗑 Resetar o Dia</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
+        Remove <b>bases, reservas e baixas</b> de todos os usuários. Use no fim do dia para preparar o app para a próxima contagem.
+      </p>
+      <button class="btn-limpar-dia" onclick="limparTudo()">⚠️ Limpar tudo e resetar o dia</button>
+    </div>
+
+  </div>
+
+</div><!-- /appPrincipal -->
+
+<!-- Modal contagem parcial -->
+<div class="overlay" id="modalContagem" onclick="if(event.target===this)fecharModalContagem()">
+  <div class="modal" style="max-width:400px">
+    <h3 id="modalContagemTitulo" style="margin-bottom:4px"></h3>
+    <p id="modalContagemDesc" style="font-size:12px;color:var(--muted);margin-bottom:16px"></p>
+    <div style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="color:var(--muted)">Sistema:</span>
+        <span id="modalContagemSistema" style="font-weight:700;font-family:'IBM Plex Mono',monospace"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--muted)">Contagem real:</span>
+        <input id="modalContagemReal" type="number" min="0" style="width:90px;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:6px 10px;font-size:14px;font-weight:700;color:var(--ink);text-align:right;font-family:'IBM Plex Mono',monospace;outline:none" onkeydown="if(event.key==='Enter')confirmarContagem()">
+      </div>
+    </div>
+    <div id="modalContagemDiff" style="font-size:13px;text-align:center;min-height:20px;margin-bottom:14px"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-baixa" style="flex:1" onclick="confirmarContagem()">💾 Salvar</button>
+      <button class="btn" style="flex:1;border-color:var(--border);color:var(--muted)" onclick="fecharModalContagem()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal gerenciar base -->
+<div class="overlay" id="modalBase">
+  <div class="modal-gerenciar" id="modalGerenciarCard">
+    <div class="modal-base-header">
+      <span class="modal-base-icon" id="modalBaseIcone"></span>
+      <span class="modal-base-titulo" id="modalBaseTitulo"></span>
+    </div>
+    <div class="modal-base-body">
+      <div class="modal-base-arquivo" id="modalBaseArquivo"></div>
+      <div class="modal-base-contagem" id="modalBaseContagem"></div>
+      <div style="display:flex;flex-direction:column">
+        <button class="btn-acao-base substituir" id="btnSubstituir" onclick="prepararUpload()">🔄 Substituir arquivo</button>
+        <button class="btn-acao-base retirar" onclick="retirarBase()">✕ Retirar base</button>
+        <button class="btn-acao-base cancelar" onclick="fecharModalBase()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal divergência -->
+<div class="overlay" id="modalDiverg" onclick="if(event.target===this)fecharDiverg()">
+  <div class="modal" style="max-width:440px;max-height:90vh;overflow-y:auto">
+    <h3 style="margin-bottom:4px">⚠️ Registrar Divergência</h3>
+    <p id="divProdInfo" style="font-size:12px;color:var(--muted);margin-bottom:14px"></p>
+
+    <!-- Motivo -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px">Motivo:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-diverg-motivo active" id="dmQtd"      onclick="setMotivoDiv('qtd')">📦 Quantidade</button>
+        <button class="btn-diverg-motivo"         id="dmData"     onclick="setMotivoDiv('data')">📅 Data</button>
+        <button class="btn-diverg-motivo"         id="dmAmbos"    onclick="setMotivoDiv('ambos')">📦📅 Ambos</button>
+        <button class="btn-diverg-motivo"         id="dmEtiqueta" onclick="setMotivoDiv('etiqueta')">🏷️ Etiqueta trocada</button>
+      </div>
+    </div>
+
+    <!-- Campos quantidade -->
+    <div id="divSecQtd" style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--ora);margin-bottom:8px">📦 QUANTIDADE</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:90px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Sistema</div>
+          <input id="divQtdSis" type="number" readonly style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:14px;font-weight:700;color:var(--muted);font-family:'IBM Plex Mono',monospace;box-sizing:border-box">
+        </div>
+        <div style="font-size:18px;color:var(--muted);padding-top:16px">→</div>
+        <div style="flex:1;min-width:90px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Físico (real)</div>
+          <input id="divQtdReal" type="number" min="0" placeholder="0" oninput="atualizarDiffDiv()" style="width:100%;background:var(--bg);border:1.5px solid var(--accent3);border-radius:6px;padding:8px 10px;font-size:14px;font-weight:700;color:var(--ink);font-family:'IBM Plex Mono',monospace;box-sizing:border-box;outline:none">
+        </div>
+      </div>
+      <div id="divDiffQtd" style="font-size:12px;margin-top:8px;min-height:18px;text-align:center"></div>
+    </div>
+
+    <!-- Campos data -->
+    <div id="divSecData" style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:12px;display:none">
+      <div style="font-size:11px;font-weight:700;color:var(--ora);margin-bottom:8px">📅 DATA DE VALIDADE</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:90px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Sistema</div>
+          <input id="divDataSis" type="text" readonly style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;font-weight:700;color:var(--muted);font-family:'IBM Plex Mono',monospace;box-sizing:border-box">
+        </div>
+        <div style="font-size:18px;color:var(--muted);padding-top:16px">→</div>
+        <div style="flex:1;min-width:90px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Físico (real)</div>
+          <input id="divDataReal" type="text" placeholder="DD/MM/AAAA" style="width:100%;background:var(--bg);border:1.5px solid var(--accent3);border-radius:6px;padding:8px 10px;font-size:13px;font-weight:700;color:var(--ink);font-family:'IBM Plex Mono',monospace;box-sizing:border-box;outline:none">
+        </div>
+      </div>
+    </div>
+
+    <!-- Campos etiqueta trocada -->
+    <div id="divSecEtiqueta" style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:12px;display:none">
+      <div style="font-size:11px;font-weight:700;color:var(--ora);margin-bottom:8px">🏷️ ETIQUETA TROCADA</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">O código da etiqueta não corresponde ao produto físico na prateleira.</div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Código na etiqueta (sistema)</div>
+        <input id="divEtiqSis" type="text" readonly style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;font-weight:700;color:var(--muted);font-family:'IBM Plex Mono',monospace;box-sizing:border-box">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">Produto físico encontrado (descrição ou código)</div>
+        <input id="divEtiqReal" type="text" placeholder="Ex: LEITE INTEGRAL 1L ou código 789123" style="width:100%;background:var(--bg);border:1.5px solid var(--accent3);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;box-sizing:border-box;outline:none">
+      </div>
+    </div>
+
+    <!-- Foto -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px">📷 Foto (opcional):</div>
+      <div id="divFotoPreview" style="display:none;margin-bottom:8px;border-radius:8px;overflow:hidden;max-height:180px;text-align:center">
+        <img id="divFotoImg" style="max-width:100%;max-height:180px;border-radius:8px;object-fit:cover">
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="tirarFoto()" style="flex:1;background:var(--surface2);border:1.5px dashed var(--border);border-radius:8px;padding:10px;font-size:12px;color:var(--muted);cursor:pointer">📷 Tirar foto</button>
+        <button onclick="escolherFoto()" style="flex:1;background:var(--surface2);border:1.5px dashed var(--border);border-radius:8px;padding:10px;font-size:12px;color:var(--muted);cursor:pointer">🖼️ Galeria</button>
+        <button id="btnRemoverFoto" onclick="removerFotoDiverg()" style="display:none;background:var(--red-bg);border:1px solid var(--red-soft);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--red);cursor:pointer">✕</button>
+      </div>
+      <input type="file" id="divFotoInput" accept="image/*" style="display:none" onchange="onFotoSelecionada(this)">
+      <input type="file" id="divFotoCamera" accept="image/*" capture="environment" style="display:none" onchange="onFotoSelecionada(this)">
+    </div>
+
+    <!-- Bloqueio -->
+    <div style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:16px;border:1.5px solid var(--border)" id="divSecBloqueio">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+        <input type="checkbox" id="divBloquearCheck" onchange="toggleBloquearSec()" style="width:16px;height:16px;accent-color:var(--red);cursor:pointer">
+        <span style="font-size:13px;font-weight:600;color:var(--ink)">🔒 Bloquear palete após registrar</span>
+      </label>
+      <div id="divBloquearMotivo" style="display:none;margin-top:10px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Motivo do bloqueio:</div>
+        <select id="divMotivoBloquear" style="width:100%;background:var(--bg);border:1.5px solid var(--accent3);border-radius:6px;padding:9px 12px;font-size:13px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;outline:none">
+          <option value="Divergência de estoque">⚠️ Divergência de estoque</option>
+          <option value="Bloqueado pela Qualidade">🔬 Bloqueado pela Qualidade</option>
+          <option value="Aguardando inspeção">📋 Aguardando inspeção</option>
+          <option value="Avaria — umidade">💧 Avaria — umidade</option>
+          <option value="Embalagem danificada">📦 Embalagem danificada</option>
+          <option value="Produto vencido">🚫 Produto vencido</option>
+          <option value="Devolução ao fornecedor">🔄 Devolução ao fornecedor</option>
+          <option value="Outro">📝 Outro</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Observação -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:6px">Observação (opcional):</div>
+      <textarea id="divObs" maxlength="200" placeholder="Ex: produto molhado, embalagem danificada…" style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;resize:none;height:64px;box-sizing:border-box;outline:none"></textarea>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-baixa" style="flex:1;background:var(--ora);border-color:var(--ora)" onclick="compartilharDivergencia()">📤 Compartilhar</button>
+      <button class="btn btn-baixa" style="flex:1" onclick="salvarDivergencia()">💾 Só salvar</button>
+      <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="fecharDiverg()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal seleção de aba -->
+<div class="overlay" id="modalAba" onclick="if(event.target===this)fecharModalAba()">
+  <div class="modal" style="max-width:420px">
+    <h3 style="margin-bottom:6px">📋 Selecionar Aba</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">O arquivo tem múltiplas abas. Escolha qual contém os dados de estoque:</p>
+    <div id="listaAbas" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow-y:auto;margin-bottom:16px"></div>
+    <button class="btn" style="width:100%;border-color:var(--border);color:var(--muted)" onclick="fecharModalAba()">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal confirmação -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <h3 id="modalTitulo">Confirmar</h3>
+    <p id="modalMsg"></p>
+    <div class="modal-btns">
+      <button class="btn btn-baixa" id="modalOk">Confirmar</button>
+      <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="fecharModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal temas -->
+<div class="overlay" id="modalTemas">
+  <div class="modal" style="max-width:380px">
+    <h3 style="margin-bottom:16px"><i class="bi bi-palette"></i> Escolher Tema</h3>
+    <div class="temas-grid">
+      <button class="tema-btn" onclick="aplicarTema('')" data-tema=""><span class="tema-preview t-dark"></span><span class="tema-label">Dark Pro</span><span class="tema-check" id="check-">OK</span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-claro')" data-tema="t-claro"><span class="tema-preview t-claro-prev"></span><span class="tema-label">Claro</span><span class="tema-check" id="check-t-claro"></span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-industrial')" data-tema="t-industrial"><span class="tema-preview t-industrial-prev"></span><span class="tema-label">Industrial</span><span class="tema-check" id="check-t-industrial"></span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-oceano')" data-tema="t-oceano"><span class="tema-preview t-oceano-prev"></span><span class="tema-label">Oceano</span><span class="tema-check" id="check-t-oceano"></span></button>
+      <button class="tema-btn" onclick="aplicarTema('t-roxo')" data-tema="t-roxo"><span class="tema-preview t-roxo-prev"></span><span class="tema-label">Roxo</span><span class="tema-check" id="check-t-roxo"></span></button>
+    </div>
+    <button class="btn-acao-base cancelar" style="width:100%;margin-top:14px" onclick="fecharTemas()">Fechar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- File inputs diretamente no body -->
+<input type="file" id="fileInputBatavo" accept=".xlsx,.xls" style="display:none" onchange="processarArquivo(this.files[0],'batavo');this.value=''">
+<input type="file" id="fileInputItambe" accept=".xlsx,.xls" style="display:none" onchange="processarArquivo(this.files[0],'itambe');this.value=''">
+
+<!-- JavaScript da aplicação -->
+<script src="./js/app.js"></script>
+</body>
+</html>
