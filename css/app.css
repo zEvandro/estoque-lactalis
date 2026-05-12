@@ -175,8 +175,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .ll-features li:nth-child(5){animation-delay:.95s}
 .ll-features li:nth-child(6){animation-delay:1.05s}
 .ll-features li i{font-size:16px;color:var(--accent);flex-shrink:0;width:20px;text-align:center}
-.ll-marcas{padding-top:28px;border-top:1px solid rgba(255,255,255,.08);animation:fadeInUp .6s ease 1.15s both}
-.ll-marcas-portfolio{max-width:340px;width:100%;object-fit:contain;mix-blend-mode:multiply;filter:brightness(1.8) contrast(1.1);opacity:.95;transition:opacity .2s}
+.ll-marcas{display:flex;align-items:center;gap:16px;padding-top:28px;border-top:1px solid rgba(255,255,255,.08);animation:fadeInUp .6s ease 1.15s both}
+.ll-marcas-portfolio{height:36px;width:auto;object-fit:contain;mix-blend-mode:multiply;filter:brightness(1.8) contrast(1.1);opacity:.95;transition:opacity .2s}
 .ll-marcas-portfolio:hover{opacity:1}
 /* Branding */
 .login-brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px}
