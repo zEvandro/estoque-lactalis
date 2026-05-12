@@ -2300,6 +2300,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Versão — injetada em todos os pontos via constante única
   const verEl = document.getElementById('loginVersion');
   if (verEl) verEl.textContent = APP_VERSION;
+  const verFooter = document.getElementById('loginVersionFooter');
+  if (verFooter) verFooter.textContent = APP_VERSION;
   const drawerVer = document.getElementById('drawerVersion');
   if (drawerVer) drawerVer.textContent = APP_VERSION;
 

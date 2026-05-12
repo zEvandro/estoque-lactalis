@@ -216,6 +216,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .pin-ok{background:var(--bat-bg);color:var(--bat)}
 .pin-no{background:var(--surface2);color:var(--muted)}
 
+/* Login footer */
+.login-footer{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:10px 24px;font-size:11px;color:rgba(255,255,255,.4);font-family:'IBM Plex Mono',monospace;letter-spacing:.3px;background:rgba(0,0,0,.25);backdrop-filter:blur(6px);border-top:1px solid rgba(255,255,255,.06);z-index:2}
+
 /* BASE SELECT */
 #telaBaseSelect{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
 .bs-logo{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:var(--accent);text-align:center;margin-bottom:4px}
