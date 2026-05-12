@@ -11,6 +11,7 @@ const PRECACHE = [
   './assets/images/Lacfrio.png',
   './assets/images/batavo.png',
   './assets/images/itambe.png',
+  './assets/images/marcas.png',
   './css/app.css',
   './js/app.js',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',
