@@ -131,7 +131,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 /* Desktop: duas colunas */
 @media(min-width:900px){
   #telaLogin{align-items:stretch;padding:0}
-  .login-split{width:100%;min-height:100vh;align-items:stretch;justify-content:flex-start}
+  .login-split{width:100%;max-width:1400px;margin:0 auto;min-height:100vh;align-items:stretch;justify-content:flex-start}
   .login-left{
     display:flex;flex-direction:column;justify-content:center;flex:1;
     padding:64px 60px;
