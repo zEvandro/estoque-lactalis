@@ -122,7 +122,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 /* LOGIN */
 #telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);position:relative;overflow:hidden;isolation:isolate}
-#telaLogin::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(8,12,18,.86),rgba(8,12,18,.72)),var(--login-bg-image) center/cover no-repeat;z-index:-2;animation:gradientPulse 8s ease-in-out infinite}
+#telaLogin::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(8,12,18,.52),rgba(8,12,18,.38)),var(--login-bg-image) center/cover no-repeat;z-index:-2;animation:gradientPulse 8s ease-in-out infinite}
 #telaLogin::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(77,163,255,.22),transparent 45%),radial-gradient(ellipse at bottom left,rgba(245,166,35,.18),transparent 45%);z-index:-1}
 .login-split{width:100%;display:flex;justify-content:center;align-items:center;position:relative;z-index:1}
 .login-left{display:none}
@@ -149,6 +149,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     border-left:1px solid rgba(255,255,255,.06);
     animation:fadeInRight .8s cubic-bezier(.22,1,.36,1) .15s both
   }
+  /* Oculta branding do painel direito no desktop (já aparece no esquerdo) */
+  .login-wrap .login-brand,
+  .login-wrap .login-brand-sub,
+  .login-wrap .login-version-tag{display:none}
 }
 
 /* Painel esquerdo — elementos */
