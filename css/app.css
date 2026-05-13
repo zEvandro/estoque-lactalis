@@ -386,56 +386,7 @@ body.marca-itambe{background:radial-gradient(ellipse at 0% 0%,rgba(59,158,255,.0
 
 /* ── TEMA POR MARCA (sobrescreve --accent quando marcaAtiva é definida) ── */
 /* ── TEMA CÂMARA BATAVO — azul médio suave ── */
-body.marca-batavo{
-  --bg:#c8daf5;
-  --surface:#bdd2f0;
-  --surface2:#aec6ea;
-  --border:rgba(0,63,138,.2);
-  --ink:#003f8a;
-  --muted:#4470a0;
-  --accent:#003f8a;
-  --accent-light:#9ab8e0;
-  --accent3:#0055bb;
-  --accent3-light:#aac4e8;
-  --bat:#003f8a;--bat-bg:#9ab8e0;--bat-border:#003f8a;
-  --itm:#2255aa;--itm-bg:#aac4e8;--itm-border:#2255aa;
-  --red:#cc2200;--red-bg:#f8ddd8;--red-soft:rgba(204,34,0,.2);
-  --card-venc-bg:#f5d8d0;--card-venc-border:#cc2200;
-  --ora:#bb4400;--ora-bg:#f5e8d8;--ora-soft:rgba(187,68,0,.2);
-  --card-crit-bg:#f0e4d0;--card-crit-border:#bb4400;
-  --yel:#886600;--yel-bg:#f0ead0;--yel-soft:rgba(136,102,0,.2);
-  --card-ate-bg:#ece8c8;--card-ate-border:#886600;
-  --baixa:#003f8a;--baixa-bg:#9ab8e0;--baixa-border:#003f8a;
-  --pick:#cc2200;--pick-bg:#f8ddd8;--pick-border:rgba(204,34,0,.3);
-  --shadow:0 1px 4px rgba(0,63,138,.15);
-  --radius:10px;
-}
-
-/* ── TEMA CÂMARA ITAMBÉ — fundo azul escuro, fontes azul claro ── */
-body.marca-itambe{
-  --bg:#003f8a;
-  --surface:#002d66;
-  --surface2:#004aaa;
-  --border:rgba(200,216,240,.25);
-  --ink:#d0e4ff;
-  --muted:#7a9cc0;
-  --accent:#c8d8f0;
-  --accent-light:rgba(200,216,240,.2);
-  --accent3:#a8c8f0;
-  --accent3-light:rgba(168,200,240,.15);
-  --bat:#c8d8f0;--bat-bg:rgba(200,216,240,.15);--bat-border:rgba(200,216,240,.4);
-  --itm:#d0e4ff;--itm-bg:rgba(200,216,240,.2);--itm-border:rgba(200,216,240,.5);
-  --red:#ff7a6a;--red-bg:rgba(255,80,60,.15);--red-soft:rgba(255,80,60,.3);
-  --card-venc-bg:rgba(255,80,60,.1);--card-venc-border:#ff7a6a;
-  --ora:#ffaa70;--ora-bg:rgba(255,150,80,.12);--ora-soft:rgba(255,150,80,.3);
-  --card-crit-bg:rgba(255,150,80,.08);--card-crit-border:#ffaa70;
-  --yel:#ffd080;--yel-bg:rgba(255,200,80,.12);--yel-soft:rgba(255,200,80,.3);
-  --card-ate-bg:rgba(255,200,80,.08);--card-ate-border:#ffd080;
-  --baixa:#a8c8f0;--baixa-bg:rgba(168,200,240,.15);--baixa-border:rgba(168,200,240,.4);
-  --pick:#ff7a6a;--pick-bg:rgba(255,80,60,.15);--pick-border:rgba(255,80,60,.3);
-  --shadow:0 1px 4px rgba(0,0,0,.3);
-  --radius:10px;
-}
+/* Marca só aplica efeitos visuais sutis — o tema do usuário permanece intacto */
 
 /* ── LOGIN ATTEMPTS ── */
 .attempt-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-radius:8px;margin-bottom:6px;font-size:12px}
