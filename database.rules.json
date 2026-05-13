@@ -40,10 +40,6 @@
       ".read": "auth != null",
       ".write": "auth != null"
     },
-    "chat": {
-      ".read": "auth != null",
-      ".write": "auth != null"
-    },
     "contagens": {
       ".read": "auth != null",
       ".write": "auth != null"
