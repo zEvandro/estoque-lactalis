@@ -12,7 +12,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.9.8';
+const APP_VERSION = 'v6.9.9';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -274,19 +274,19 @@ function initListeners() {
     }
     reservasDB = novas;
     reconstruirIndice();
-    if (appVisivel()) { buscar(); renderReservados(); atualizarStatus(); renderSidebarVenc(); }
+    if (appVisivel()) { buscar(); renderReservados(); atualizarStatus(); }
   });
 
   db.ref('baixados').on('value', snap => {
     baixadosDB = snap.val() || {};
     reconstruirIndice();
-    if (appVisivel()) { buscar(); renderReservados(); renderSidebarVenc(); }
+    if (appVisivel()) { buscar(); renderReservados(); }
   });
 
   db.ref('bloqueios').on('value', snap => {
     bloqueiosDB = snap.val() || {};
     reconstruirIndice();
-    if (appVisivel()) { buscar(); renderReservados(); renderSidebarVenc(); }
+    if (appVisivel()) { buscar(); renderReservados(); }
   });
 
   db.ref('baixas').on('value', snap => {
@@ -303,7 +303,7 @@ function initListeners() {
   db.ref('log').on('value', snap => {
     const raw = snap.val() || {};
     logDB = Object.values(raw).sort((a,b) => (b.ts||0) - (a.ts||0));
-    if (appVisivel()) { renderLog(); atualizarBadgeLog(); renderSidebarDia(); }
+    if (appVisivel()) { renderLog(); atualizarBadgeLog(); }
   });
 
   db.ref('loginAttempts').on('value', snap => {
@@ -327,8 +327,6 @@ function onBaseAtualizada() {
     buscar();
     atualizarCardsBase();
     renderReservados();
-    renderSidebarBase();
-    renderSidebarVenc();
   }
 }
 
@@ -462,7 +460,6 @@ function irParaApp() {
   atualizarStatus();
   buscar();
   normalizarUIVisual();
-  renderSidebar();
 }
 
 function selecionarBase(marca) {
