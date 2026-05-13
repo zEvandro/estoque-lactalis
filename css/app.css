@@ -595,17 +595,20 @@ body.marca-itambe{
       url('../assets/images/mulher.png') center top / cover no-repeat fixed;
     min-height:100vh;
   }
+  /* Sidebar esquerda: coluna fina, card vai para o rodapé da coluna */
   .app-sidebar{
-    display:flex;flex-direction:column;gap:12px;
-    width:300px;flex-shrink:0;
-    padding:220px 0 80px 20px;
+    display:flex;flex-direction:column;
+    width:240px;flex-shrink:0;
+    padding:0 0 28px 16px;
     position:sticky;top:57px;
-    max-height:calc(100vh - 57px);
-    overflow-y:auto;
-    scrollbar-width:thin;
-    scrollbar-color:rgba(255,255,255,.1) transparent;
+    height:calc(100vh - 57px); /* ocupa toda a altura visível */
+    overflow:hidden;
   }
-  /* Conteúdo principal alinhado à esquerda do app-main */
+  /* Empurra o card de resumo para o fundo da coluna */
+  .app-sidebar .sb-card{
+    margin-top:auto;
+  }
+  /* Conteúdo principal colado na esquerda do app-main */
   .content{margin-left:0;margin-right:auto}
 }
 
