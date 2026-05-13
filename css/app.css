@@ -314,10 +314,8 @@ body.marca-itambe{background:radial-gradient(ellipse at 0% 0%,rgba(59,158,255,.0
 
 /* CARDS */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .2s ease;margin-bottom:8px}
-.card.batavo{box-shadow:inset 3px 0 0 var(--bat)}
-.card.itambe{box-shadow:inset 3px 0 0 var(--itm)}
-.card.batavo:hover{box-shadow:inset 3px 0 0 var(--bat),0 6px 24px rgba(79,255,176,.12);transform:translateY(-1px)}
-.card.itambe:hover{box-shadow:inset 3px 0 0 var(--itm),0 6px 24px rgba(59,158,255,.12);transform:translateY(-1px)}
+.card.batavo:hover{box-shadow:0 6px 24px rgba(79,255,176,.12);transform:translateY(-1px)}
+.card.itambe:hover{box-shadow:0 6px 24px rgba(59,158,255,.12);transform:translateY(-1px)}
 .card.vencido{background:var(--card-venc-bg);border-color:var(--red)}
 .card.critico{border-color:var(--ora)}
 .card.atencao{border-color:var(--yel)}
