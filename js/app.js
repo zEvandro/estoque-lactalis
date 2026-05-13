@@ -12,7 +12,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.9.7';
+const APP_VERSION = 'v6.9.8';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)

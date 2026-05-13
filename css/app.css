@@ -608,8 +608,6 @@ body.marca-itambe{
   .app-sidebar .sb-card{
     margin-top:auto;
   }
-  /* Conteúdo principal colado na esquerda do app-main */
-  .content{margin-left:0;margin-right:auto}
 }
 
 /* Sidebar cards — glassmorphism sobre a imagem */
