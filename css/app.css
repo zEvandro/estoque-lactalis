@@ -582,68 +582,67 @@ body.marca-itambe{
 .btn-fechar{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif}
 .baixa-user-row{font-size:11px;color:var(--muted);padding:6px 14px 10px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
 
-/* ══ APP LAYOUT — DUAS COLUNAS + BACKGROUND ══════════════════════ */
+/* ══ APP LAYOUT — DUAS COLUNAS + BACKGROUND TELA CHEIA ══════════ */
 .app-layout{display:flex;align-items:flex-start}
 .app-main{flex:1;min-width:0}
 .app-sidebar{display:none}
 
 @media(min-width:1100px){
+  /* Imagem de fundo cobrindo a tela toda */
   #appPrincipal{
     background:
-      linear-gradient(to right,var(--bg) 0%,var(--bg) 52%,rgba(8,12,18,.65) 100%),
-      url('../assets/images/mulher.png') right top / auto 100vh no-repeat fixed;
-  }
-  body.marca-batavo #appPrincipal{
-    background:
-      radial-gradient(ellipse at 0% 0%,rgba(79,255,176,.04) 0%,transparent 55%),
-      linear-gradient(to right,var(--bg) 0%,var(--bg) 52%,rgba(8,12,18,.65) 100%),
-      url('../assets/images/mulher.png') right top / auto 100vh no-repeat fixed;
-  }
-  body.marca-itambe #appPrincipal{
-    background:
-      radial-gradient(ellipse at 0% 0%,rgba(59,158,255,.04) 0%,transparent 55%),
-      linear-gradient(to right,var(--bg) 0%,var(--bg) 52%,rgba(8,12,18,.65) 100%),
-      url('../assets/images/mulher.png') right top / auto 100vh no-repeat fixed;
+      linear-gradient(rgba(8,12,18,.78),rgba(8,12,18,.78)),
+      url('../assets/images/mulher.png') center top / cover no-repeat fixed;
+    min-height:100vh;
   }
   .app-sidebar{
     display:flex;flex-direction:column;gap:12px;
-    width:272px;flex-shrink:0;
-    padding:14px 14px 80px 0;
+    width:300px;flex-shrink:0;
+    padding:20px 20px 80px 0;
     position:sticky;top:57px;
     max-height:calc(100vh - 57px);
     overflow-y:auto;
     scrollbar-width:thin;
-    scrollbar-color:var(--border) transparent;
+    scrollbar-color:rgba(255,255,255,.1) transparent;
   }
 }
 
-/* Sidebar cards */
-.sb-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.sb-card-title{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
-.sb-empty{font-size:12px;color:var(--muted);padding:14px;display:block;text-align:center;font-style:italic}
-.sb-base-item{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.sb-base-item:last-child{border-bottom:none}
-.sb-base-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.sb-base-dot.batavo{background:var(--bat)}
-.sb-base-dot.itambe{background:var(--itm)}
-.sb-base-info{flex:1;min-width:0}
-.sb-base-nome{font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-base-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.sb-base-count{font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0}
-.sb-stat-row{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;border-bottom:1px solid var(--border);font-size:12px}
+/* Sidebar cards — glassmorphism sobre a imagem */
+.sb-card{
+  background:rgba(15,18,23,.72);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--radius);
+  overflow:hidden;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.sb-card-title{
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:rgba(255,255,255,.5);padding:11px 16px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:7px;
+}
+.sb-card-title i{font-size:12px;color:var(--accent)}
+.sb-empty{font-size:12px;color:rgba(255,255,255,.35);padding:18px 16px;display:block;text-align:center;font-style:italic}
+.sb-stat-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
 .sb-stat-row:last-child{border-bottom:none}
-.sb-stat-label{color:var(--muted)}
-.sb-stat-val{font-weight:700;color:var(--ink)}
+.sb-stat-label{color:rgba(255,255,255,.55)}
+.sb-stat-val{font-weight:700;color:#fff}
 .sb-stat-val.green{color:var(--bat)}
 .sb-stat-val.blue{color:var(--itm)}
 .sb-stat-val.red{color:var(--red)}
 .sb-stat-val.ora{color:var(--ora)}
-.sb-venc-item{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:8px}
-.sb-venc-item:last-child{border-bottom:none}
-.sb-venc-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;flex-shrink:0;letter-spacing:.3px;margin-top:1px}
+/* Manter elementos antigos (base/venc) mas sem visibilidade — fallback */
+.sb-base-item,.sb-venc-item{padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:8px}
+.sb-base-item:last-child,.sb-venc-item:last-child{border-bottom:none}
+.sb-base-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-base-dot.batavo{background:var(--bat)}
+.sb-base-dot.itambe{background:var(--itm)}
+.sb-base-info,.sb-venc-info{flex:1;min-width:0}
+.sb-base-nome,.sb-venc-desc{font-size:11px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-base-sub,.sb-venc-val{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+.sb-base-count{font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0}
+.sb-venc-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;flex-shrink:0;letter-spacing:.3px}
 .sb-venc-badge.vencido{background:var(--red-bg);color:var(--red);border:1px solid var(--red-soft)}
 .sb-venc-badge.critico{background:var(--ora-bg);color:var(--ora);border:1px solid var(--ora-soft)}
-.sb-venc-info{flex:1;min-width:0}
-.sb-venc-desc{font-size:11px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-venc-val{font-size:10px;color:var(--muted);margin-top:1px}
 .baixa-user-row b{color:var(--ink)}
