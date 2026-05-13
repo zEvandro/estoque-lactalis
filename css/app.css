@@ -536,13 +536,13 @@ body.marca-itambe{background:radial-gradient(ellipse at 0% 0%,rgba(59,158,255,.0
 .baixa-user-row b{color:var(--ink)}
 
 /* ══ BACKGROUND TELA PRINCIPAL ══════════════════════════════════ */
+#appPrincipal{
+  background:
+    linear-gradient(rgba(8,12,18,.78),rgba(8,12,18,.78)),
+    url('../assets/images/mulher.png') center top / cover no-repeat fixed;
+  min-height:100vh;
+}
+/* Conteúdo deslocado para a direita, ~4cm da borda (só desktop) */
 @media(min-width:1100px){
-  #appPrincipal{
-    background:
-      linear-gradient(rgba(8,12,18,.78),rgba(8,12,18,.78)),
-      url('../assets/images/mulher.png') center top / cover no-repeat fixed;
-    min-height:100vh;
-  }
-  /* Conteúdo deslocado para a direita, ~4cm da borda */
   .content{margin-left:auto;margin-right:150px}
 }
