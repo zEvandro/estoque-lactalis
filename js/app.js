@@ -12,7 +12,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v7.1.0';
+const APP_VERSION = 'v7.1.1';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -1724,8 +1724,8 @@ function aplicarTema(tema) {
   fecharTemas();
   try { localStorage.setItem('estoque-tema', tema); } catch(e) {}
 }
-function abrirTemas()  { document.getElementById('modalTemas').classList.add('show'); }
-function fecharTemas() { document.getElementById('modalTemas').classList.remove('show'); }
+function abrirTemas()  { document.getElementById('modalTemas')?.classList.add('show'); }
+function fecharTemas() { document.getElementById('modalTemas')?.classList.remove('show'); }
 
 function escapeHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -2257,18 +2257,6 @@ function renderDrawer() {
   }).join('');
 }
 
-function aplicarTema(tema) {
-  TEMAS.forEach(function(t){ if (t) document.body.classList.remove(t); });
-  if (tema) document.body.classList.add(tema);
-  TEMAS.forEach(function(t){
-    const el = document.getElementById('check-' + t);
-    if (el) el.textContent = t === tema ? 'OK' : '';
-  });
-  document.querySelectorAll('.tema-btn').forEach(function(b){ b.classList.toggle('ativo', b.dataset.tema === tema); });
-  fecharTemas();
-  try { localStorage.setItem('estoque-tema', tema); } catch(e) {}
-}
-
 function iniciarRelogio() {
   const el = document.getElementById('headerClock');
   if (!el) return;
@@ -2419,12 +2407,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Tema salvo
   try {
     const saved = localStorage.getItem('estoque-tema') ?? '';
-    if (saved) aplicarTema(saved);
-    else document.getElementById('check-').textContent = 'OK';
-  } catch(e) { document.getElementById('check-').textContent = 'OK'; }
-
-  const checkPadrao = document.getElementById('check-');
-  if (checkPadrao) checkPadrao.textContent = 'OK';
+    aplicarTema(saved); // aplica tema salvo (ou padrão se vazio)
+  } catch(e) { aplicarTema(''); }
   normalizarUIVisual();
 
   // Inicia listeners Firebase

@@ -90,7 +90,7 @@ O ADM carrega diariamente um arquivo `.xlsx` para cada marca via a aba **Base de
 
 ## Versão atual
 
-**v7.1.0**
+**v7.1.1**
 
 ---
 
@@ -98,6 +98,7 @@ O ADM carrega diariamente um arquivo `.xlsx` para cada marca via a aba **Base de
 
 | Versão | Destaques |
 |---|---|
+| **v7.1.1** | Corrige bugs no sistema de temas: remove função duplicada, padroniza checkmark `✓`, simplifica inicialização |
 | **v7.1.0** | Tema do usuário não é mais sobrescrito pela marca — marca aplica apenas glow sutil |
 | **v7.0.1** | Conteúdo principal deslocado para a direita no desktop |
 | **v7.0.0** | Background `mulher.png` na tela principal (desktop) |
