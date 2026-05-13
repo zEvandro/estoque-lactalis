@@ -592,4 +592,6 @@ body.marca-itambe{
       url('../assets/images/mulher.png') center top / cover no-repeat fixed;
     min-height:100vh;
   }
+  /* Conteúdo deslocado para a direita, ~4cm da borda */
+  .content{margin-left:auto;margin-right:150px}
 }
