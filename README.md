@@ -22,7 +22,7 @@ Ferramenta de consulta de endereços e localização de produtos na câmara fria
 | **Baixas** | Registro de saída de produtos do estoque |
 | **Picking** | Identificação e baixa de posições de picking |
 | **Divergências** | Registro de divergências com foto, bloqueio de palete e compartilhamento via WhatsApp |
-| **Log de atividade** | Histórico de todas as ações do dia |
+| **Log de atividade** | Histórico com filtros por ação, marca, operador e busca livre |
 | **Admin** | Gestão de usuários, base de dados e reset diário |
 | **Temas** | Dark Pro, Claro, Industrial, Oceano, Roxo |
 | **Offline** | Cache local para consulta sem internet |
@@ -40,7 +40,9 @@ Projeto Contagem/
 │   └── images/
 │       ├── Lacfrio.png # Ícone principal / splash
 │       ├── batavo.png  # Logo Batavo
-│       └── itambe.png  # Logo Itambé
+│       ├── itambe.png  # Logo Itambé
+│       ├── logos.png   # Portfólio de marcas (landing page)
+│       └── mulher.png  # Background da tela principal (desktop)
 ├── css/
 │   └── app.css         # Estilos da aplicação (temas, componentes, layout)
 └── js/
@@ -57,7 +59,7 @@ Projeto Contagem/
 | Banco de dados | Firebase Realtime Database v10.12.0 |
 | Ícones | Bootstrap Icons v1.11.3 |
 | Exportação | XLSX.js v0.18.5 |
-| Fontes | Manrope + Plus Jakarta Sans (Google Fonts) |
+| Fontes | Manrope + Plus Jakarta Sans + Dancing Script (Google Fonts) |
 | PWA | Service Worker com estratégia Network-First |
 
 ---
@@ -88,4 +90,15 @@ O ADM carrega diariamente um arquivo `.xlsx` para cada marca via a aba **Base de
 
 ## Versão atual
 
-**v6.9.0**
+**v7.0.1**
+
+---
+
+## Histórico de versões
+
+| Versão | Destaques |
+|---|---|
+| **v7.0.1** | Conteúdo principal deslocado para a direita no desktop |
+| **v7.0.0** | Background `mulher.png` na tela principal (desktop) |
+| **v6.9.x** | Landing page two-column com animações typewriter, filtros no log, header com relógio e nome do operador, stats chips, cards com hover glow, tema brand-aware |
+| **v6.9.0** | Versão inicial publicada |
