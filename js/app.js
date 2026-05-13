@@ -12,10 +12,19 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // Autenticação anônima — garante token válido para as Security Rules do Firebase
+// O app aguarda o auth estar pronto antes de iniciar qualquer listener do banco
+let _authPronto = false;
+firebase.auth().onAuthStateChanged(user => {
+  if (user && !_authPronto) {
+    _authPronto = true;
+    // Dispara evento customizado para o DOMContentLoaded saber que auth está OK
+    document.dispatchEvent(new Event('firebase-auth-ready'));
+  }
+});
 firebase.auth().signInAnonymously().catch(err => console.warn('[Auth]', err.message));
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v7.2.0';
+const APP_VERSION = 'v7.2.1';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -2464,9 +2473,16 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch(e) { aplicarTema(''); }
   normalizarUIVisual();
 
-  // Inicia listeners Firebase
-  initListeners();
-  carregarSenhaAdm();
+  // Inicia listeners Firebase somente após auth anônimo estar pronto
+  // Evita rejeição das Security Rules por falta de token
+  const iniciarFirebase = () => { initListeners(); carregarSenhaAdm(); };
+  if (_authPronto) {
+    iniciarFirebase();
+  } else {
+    document.addEventListener('firebase-auth-ready', iniciarFirebase, { once: true });
+    // Fallback: se auth demorar mais de 4s (ex: offline), inicia mesmo assim
+    setTimeout(() => { if (!_authPronto) iniciarFirebase(); }, 4000);
+  }
 
   // ── Restaura sessão automaticamente ──
   if (restaurarSessao()) {
