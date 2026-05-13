@@ -1,6 +1,56 @@
 {
   "rules": {
-    ".read":  "auth != null",
-    ".write": "auth != null"
+    "config": {
+      ".read": false,
+      ".write": false,
+      "senhaAdm": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "usuarios": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "bases": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "reservas": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "baixas": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "baixados": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "bloqueios": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "divergencias": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "log": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "chat": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "contagens": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "loginAttempts": {
+      ".read": false,
+      ".write": "auth != null"
+    }
   }
 }
