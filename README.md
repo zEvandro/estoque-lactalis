@@ -90,7 +90,7 @@ O ADM carrega diariamente um arquivo `.xlsx` para cada marca via a aba **Base de
 
 ## Versão atual
 
-**v7.1.3**
+**v7.2.0**
 
 ---
 
@@ -98,6 +98,7 @@ O ADM carrega diariamente um arquivo `.xlsx` para cada marca via a aba **Base de
 
 | Versão | Destaques |
 |---|---|
+| **v7.2.0** | Segurança: Auth anônimo Firebase, bloqueio após 5 tentativas, sessão reduzida para 4h, Security Rules |
 | **v7.1.3** | Título do header muda conforme a base: CONTAGEM BATAVO / ITAMBÉ / GERAL |
 | **v7.1.2** | Background `mulher.png` aparece em todos os tamanhos de tela |
 | **v7.1.1** | Corrige bugs no sistema de temas: remove função duplicada, padroniza checkmark `✓`, simplifica inicialização |

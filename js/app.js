@@ -11,8 +11,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// Autenticação anônima — garante token válido para as Security Rules do Firebase
+firebase.auth().signInAnonymously().catch(err => console.warn('[Auth]', err.message));
+
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v7.1.3';
+const APP_VERSION = 'v7.2.0';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -335,11 +338,48 @@ function appVisivel() {
   return document.getElementById('appPrincipal').style.display !== 'none';
 }
 
+// ════ SEGURANÇA — BLOQUEIO POR TENTATIVAS ════════════════════════
+const LOCKOUT_KEY      = 'estoque-lockout';
+const MAX_TENTATIVAS   = 5;
+const LOCKOUT_DURACAO  = 5 * 60 * 1000; // 5 minutos em ms
+
+function verificarBloqueio() {
+  try {
+    const d = JSON.parse(localStorage.getItem(LOCKOUT_KEY) || '{}');
+    if (d.ate && Date.now() < d.ate) {
+      const mins = Math.ceil((d.ate - Date.now()) / 60000);
+      return `Acesso bloqueado. Tente novamente em ${mins} min.`;
+    }
+    if (d.ate && Date.now() >= d.ate) localStorage.removeItem(LOCKOUT_KEY);
+    return null;
+  } catch(e) { return null; }
+}
+
+function registrarFalha() {
+  try {
+    const d = JSON.parse(localStorage.getItem(LOCKOUT_KEY) || '{}');
+    const tentativas = (d.tentativas || 0) + 1;
+    if (tentativas >= MAX_TENTATIVAS) {
+      localStorage.setItem(LOCKOUT_KEY, JSON.stringify({ tentativas, ate: Date.now() + LOCKOUT_DURACAO }));
+    } else {
+      localStorage.setItem(LOCKOUT_KEY, JSON.stringify({ tentativas }));
+    }
+  } catch(e) {}
+}
+
+function limparBloqueio() {
+  try { localStorage.removeItem(LOCKOUT_KEY); } catch(e) {}
+}
+
 // ════ LOGIN ═══════════════════════════════════════════════════════
 function fazerLogin() {
   const cracha = document.getElementById('loginCracha').value.trim();
   const errEl  = document.getElementById('loginErro');
   errEl.textContent = '';
+
+  // ── Verificar bloqueio por tentativas ──
+  const bloqueio = verificarBloqueio();
+  if (bloqueio) { errEl.textContent = bloqueio; return; }
 
   if (!cracha) { errEl.textContent = 'Digite seu crachá'; return; }
 
@@ -351,13 +391,17 @@ function fazerLogin() {
       return;
     }
     const senha = document.getElementById('loginSenha').value;
-    // Guard: senha não carregou do Firebase ainda (sem conexão ou nó inexistente)
     if (_senhaAdm === null) {
       errEl.textContent = 'Aguardando configuração do servidor. Verifique a conexão.';
-      carregarSenhaAdm(); // tenta recarregar
+      carregarSenhaAdm();
       return;
     }
-    if (senha !== _senhaAdm) { errEl.textContent = 'Senha incorreta'; return; }
+    if (senha !== _senhaAdm) {
+      registrarFalha();
+      errEl.textContent = 'Senha incorreta';
+      return;
+    }
+    limparBloqueio();
     usuarioLogado = { nome: ADM_NOME, cracha: ADM_CRACHA, perfil: 'adm' };
     marcaAtiva = 'ambas';
     salvarSessao();
@@ -368,11 +412,16 @@ function fazerLogin() {
   // Usuário comum — consulta Firebase
   db.ref('usuarios/' + cracha).get().then(snap => {
     if (!snap.exists()) {
-      errEl.textContent = 'Crachá não cadastrado. Contate o ADM.';
-      // Registra tentativa inválida
+      registrarFalha();
+      const tentativas = JSON.parse(localStorage.getItem(LOCKOUT_KEY) || '{}').tentativas || 0;
+      const restam = MAX_TENTATIVAS - tentativas;
+      errEl.textContent = restam > 0
+        ? `Crachá não cadastrado. ${restam} tentativa(s) restante(s).`
+        : 'Acesso bloqueado por 5 minutos.';
       db.ref('loginAttempts').push({ cracha, hora: new Date().toLocaleString('pt-BR'), ts: Date.now() }).catch(()=>{});
       return;
     }
+    limparBloqueio();
     const u = snap.val();
     usuarioLogado = { nome: u.nome, cracha: String(cracha), perfil: 'comum', basePerm: u.basePerm||'ambas' };
     salvarSessao();
@@ -2201,8 +2250,8 @@ function restaurarSessao() {
     const raw = localStorage.getItem(SESSAO_KEY);
     if (!raw) return false;
     const s = JSON.parse(raw);
-    // Expira após 12 horas
-    if (Date.now() - (s.ts || 0) > 12 * 3600000) { limparSessao(); return false; }
+    // Expira após 4 horas (1 turno de trabalho)
+    if (Date.now() - (s.ts || 0) > 4 * 3600000) { limparSessao(); return false; }
     if (!s.usuarioLogado) return false;
     usuarioLogado = s.usuarioLogado;
     marcaAtiva    = s.marcaAtiva || '';

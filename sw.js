@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════
 // ESTOQUE CONTAGEM — Service Worker v4.5
 // ═══════════════════════════════════════════════
-const CACHE_NAME = 'estoque-v28';
+const CACHE_NAME = 'estoque-v29';
 
 // Recursos para cachear na instalação
 const PRECACHE = [
@@ -19,6 +19,7 @@ const PRECACHE = [
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
   'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js',
   'https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js',
+  'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js',
   'https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap'
 ];
 
