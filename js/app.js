@@ -12,7 +12,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v7.1.2';
+const APP_VERSION = 'v7.1.3';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -64,7 +64,8 @@ function normalizarUIVisual(){
 
   setHtml('.btn-consultor span','<i class="bi bi-eye"></i>');
   setText('.bs-logo','ESTOQUE CONTAGEM');
-  setText('#headerTitulo','ESTOQUE CONTAGEM');
+  const _titulo = marcaAtiva==='batavo' ? 'CONTAGEM BATAVO' : marcaAtiva==='itambe' ? 'CONTAGEM ITAMBÉ' : marcaAtiva==='ambas' ? 'CONTAGEM GERAL' : 'ESTOQUE CONTAGEM';
+  setText('#headerTitulo', _titulo);
   setHtml('.btn-hamburguer','<i class="bi bi-list"></i>');
 
   const conn=document.getElementById('connPill');
@@ -444,11 +445,14 @@ function irParaApp() {
   if (marcaAtiva === 'batavo') {
     document.body.classList.add('marca-batavo');
     if (logoEl)  { logoEl.src = './assets/images/batavo.png'; logoEl.style.display = ''; }
-    if (tituloEl) tituloEl.textContent = 'CÂMARA BATAVO';
+    if (tituloEl) tituloEl.textContent = 'CONTAGEM BATAVO';
   } else if (marcaAtiva === 'itambe') {
     document.body.classList.add('marca-itambe');
     if (logoEl)  { logoEl.src = './assets/images/itambe.png'; logoEl.style.display = ''; }
-    if (tituloEl) tituloEl.textContent = 'CÂMARA ITAMBÉ';
+    if (tituloEl) tituloEl.textContent = 'CONTAGEM ITAMBÉ';
+  } else if (marcaAtiva === 'ambas') {
+    if (logoEl)  { logoEl.src = ''; logoEl.style.display = 'none'; }
+    if (tituloEl) tituloEl.textContent = 'CONTAGEM GERAL';
   } else {
     if (logoEl)  { logoEl.src = ''; logoEl.style.display = 'none'; }
     if (tituloEl) tituloEl.textContent = 'ESTOQUE CONTAGEM';

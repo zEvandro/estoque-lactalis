@@ -90,7 +90,7 @@ O ADM carrega diariamente um arquivo `.xlsx` para cada marca via a aba **Base de
 
 ## Versão atual
 
-**v7.1.2**
+**v7.1.3**
 
 ---
 
@@ -98,6 +98,7 @@ O ADM carrega diariamente um arquivo `.xlsx` para cada marca via a aba **Base de
 
 | Versão | Destaques |
 |---|---|
+| **v7.1.3** | Título do header muda conforme a base: CONTAGEM BATAVO / ITAMBÉ / GERAL |
 | **v7.1.2** | Background `mulher.png` aparece em todos os tamanhos de tela |
 | **v7.1.1** | Corrige bugs no sistema de temas: remove função duplicada, padroniza checkmark `✓`, simplifica inicialização |
 | **v7.1.0** | Tema do usuário não é mais sobrescrito pela marca — marca aplica apenas glow sutil |
