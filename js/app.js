@@ -32,6 +32,7 @@ let usuariosDB   = {}; // { [cracha]: { nome, basePerm } }
 let logDB        = []; // sorted array of all actions
 let loginAttemptsDB = []; // login attempts
 let contagensDB  = {}; // { [idx]: { real, sistema, diff, nome, hora } }
+let _relogioInterval  = null;
 let _filtroLog        = 'todos';
 let _filtroLogMarca   = 'todas';
 let _filtroLogUsuario = 'todos';
@@ -403,6 +404,10 @@ function fazerLogout() {
   document.getElementById('loginSenha').value = '';
   document.getElementById('loginSenhaWrap').style.display = 'none';
   document.getElementById('loginErro').textContent = '';
+  document.body.classList.remove('marca-batavo','marca-itambe');
+  pararRelogio();
+  const headerUser = document.getElementById('headerUser');
+  if (headerUser) headerUser.textContent = '';
   _filtroLog = 'todos';
   _filtroLogMarca = 'todas';
   _filtroLogUsuario = 'todos';
@@ -432,20 +437,24 @@ function irParaApp() {
   document.getElementById('telaLogin').style.display = 'none';
   document.getElementById('telaBaseSelect').style.display = 'none';
   document.getElementById('appPrincipal').style.display = '';
-  // Tema sempre dark — sem variação por marca
   document.body.classList.remove('marca-batavo','marca-itambe');
-  const logoEl  = document.getElementById('headerLogo');
+  const logoEl   = document.getElementById('headerLogo');
   const tituloEl = document.getElementById('headerTitulo');
+  const userEl   = document.getElementById('headerUser');
   if (marcaAtiva === 'batavo') {
+    document.body.classList.add('marca-batavo');
     if (logoEl)  { logoEl.src = './assets/images/batavo.png'; logoEl.style.display = ''; }
     if (tituloEl) tituloEl.textContent = 'CÂMARA BATAVO';
   } else if (marcaAtiva === 'itambe') {
+    document.body.classList.add('marca-itambe');
     if (logoEl)  { logoEl.src = './assets/images/itambe.png'; logoEl.style.display = ''; }
     if (tituloEl) tituloEl.textContent = 'CÂMARA ITAMBÉ';
   } else {
     if (logoEl)  { logoEl.src = ''; logoEl.style.display = 'none'; }
     if (tituloEl) tituloEl.textContent = 'ESTOQUE CONTAGEM';
   }
+  if (userEl && usuarioLogado) userEl.textContent = usuarioLogado.nome;
+  iniciarRelogio();
   configurarTabs();
   reconstruirIndice();
   atualizarStatus();
@@ -946,9 +955,9 @@ function buscar() {
   ).length;
 
   if (stats) stats.innerHTML =
-    '<div class="stat">Resultados: <b>' + res.length + '</b>' + (isEndBusca ? ' · endereco' : '') + '</div>' +
-    '<div class="stat">Em estoque: <b>' + _indice.length + '</b></div>' +
-    '<div class="stat">Reservados: <b>' + resCount + '</b></div>';
+    '<div class="stat-chip"><i class="bi bi-list-ul"></i><span>' + res.length + '</span><label>' + (isEndBusca ? 'Endereço' : 'Resultados') + '</label></div>' +
+    '<div class="stat-chip stock"><i class="bi bi-boxes"></i><span>' + _indice.length + '</span><label>Em estoque</label></div>' +
+    '<div class="stat-chip reserved"><i class="bi bi-bookmark-check"></i><span>' + resCount + '</span><label>Reservados</label></div>';
 
   if (!res.length) {
     lista.innerHTML = q.length > 0
@@ -1570,7 +1579,7 @@ function cardHTMLFast(e) {
   }
   // Guest: acoesHTML permanece '' — sem nenhum botão
 
-  return '<div class="card ' + valClass + (isBloqueado ? ' bloqueado' : '') + '">' +
+  return '<div class="card ' + marca + ' ' + valClass + (isBloqueado ? ' bloqueado' : '') + '">' +
     '<div class="card-head">' +
       '<div>' +
         '<div class="card-code" style="color:' + cc + '">' + h(e.cod) + '</div>' +
@@ -2258,6 +2267,23 @@ function aplicarTema(tema) {
   document.querySelectorAll('.tema-btn').forEach(function(b){ b.classList.toggle('ativo', b.dataset.tema === tema); });
   fecharTemas();
   try { localStorage.setItem('estoque-tema', tema); } catch(e) {}
+}
+
+function iniciarRelogio() {
+  const el = document.getElementById('headerClock');
+  if (!el) return;
+  const tick = () => {
+    const n = new Date();
+    el.textContent = n.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  };
+  tick();
+  _relogioInterval = setInterval(tick, 1000);
+}
+
+function pararRelogio() {
+  if (_relogioInterval) { clearInterval(_relogioInterval); _relogioInterval = null; }
+  const el = document.getElementById('headerClock');
+  if (el) el.textContent = '';
 }
 
 function initTypewriter() {
