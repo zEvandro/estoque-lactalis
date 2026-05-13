@@ -191,6 +191,10 @@
     </div>
   </div>
 
+  <!-- ══ LAYOUT DUAS COLUNAS ══ -->
+  <div class="app-layout">
+  <div class="app-main">
+
   <!-- CONSULTA -->
   <div class="content" id="tab-consulta">
     <div id="noDB" class="no-db-banner" style="display:none">
@@ -391,6 +395,30 @@
     </div>
 
   </div>
+
+  </div><!-- /app-main -->
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="app-sidebar" id="appSidebar">
+
+    <div class="sb-card">
+      <div class="sb-card-title"><i class="bi bi-database"></i> Base de dados</div>
+      <div id="sbBase"><span class="sb-empty">Carregando…</span></div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-card-title"><i class="bi bi-calendar-check"></i> Resumo do dia</div>
+      <div id="sbDia"><span class="sb-empty">Sem dados</span></div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-card-title"><i class="bi bi-exclamation-triangle"></i> Vencimentos críticos</div>
+      <div id="sbVenc"><span class="sb-empty">Nenhum crítico</span></div>
+    </div>
+
+  </aside><!-- /app-sidebar -->
+
+  </div><!-- /app-layout -->
 
 </div><!-- /appPrincipal -->
 

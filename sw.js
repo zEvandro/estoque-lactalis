@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════
 // ESTOQUE CONTAGEM — Service Worker v4.5
 // ═══════════════════════════════════════════════
-const CACHE_NAME = 'estoque-v26';
+const CACHE_NAME = 'estoque-v27';
 
 // Recursos para cachear na instalação
 const PRECACHE = [
@@ -12,6 +12,7 @@ const PRECACHE = [
   './assets/images/batavo.png',
   './assets/images/itambe.png',
   './assets/images/logos.png',
+  './assets/images/mulher.png',
   './css/app.css',
   './js/app.js',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',

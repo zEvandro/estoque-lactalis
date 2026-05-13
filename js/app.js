@@ -12,7 +12,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v6.9.2';
+const APP_VERSION = 'v6.9.3';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -274,19 +274,19 @@ function initListeners() {
     }
     reservasDB = novas;
     reconstruirIndice();
-    if (appVisivel()) { buscar(); renderReservados(); atualizarStatus(); }
+    if (appVisivel()) { buscar(); renderReservados(); atualizarStatus(); renderSidebarVenc(); }
   });
 
   db.ref('baixados').on('value', snap => {
     baixadosDB = snap.val() || {};
     reconstruirIndice();
-    if (appVisivel()) { buscar(); renderReservados(); }
+    if (appVisivel()) { buscar(); renderReservados(); renderSidebarVenc(); }
   });
 
   db.ref('bloqueios').on('value', snap => {
     bloqueiosDB = snap.val() || {};
     reconstruirIndice();
-    if (appVisivel()) { buscar(); renderReservados(); }
+    if (appVisivel()) { buscar(); renderReservados(); renderSidebarVenc(); }
   });
 
   db.ref('baixas').on('value', snap => {
@@ -303,7 +303,7 @@ function initListeners() {
   db.ref('log').on('value', snap => {
     const raw = snap.val() || {};
     logDB = Object.values(raw).sort((a,b) => (b.ts||0) - (a.ts||0));
-    if (appVisivel()) { renderLog(); atualizarBadgeLog(); }
+    if (appVisivel()) { renderLog(); atualizarBadgeLog(); renderSidebarDia(); }
   });
 
   db.ref('loginAttempts').on('value', snap => {
@@ -327,6 +327,8 @@ function onBaseAtualizada() {
     buscar();
     atualizarCardsBase();
     renderReservados();
+    renderSidebarBase();
+    renderSidebarVenc();
   }
 }
 
@@ -460,6 +462,7 @@ function irParaApp() {
   atualizarStatus();
   buscar();
   normalizarUIVisual();
+  renderSidebar();
 }
 
 function selecionarBase(marca) {
@@ -2284,6 +2287,91 @@ function pararRelogio() {
   if (_relogioInterval) { clearInterval(_relogioInterval); _relogioInterval = null; }
   const el = document.getElementById('headerClock');
   if (el) el.textContent = '';
+}
+
+// ════ SIDEBAR ══════════════════════════════════════════════════════
+function renderSidebar() {
+  renderSidebarBase();
+  renderSidebarDia();
+  renderSidebarVenc();
+}
+
+function renderSidebarBase() {
+  const el = document.getElementById('sbBase');
+  if (!el) return;
+  const marcas = marcaAtiva === 'ambas' ? ['batavo','itambe'] : (marcaAtiva ? [marcaAtiva] : []);
+  if (!marcas.length) { el.innerHTML = '<span class="sb-empty">Nenhuma base ativa</span>'; return; }
+  let html = '';
+  marcas.forEach(m => {
+    const b   = bases[m];
+    const cor = m === 'batavo' ? 'batavo' : 'itambe';
+    const nome = m === 'batavo' ? 'Batavo' : 'Itambé';
+    if (!b.carregada) {
+      html += '<div class="sb-base-item">' +
+        '<div class="sb-base-dot ' + cor + '"></div>' +
+        '<div class="sb-base-info">' +
+          '<div class="sb-base-nome">' + nome + '</div>' +
+          '<div class="sb-base-sub">Base não carregada</div>' +
+        '</div></div>';
+    } else {
+      const total = b.dados.length;
+      const arch  = b.arquivo ? b.arquivo.split(/[\\/]/).pop() : '—';
+      const por   = b.carregadoPor || '—';
+      html += '<div class="sb-base-item">' +
+        '<div class="sb-base-dot ' + cor + '"></div>' +
+        '<div class="sb-base-info">' +
+          '<div class="sb-base-nome">' + escapeHtml(arch) + '</div>' +
+          '<div class="sb-base-sub">por ' + escapeHtml(por) + '</div>' +
+        '</div>' +
+        '<div class="sb-base-count">' + total + '</div>' +
+        '</div>';
+    }
+  });
+  el.innerHTML = html;
+}
+
+function renderSidebarDia() {
+  const el = document.getElementById('sbDia');
+  if (!el) return;
+  const hojeStr = new Date().toDateString();
+  const logHoje = logDB.filter(e => e.ts && new Date(e.ts).toDateString() === hojeStr);
+  const reservas  = logHoje.filter(e => e.acao === 'reserva').length;
+  const baixas    = logHoje.filter(e => e.acao === 'baixa').length;
+  const contagens = logHoje.filter(e => e.acao === 'contagem').length;
+  const cancelamentos = logHoje.filter(e => e.acao === 'cancelamento').length;
+  const total = logHoje.length;
+  if (!total) { el.innerHTML = '<span class="sb-empty">Sem atividade hoje</span>'; return; }
+  el.innerHTML =
+    '<div class="sb-stat-row"><span class="sb-stat-label">Total de ações</span><span class="sb-stat-val">' + total + '</span></div>' +
+    (reservas    ? '<div class="sb-stat-row"><span class="sb-stat-label">Reservas</span><span class="sb-stat-val blue">' + reservas + '</span></div>' : '') +
+    (baixas      ? '<div class="sb-stat-row"><span class="sb-stat-label">Baixas</span><span class="sb-stat-val green">' + baixas + '</span></div>' : '') +
+    (contagens   ? '<div class="sb-stat-row"><span class="sb-stat-label">Contagens</span><span class="sb-stat-val ora">' + contagens + '</span></div>' : '') +
+    (cancelamentos ? '<div class="sb-stat-row"><span class="sb-stat-label">Cancelamentos</span><span class="sb-stat-val red">' + cancelamentos + '</span></div>' : '');
+}
+
+function renderSidebarVenc() {
+  const el = document.getElementById('sbVenc');
+  if (!el) return;
+  const criticos = _indice
+    .filter(e => e._diasVal !== null && e._diasVal <= 7)
+    .sort((a, b) => a._diasVal - b._diasVal)
+    .slice(0, 8);
+  if (!criticos.length) { el.innerHTML = '<span class="sb-empty">Nenhum crítico</span>'; return; }
+  let html = '';
+  criticos.forEach(e => {
+    const dias = e._diasVal;
+    let badge, cls;
+    if (dias < 0)       { badge = 'VENCIDO'; cls = 'vencido'; }
+    else if (dias === 0){ badge = 'HOJE';    cls = 'vencido'; }
+    else                { badge = dias + 'd'; cls = 'critico'; }
+    html += '<div class="sb-venc-item">' +
+      '<span class="sb-venc-badge ' + cls + '">' + badge + '</span>' +
+      '<div class="sb-venc-info">' +
+        '<div class="sb-venc-desc">' + escapeHtml(e.desc) + '</div>' +
+        '<div class="sb-venc-val">' + (e.val || '—') + '</div>' +
+      '</div></div>';
+  });
+  el.innerHTML = html;
 }
 
 function initTypewriter() {
