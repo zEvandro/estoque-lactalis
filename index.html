@@ -108,7 +108,7 @@
       <div class="login-card-titulo">🔐 Acesso com crachá</div>
       <div class="lf">
         <label>Número do Crachá</label>
-        <input id="loginCracha" type="number" placeholder="Digite seu crachá" onkeydown="if(event.key==='Enter')fazerLogin()">
+        <input id="loginCracha" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="Digite seu crachá" onkeydown="if(event.key==='Enter')fazerLogin()" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
       </div>
       <div class="lf" id="loginSenhaWrap" style="display:none">
         <label>Senha ADM</label>

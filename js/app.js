@@ -24,7 +24,7 @@ firebase.auth().onAuthStateChanged(user => {
 firebase.auth().signInAnonymously().catch(err => console.warn('[Auth]', err.message));
 
 // ════ CONFIG ADM ══════════════════════════════════════════════════
-const APP_VERSION = 'v7.2.1';
+const APP_VERSION = 'v7.2.2';
 const ADM_CRACHA = '564216';
 const ADM_NOME   = 'Chicão';
 // ADM_SENHA removida do código — carregada exclusivamente do Firebase (config/senhaAdm)
@@ -391,6 +391,8 @@ function fazerLogin() {
   if (bloqueio) { errEl.textContent = bloqueio; return; }
 
   if (!cracha) { errEl.textContent = 'Digite seu crachá'; return; }
+  if (!/^\d+$/.test(cracha)) { errEl.textContent = 'Crachá deve conter apenas números'; return; }
+  if (cracha.length < 4 || cracha.length > 10) { errEl.textContent = 'Crachá inválido (4 a 10 dígitos)'; return; }
 
   if (cracha === ADM_CRACHA) {
     const wrap = document.getElementById('loginSenhaWrap');
