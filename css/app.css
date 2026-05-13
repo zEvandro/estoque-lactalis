@@ -598,13 +598,15 @@ body.marca-itambe{
   .app-sidebar{
     display:flex;flex-direction:column;gap:12px;
     width:300px;flex-shrink:0;
-    padding:20px 0 80px 20px;
+    padding:220px 0 80px 20px;
     position:sticky;top:57px;
     max-height:calc(100vh - 57px);
     overflow-y:auto;
     scrollbar-width:thin;
     scrollbar-color:rgba(255,255,255,.1) transparent;
   }
+  /* Conteúdo principal alinhado à esquerda do app-main */
+  .content{margin-left:0;margin-right:auto}
 }
 
 /* Sidebar cards — glassmorphism sobre a imagem */
